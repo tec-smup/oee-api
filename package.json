@@ -1,0 +1,33 @@
+{
+  "name": "oee-api",
+  "version": "1.0.0",
+  "description": "Serviço de Monitoramento de OEE de máquinas",
+  "main": "api.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/paul8liveira/oee-api.git"
+  },
+  "keywords": [
+    "oee",
+    "api",
+    "serviço",
+    "monitoramento de OEE de máquinas",
+    "OEE",
+    "máquinas",
+    "startmeup"
+  ],
+  "author": "paul8liveira",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/paul8liveira/oee-api/issues"
+  },
+  "homepage": "https://github.com/paul8liveira/oee-api#readme",
+  "dependencies": {
+    "consign": "^0.1.6",
+    "express": "^4.16.2",
+    "mysql": "^2.15.0"
+  }
+}
