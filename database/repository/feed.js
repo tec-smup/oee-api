@@ -2,6 +2,10 @@ function feed(connection) {
     this._connection = connection;
 }
 
+feed.prototype.autenticateToken = function(token, callback) {
+    this._connection.query("select id from channel where token = ?", token, callback);
+}
+
 feed.prototype.save = function(data, callback) {
     this._connection.query("insert into feed set ?", data, callback);
 }
