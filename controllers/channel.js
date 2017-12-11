@@ -4,7 +4,7 @@ const notFound = {
 };
 
 module.exports = function(app) {
-    app.get('/oee/api/channel/get', function(req, res) {
+    app.get('/oee/get', function(req, res) {
         var params = req.query;  
         var data = {};
         
