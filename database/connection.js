@@ -5,7 +5,8 @@ function connection() {
         host: 'localhost',
         user: 'root',
         password: 'root',
-        database: 'oee'
+        database: 'oee',
+        timezone: 'utc'
     });
 }
 
