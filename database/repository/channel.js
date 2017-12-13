@@ -12,8 +12,9 @@ channel.prototype.getChannel = function(params, callback) {
         query += "  from channel c";
         query += " inner join feed_config fc on(fc.channel_id = c.id) ";
         query += " where c.id = ?";
+        query += "   and c.token = ?";
 
-    this._connection.query(query, params.channel_id, callback);
+    this._connection.query(query, [params.channel_id, params.token], callback);
 }
 
 channel.prototype.getFeeds = function(params, callback) {
