@@ -17,7 +17,7 @@ channel.prototype.getChannel = function(params, callback) {
 }
 
 channel.prototype.getFeeds = function(params, callback) {
-    var query = "select f.id, f.inserted_at" ;
+    var query = "select f.id, DATE_FORMAT(f.inserted_at, '%Y-%m-%d %H:%i:%s') as inserted_at";
         query += params.fields.indexOf("1") >= 0 ? ", f.field1" : "";
         query += params.fields.indexOf("2") >= 0 ? ", f.field2" : "";
         query += params.fields.indexOf("3") >= 0 ? ", f.field3" : "";
