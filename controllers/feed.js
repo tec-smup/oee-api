@@ -1,5 +1,5 @@
 module.exports = function(app) {
-    app.get('/oee/upd', function(req, res) {
+    app.get('/oee/api/feed/update', function(req, res) {
         var query = req.query;        
         var connection = app.database.connection();
         var feed = new app.database.repository.feed(connection);  
