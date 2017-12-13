@@ -11,9 +11,9 @@ channel.prototype.getChannel = function(params, callback) {
         query += params.fields.indexOf("5") >= 0 ? ", fc.field5" : "";
         query += "  from channel c";
         query += " inner join feed_config fc on(fc.channel_id = c.id) ";
-        query += " where token = ?";
+        query += " where c.id = ?";
 
-    this._connection.query(query, params.token, callback);
+    this._connection.query(query, params.channel_id, callback);
 }
 
 channel.prototype.getFeeds = function(params, callback) {
@@ -25,11 +25,11 @@ channel.prototype.getFeeds = function(params, callback) {
         query += params.fields.indexOf("5") >= 0 ? ", f.field5" : "";    
         query += "  from feed f";
         query += " inner join channel c on (c.id = f.channel_id)";
-        query += " where c.token = ?";
+        query += " where c.id = ?";
         query += " order by f.inserted_at desc";
         query += params.results ? " limit " + params.results : "";
          
-    this._connection.query(query, params.token, callback);
+    this._connection.query(query, params.channel_id, callback);
 }
 
 module.exports = function() {

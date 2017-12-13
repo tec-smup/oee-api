@@ -4,8 +4,10 @@ const notFound = {
 };
 
 module.exports = function(app) {
-    app.get('/oee/api/channel/get', function(req, res) {
+    app.get('/oee/api/:channel/get', function(req, res) {
+        var channelId = req.params.channel;
         var params = req.query;  
+            params.channel_id = channelId;
         var data = {};
         
         var connection = app.database.connection();
