@@ -18,7 +18,8 @@ module.exports = function(app) {
                 if(exception) {
                     return res.status(400).send(exception);
                 }
-                res.send(result.insertId.toString());   //seguindo modelo do thingspeak                   
+                res.send(result.insertId.toString());   //seguindo modelo do thingspeak  
+                connection.end();                 
             });             
         });        
     });
