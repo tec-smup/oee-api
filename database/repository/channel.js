@@ -33,10 +33,10 @@ channel.prototype.getFeeds = function(params, callback) {
 }
 
 channel.prototype.deleteFeeds = function(params, callback) {
-    var query = " delete from feed f";
-        query += " where f.channel_id = ?";
+    var query = " delete from feed";
+        query += " where channel_id = ?";
          
-    this._connection.query(query, params.channel_id, callback);
+    this._connection.query(query, parseInt(params.channel_id), callback);
 }
 
 module.exports = function() {
