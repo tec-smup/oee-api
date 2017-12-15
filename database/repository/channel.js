@@ -18,12 +18,15 @@ channel.prototype.getChannel = function(params, callback) {
 }
 
 channel.prototype.getFeeds = function(params, callback) {
-    var query = "select f.id, DATE_FORMAT(f.inserted_at, '%Y-%m-%d %H:%i:%s') as inserted_at";
+    var query = "select f.id";
+        query += ", DATE_FORMAT(f.inserted_at, '%Y-%m-%d %H:%i:%s') as inserted_at";
+        query += ", DATE_FORMAT(f.inserted_at, '%d/%m/%Y') as date";
+        query += ", DATE_FORMAT(f.inserted_at, '%H:%i:%s') as time";
         query += params.fields.indexOf("1") >= 0 ? ", f.field1" : "";
         query += params.fields.indexOf("2") >= 0 ? ", f.field2" : "";
         query += params.fields.indexOf("3") >= 0 ? ", f.field3" : "";
         query += params.fields.indexOf("4") >= 0 ? ", f.field4" : "";
-        query += params.fields.indexOf("5") >= 0 ? ", f.field5" : "";    
+        query += params.fields.indexOf("5") >= 0 ? ", f.field5" : "";              
         query += "  from feed f";
         query += " where f.channel_id = ?";
         query += " order by f.inserted_at desc";
