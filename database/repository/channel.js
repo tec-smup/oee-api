@@ -19,6 +19,7 @@ channel.prototype.getChannel = function(params, callback) {
 
 channel.prototype.getFeeds = function(params, callback) {
     var query = "select f.id";
+        query += ", f.machine_code";
         query += ", DATE_FORMAT(f.inserted_at, '%Y-%m-%d %H:%i:%s') as inserted_at";
         query += ", DATE_FORMAT(f.inserted_at, '%d/%m/%Y') as date";
         query += ", DATE_FORMAT(f.inserted_at, '%H:%i:%s') as time";

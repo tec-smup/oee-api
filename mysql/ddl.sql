@@ -12,6 +12,7 @@ create table channel
 	created_at timestamp not null default CURRENT_TIMESTAMP,
 	updated_at timestamp not null default CURRENT_TIMESTAMP
 );
+
 create table feed_config
 (
     id int not null auto_increment primary key,
@@ -28,6 +29,7 @@ create table feed
 (
 	id int not null auto_increment primary key,
     channel_id int not null,
+    machine_code varchar(10) null,
     field1 float(8,2) null,
     field2 float(8,2) null,
     field3 float(8,2) null,
@@ -36,3 +38,30 @@ create table feed
 	inserted_at timestamp not null default CURRENT_TIMESTAMP
 );
 alter table feed add constraint fk_feed_channel foreign key(channel_id) references channel(id);
+alter table feed add constraint fk_feed_machine_data foreign key(machine_code) references machine_data(code);
+
+create table machine_data
+(
+    code varchar(10) not null primary key,
+    name varchar(20) not null,
+    department varchar(100) null,
+    product varchar(100) null,
+    last_maintenance timestamp null,
+    next_maintenance timestamp null
+);
+
+/*
+Nova estrutura
+com base nesses campos será criado a tabela feed_x (onde x é o id do canal)
+obs: sempre criar o campo machine_code referenciando a tabela machine_data no script
+*/
+create table feed_field
+(
+    id int not null auto_increment primary key,
+    channel_id int not null,
+    field_name varchar(100) not null,
+    field_description varchar(100) not null,
+    field_type varchar(50) not null,
+    created_at timestamp not null default CURRENT_TIMESTAMP,
+);
+alter table channel_feed_config add constraint fk_feed_field_channel foreign key(channel_id) references channel(id);
