@@ -15,12 +15,25 @@ module.exports = function(app) {
         var connection = app.database.connection();
         var machine = new app.database.repository.machine(connection);
 
-        machine.save(bodyData, function(exception, result) {
+        machine.autenticateToken(bodyData.token, function(exception, result) {
             if(exception) {
                 return res.status(400).send(exception);
             }
-            bodyData.id = result.insertId; 
-            res.send(bodyData);                 
+            if(!result[0]) {
+                return res.send('0'); //seguindo modelo do thingspeak
+            }
+
+            //null na data
+            bodyData.next_maintenance = bodyData.next_maintenance || null;                       
+            bodyData.last_maintenance = bodyData.last_maintenance || null;                       
+            
+            delete bodyData.token;
+            machine.save(bodyData, function(exception, result) {
+                if(exception) {
+                    return res.status(400).send(exception);
+                }
+                res.send('OK. ' + bodyData.code + ' habilitada para medição.');                 
+            });            
         });        
     });
 

@@ -10,7 +10,8 @@ create table channel
     token varchar(50) not null,
     active bit not null default false, 
 	created_at timestamp not null default CURRENT_TIMESTAMP,
-	updated_at timestamp not null default CURRENT_TIMESTAMP
+	updated_at timestamp not null default CURRENT_TIMESTAMP,
+    time_shift int null default 0,
 );
 
 create table feed_config
@@ -46,8 +47,8 @@ create table machine_data
     name varchar(20) not null,
     department varchar(100) null,
     product varchar(100) null,
-    last_maintenance timestamp null,
-    next_maintenance timestamp null
+    last_maintenance date null,
+    next_maintenance date null
 );
 
 /*
