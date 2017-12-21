@@ -3,7 +3,7 @@ function channel(connection) {
 }
 
 channel.prototype.getChannel = function(params, callback) {
-    var query = "select c.id, c.name, c.description";
+    var query = "select c.id, c.name, c.description, c.time_shift";
         query += params.fields && params.fields.indexOf("1") >= 0 ? ", fc.field1" : "";
         query += params.fields && params.fields.indexOf("2") >= 0 ? ", fc.field2" : "";
         query += params.fields && params.fields.indexOf("3") >= 0 ? ", fc.field3" : "";
@@ -42,6 +42,15 @@ channel.prototype.deleteFeeds = function(params, callback) {
          
     this._connection.query(query, parseInt(params.channel_id), callback);
 }
+
+channel.prototype.timeShift = function(params, callback) {
+    var query = " update channel";
+        query += "   set time_shift = ?";
+        query += " where id = ?";
+         
+    this._connection.query(query, [parseInt(params.total), parseInt(params.channel_id)], callback);
+}
+
 
 module.exports = function() {
     return channel;

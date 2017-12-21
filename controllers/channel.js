@@ -60,4 +60,30 @@ module.exports = function(app) {
             });            
         });         
     });    
+
+    app.get('/oee/api/:channel/timeShift', function(req, res) {
+        var channelId = req.params.channel;
+        var params = req.query;  
+            params.channel_id = channelId;
+        
+        var connection = app.database.connection();
+        var channel = new app.database.repository.channel(connection);   
+        
+        channel.getChannel(params, function(exception, result) {
+            if(exception) {
+                return res.status(400).send(exception);
+            }
+            if(!result[0]) {
+                return res.send(notFound); //seguindo modelo do thingspeak
+            }
+
+            channel.timeShift(params, function(exception, result) {
+                if(exception) {
+                    return res.status(400).send(exception);
+                }
+                res.send(result);
+                connection.end();
+            });            
+        });         
+    });     
 }
