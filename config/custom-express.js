@@ -5,6 +5,7 @@ const expressValidator = require('express-validator');
 
 module.exports = function() {
     var app = express(); 
+    app.use(express.static('public'));
     app.use(expressValidator());
 
     app.use(bodyParser.urlencoded({

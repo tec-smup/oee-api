@@ -38,6 +38,6 @@ module.exports = function(app) {
     });
 
     app.get('/oee/api/machine', function(req, res) { 
-        res.sendFile(path.join(__dirname, '../html/', 'machine.html'));       
+        res.sendFile(path.join(__dirname, '../public/', 'machine.html'));       
     });    
 }
