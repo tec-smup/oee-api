@@ -32,10 +32,23 @@ module.exports = function(app) {
                 if(exception) {
                     return res.status(400).send(exception);
                 }
-                res.send('OK. ' + bodyData.code + ' habilitada para medição.');                 
+                res.send('OK. ' + bodyData.code + ' habilitada para medição.<br><a href="/oee/api/machine">Voltar</a>');                 
             });            
         });        
     });
+
+    app.get('/oee/api/machine/list', function(req, res) {        
+        var connection = app.database.connection();
+        var machine = new app.database.repository.machine(connection);   
+        
+        machine.list(function(exception, result) {
+            if(exception) {
+                return res.status(400).send(exception);
+            }
+            res.send(result);
+            connection.end();
+        });                    
+    });      
 
     app.get('/oee/api/machine', function(req, res) { 
         res.sendFile(path.join(__dirname, '../public/', 'machine.html'));       

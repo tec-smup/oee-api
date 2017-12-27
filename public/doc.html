@@ -13,13 +13,13 @@
                     <div class="bs-example" style="padding-top:20px"> 
                         <div class="panel panel-primary"> 
                             <div class="panel-heading"> 
-                                <h3 class="panel-title">Inserir medição</h3> 
+                                <h3 class="panel-title">Inserir medição via TCP/UDP</h3> 
                             </div> 
                             <div class="panel-body">
                                 Conectar via TCP na porta 8008 do servidor e enviar as medições em formato string. A cada medição enviada, será retornado o valor do <a href="#turno">turno configurado.</a>
                                 <p>
-                                    Exemplo da string para envio de medição:
-                                    <pre>&channel_id=VALOR&machine_code=VALOR&field1=VALOR&field2=VALOR&field3=VALOR&field4=VALOR&field5=VALOR</pre>
+                                    Exemplo da string para envio de medição (pode ser enviado um "enter" para simbolizar fim da linha):
+                                    <pre>&channel_id=VALOR&machine_code=VALOR&field1=VALOR&field2=VALOR&field3=VALOR&field4=VALOR&field5=VALOR\n\r</pre>
                                 </p>
                                 <p>
                                     Obs: A ordem dos parâmetros não interfere.
@@ -45,7 +45,7 @@
                                             <td>&machine_code</td> 
                                             <td>String</td> 
                                             <td>Sim</td> 
-                                            <td>Código da máquina</td> 
+                                            <td>Código da máquina (pode ser enviado null, porém a medição ficará "orfã" de máquina)</td> 
                                         </tr>
                                         <tr> 
                                             <td>&field1</td> 
@@ -83,6 +83,78 @@
                             </div> 
                         </div>
                     </div>
+
+                    <div class="bs-example"> 
+                        <div class="panel panel-primary"> 
+                            <div class="panel-heading"> 
+                                <h3 class="panel-title">Inserir medição via Web API</h3> 
+                            </div> 
+                            <div class="panel-body">
+                                Insere medições no canal vinculado ao token informado, se ocorrer sucesso na requisição, retorna o ID gerado à medicação. 
+                                <br>Retorna erro 400 caso haja alguma exceção não tratada.
+                                <pre>http://paul8liveira.blog.br/oee/api/feed/update?token=VALOR&machine_code=VALOR&field1=VALOR&field2=VALOR&field3=VALOR&field4=VALOR&field5=VALOR</pre>
+                                <p>
+                                    Obs: A ordem dos parâmetros não interfere.
+                                </p> 
+
+                                <table class="table"> 
+                                    <thead> 
+                                        <tr> 
+                                            <th>Parâmetro</th> 
+                                            <th>Tipo</th>
+                                            <th>Obrigatório</th> 
+                                            <th>Descrição</th>
+                                        </tr> 
+                                    </thead> 
+                                    <tbody> 
+                                        <tr> 
+                                            <td>&token</td> 
+                                            <td>String</td> 
+                                            <td>Sim</td> 
+                                            <td>Chave de autenticação vinculada ao canal. Retorna zero caso não informado ou incorreto.</td> 
+                                        </tr> 
+                                        <tr> 
+                                            <td>&machine_code</td> 
+                                            <td>String</td> 
+                                            <td>Sim</td> 
+                                            <td>Código da máquina (pode ser enviado null, porém a medição ficará "orfã" de máquina)</td> 
+                                        </tr>
+                                        <tr> 
+                                            <td>&field1</td> 
+                                            <td>Float</td> 
+                                            <td>Não</td> 
+                                            <td>Campo 1 para envio de medição. Precisão de duas casas decimais.</td> 
+                                        </tr>
+                                        <tr> 
+                                            <td>&field2</td> 
+                                            <td>Float</td> 
+                                            <td>Não</td> 
+                                            <td>Campo 2 para envio de medição. Precisão de duas casas decimais.</td> 
+                                        </tr>    
+                                        <tr> 
+                                            <td>&field3</td> 
+                                            <td>Float</td> 
+                                            <td>Não</td> 
+                                            <td>Campo 3 para envio de medição. Precisão de duas casas decimais.</td> 
+                                        </tr>
+                                        <tr> 
+                                            <td>&field4</td> 
+                                            <td>Float</td> 
+                                            <td>Não</td> 
+                                            <td>Campo 4 para envio de medição. Precisão de duas casas decimais.</td> 
+                                        </tr>          
+                                        <tr> 
+                                            <td>&field5</td> 
+                                            <td>Float</td> 
+                                            <td>Não</td> 
+                                            <td>Campo 5 para envio de medição. Precisão de duas casas decimais.</td> 
+                                        </tr>                                                                                                                                                                                        
+                                    </tbody> 
+                                </table>
+
+                            </div> 
+                        </div>
+                    </div>                    
                     
                     <div class="bs-example"> 
                         <div class="panel panel-primary"> 
@@ -90,8 +162,9 @@
                                 <h3 class="panel-title">Consultar medição</h3> 
                             </div> 
                             <div class="panel-body">
-                                Retorna as medições inseridas em formato JSON conforme filtros enviados como parâmetros.
-                                <pre>DOMINIO/oee/api/CODIGO_CANAL/get?token=&fields=VALOR&results=VALOR</pre>
+                                Retorna as medições inseridas em formato JSON conforme filtros enviados como parâmetros. 
+                                <br>Retorna erro 400 caso haja alguma exceção não tratada. 
+                                <pre>http://paul8liveira.blog.br/oee/api/CODIGO_CANAL/get?token=VALOR&fields=VALOR&results=VALOR</pre>
                                 <table class="table"> 
                                     <thead> 
                                         <tr> 
@@ -133,7 +206,7 @@
                             </div> 
                             <div class="panel-body">
                                 Deleta todas as medições do canal.
-                                <pre>DOMINIO/oee/api/CODIGO_CANAL/delete?token=</pre>
+                                <pre>http://paul8liveira.blog.br/oee/api/CODIGO_CANAL/delete?token=</pre>
                                 <table class="table"> 
                                     <thead> 
                                         <tr> 
@@ -163,7 +236,7 @@
                             </div> 
                             <div class="panel-body">
                                 Exibe cadastro de máquinas. Obrigatório informar token, código da máquina e nome.
-                                <pre>DOMINIO/oee/api/machine</pre>
+                                <pre>http://paul8liveira.blog.br/oee/api/machine</pre>
                             </div> 
                         </div>
                     </div>
@@ -175,7 +248,7 @@
                             </div> 
                             <div class="panel-body">
                                 <p>Configura o turno do canal.</p>
-                                <pre>DOMINIO/oee/api/CODIGO_CANAL/timeShift?token=VALOR&total=VALOR</pre>                                
+                                <pre>http://paul8liveira.blog.br/oee/api/CODIGO_CANAL/timeShift?token=VALOR&total=VALOR</pre>                                
                                 <table class="table"> 
                                     <thead> 
                                         <tr> 
@@ -190,7 +263,7 @@
                                             <td>&token</td> 
                                             <td>String</td> 
                                             <td>Sim</td> 
-                                            <td>Token para autenticação do canal.</td> 
+                                            <td>Chave de autenticação do canal. Retorna erro 404 caso não informado ou incorreto.</td> 
                                         </tr> 
                                         <tr> 
                                             <td>&total</td> 
