@@ -11,7 +11,7 @@ module.exports = function(app) {
             if(!result[0]) {
                 return res.send('0'); //seguindo modelo do thingspeak
             }
-            query.channel_id = result[0].id;
+            query.ch_id = result[0].id;
             delete query.token; //para não interferir no parse do insert
 
             feed.save(query, function(exception, result) {

@@ -29,8 +29,8 @@ alter table feed_config add constraint fk_feed_config_channel foreign key(channe
 create table feed 
 (
 	id int not null auto_increment primary key,
-    channel_id int not null,
-    machine_code varchar(10) null,
+    ch_id int not null,
+    mc_cd varchar(10) null,
     field1 float(8,2) null,
     field2 float(8,2) null,
     field3 float(8,2) null,
@@ -38,8 +38,8 @@ create table feed
     field5 float(8,2) null,
 	inserted_at timestamp not null default CURRENT_TIMESTAMP
 );
-alter table feed add constraint fk_feed_channel foreign key(channel_id) references channel(id);
-alter table feed add constraint fk_feed_machine_data foreign key(machine_code) references machine_data(code);
+alter table feed add constraint fk_feed_channel foreign key(ch_id) references channel(id);
+alter table feed add constraint fk_feed_machine_data foreign key(mc_cd) references machine_data(code);
 
 create table machine_data
 (

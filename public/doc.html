@@ -19,7 +19,7 @@
                                 Conectar via TCP na porta 8008 do servidor e enviar as medições em formato string. A cada medição enviada, será retornado o valor do <a href="#turno">turno configurado.</a>
                                 <p>
                                     Exemplo da string para envio de medição (pode ser enviado um "enter" para simbolizar fim da linha):
-                                    <pre>&channel_id=VALOR&machine_code=VALOR&field1=VALOR&field2=VALOR&field3=VALOR&field4=VALOR&field5=VALOR\n\r</pre>
+                                    <pre>&ch_id=VALOR&mc_cd=VALOR&field1=VALOR&field2=VALOR&field3=VALOR&field4=VALOR&field5=VALOR\n\r</pre>
                                 </p>
                                 <p>
                                     Obs: A ordem dos parâmetros não interfere.
@@ -36,13 +36,13 @@
                                     </thead> 
                                     <tbody> 
                                         <tr> 
-                                            <td>&channel_id</td> 
+                                            <td>&ch_id</td> 
                                             <td>Inteiro</td> 
                                             <td>Sim</td> 
                                             <td>Código do canal. Ignora a transação caso não informado.</td> 
                                         </tr> 
                                         <tr> 
-                                            <td>&machine_code</td> 
+                                            <td>&mc_cd</td> 
                                             <td>String</td> 
                                             <td>Sim</td> 
                                             <td>Código da máquina (pode ser enviado null, porém a medição ficará "orfã" de máquina)</td> 
@@ -92,7 +92,7 @@
                             <div class="panel-body">
                                 Insere medições no canal vinculado ao token informado, se ocorrer sucesso na requisição, retorna o ID gerado à medicação. 
                                 <br>Retorna erro 400 caso haja alguma exceção não tratada.
-                                <pre>http://paul8liveira.blog.br/oee/api/feed/update?token=VALOR&machine_code=VALOR&field1=VALOR&field2=VALOR&field3=VALOR&field4=VALOR&field5=VALOR</pre>
+                                <pre>http://paul8liveira.blog.br/oee/api/feed/update?token=VALOR&mc_cd=VALOR&field1=VALOR&field2=VALOR&field3=VALOR&field4=VALOR&field5=VALOR</pre>
                                 <p>
                                     Obs: A ordem dos parâmetros não interfere.
                                 </p> 
@@ -114,7 +114,7 @@
                                             <td>Chave de autenticação vinculada ao canal. Retorna zero caso não informado ou incorreto.</td> 
                                         </tr> 
                                         <tr> 
-                                            <td>&machine_code</td> 
+                                            <td>&mc_cd</td> 
                                             <td>String</td> 
                                             <td>Sim</td> 
                                             <td>Código da máquina (pode ser enviado null, porém a medição ficará "orfã" de máquina)</td> 
