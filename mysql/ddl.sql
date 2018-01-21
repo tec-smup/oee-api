@@ -51,6 +51,21 @@ create table machine_data
     next_maintenance date null
 );
 
+create table log 
+(
+	id int not null auto_increment primary key,
+    message varchar(500) null,
+    remoteAddress varchar(50) null,
+    remotePort varchar(10) null,
+    remoteFamily varchar(10) null,
+    localAddress varchar(50) null,
+    localPort varchar(10) null,
+    bufferSize varchar(20) null,
+    bytesRead varchar(20) null,
+    bytesWritten varchar(20) null,
+	created_at timestamp not null default CURRENT_TIMESTAMP
+);
+
 /*
 Nova estrutura
 com base nesses campos será criado a tabela feed_x (onde x é o id do canal)
