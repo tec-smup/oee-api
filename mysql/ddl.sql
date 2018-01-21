@@ -35,7 +35,7 @@ create table feed
     field2 float(8,2) null,
     field3 float(8,2) null,
     field4 float(8,2) null,
-    field5 float(8,2) null,
+    field5 varchar(100) null,
 	inserted_at timestamp not null default CURRENT_TIMESTAMP
 );
 alter table feed add constraint fk_feed_channel foreign key(ch_id) references channel(id);
