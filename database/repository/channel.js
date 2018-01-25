@@ -20,6 +20,7 @@ channel.prototype.getChannel = function(params, callback) {
 channel.prototype.getFeeds = function(params, callback) {
     var query = "select f.id";
         query += ", f.mc_cd as machine_code";
+		query += ", m.name as machine_name";
         query += ", DATE_FORMAT(f.inserted_at, '%Y-%m-%d %H:%i:%s') as inserted_at";
         query += ", DATE_FORMAT(f.inserted_at, '%d/%m/%Y') as date";
         query += ", DATE_FORMAT(f.inserted_at, '%H:%i:%s') as time";
@@ -29,6 +30,7 @@ channel.prototype.getFeeds = function(params, callback) {
         query += params.fields.indexOf("4") >= 0 ? ", f.field4" : "";
         query += params.fields.indexOf("5") >= 0 ? ", f.field5" : "";              
         query += "  from feed f";
+		query += " inner join machine_data m on m.code = f.mc_cd";
         query += " where f.ch_id = ?";
         query += " order by f.inserted_at desc";
         query += params.results ? " limit " + params.results : "";
