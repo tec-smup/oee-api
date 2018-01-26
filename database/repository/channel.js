@@ -39,9 +39,19 @@ channel.prototype.getFeeds = function(params, callback) {
 }
 
 channel.prototype.deleteFeeds = function(params, callback) {
+    var and = params.initial_date && params.final_date ? 
+        " and DATE_FORMAT(inserted_at, '%d/%m/%Y %H:%i') between '" + params.initial_date + "' and '" + params.final_date + "'" : "";
+    
+    var bkpQuery = "insert into deleted_feed(id, ch_id, mc_cd, field1, field2, field3, field4, field5, inserted_at) ";    
+        bkpQuery += "select id, ch_id, mc_cd, field1, field2, field3, field4, field5, inserted_at from feed ";
+        bkpQuery += "where ch_id = ?";
+        bkpQuery += and;
+
     var query = " delete from feed";
         query += " where ch_id = ?";
-         
+        query += and;
+    
+    this._connection.query(bkpQuery, parseInt(params.channel_id));
     this._connection.query(query, parseInt(params.channel_id), callback);
 }
 

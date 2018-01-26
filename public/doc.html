@@ -49,9 +49,9 @@
                                         </tr>
                                         <tr> 
                                             <td>&field1</td> 
-                                            <td>Float</td> 
+                                            <td>String</td> 
                                             <td>Não</td> 
-                                            <td>Campo 1 para envio de medição. Precisão de duas casas decimais.</td> 
+                                            <td>Campo 1 para envio de medição.</td> 
                                         </tr>
                                         <tr> 
                                             <td>&field2</td> 
@@ -73,9 +73,9 @@
                                         </tr>          
                                         <tr> 
                                             <td>&field5</td> 
-                                            <td>Float</td> 
+                                            <td>String</td> 
                                             <td>Não</td> 
-                                            <td>Campo 5 para envio de medição. Precisão de duas casas decimais.</td> 
+                                            <td>Campo 5 para envio de medição.</td> 
                                         </tr>                                                                                                                                                                                        
                                     </tbody> 
                                 </table>
@@ -121,9 +121,9 @@
                                         </tr>
                                         <tr> 
                                             <td>&field1</td> 
-                                            <td>Float</td> 
+                                            <td>String</td> 
                                             <td>Não</td> 
-                                            <td>Campo 1 para envio de medição. Precisão de duas casas decimais.</td> 
+                                            <td>Campo 1 para envio de medição.</td> 
                                         </tr>
                                         <tr> 
                                             <td>&field2</td> 
@@ -145,9 +145,9 @@
                                         </tr>          
                                         <tr> 
                                             <td>&field5</td> 
-                                            <td>Float</td> 
+                                            <td>String</td> 
                                             <td>Não</td> 
-                                            <td>Campo 5 para envio de medição. Precisão de duas casas decimais.</td> 
+                                            <td>Campo 5 para envio de medição.</td> 
                                         </tr>                                                                                                                                                                                        
                                     </tbody> 
                                 </table>
@@ -205,8 +205,9 @@
                                 <h3 class="panel-title">Deletar medições</h3> 
                             </div> 
                             <div class="panel-body">
-                                Deleta todas as medições do canal.
-                                <pre>http://paul8liveira.blog.br/oee/api/CODIGO_CANAL/delete?token=</pre>
+                                Deleta medições do canal mantendo uma cópia de cada registro deletado em uma tabela de log. 
+                                Permite passar um range de data e hora para deletar registros específicos. Caso o range nao for especificado, todos os registros do canal serão deletados.
+                                <pre>http://paul8liveira.blog.br/oee/api/CODIGO_CANAL/delete?token=VALOR&initial_date=99/99/9999 99:99&final_date=99/99/9999 99:99</pre>
                                 <table class="table"> 
                                     <thead> 
                                         <tr> 
@@ -222,7 +223,19 @@
                                             <td>String</td> 
                                             <td>Sim</td> 
                                             <td>Chave de autenticação do canal. Retorno erro 404 caso não informado ou incorreto.</td> 
-                                        </tr>                                                                                                                                                                                        
+                                        </tr>   
+                                        <tr> 
+                                            <td>&initial_date</td> 
+                                            <td>String</td> 
+                                            <td>Não</td> 
+                                            <td>Data inicial para deletar os registros. Formato 99/99/9999 99:99</td> 
+                                        </tr>   
+                                        <tr> 
+                                            <td>&final_date</td> 
+                                            <td>String</td> 
+                                            <td>Não</td> 
+                                            <td>Data final para deletar os registros. Formato 99/99/9999 99:99</td> 
+                                        </tr>                                                                                                                                                                                                                                                                  
                                     </tbody> 
                                 </table>                                 
                             </div> 

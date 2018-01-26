@@ -31,7 +31,7 @@ create table feed
 	id int not null auto_increment primary key,
     ch_id int not null,
     mc_cd varchar(10) null,
-    field1 float(8,2) null,
+    field1 varchar(100) null,
     field2 float(8,2) null,
     field3 float(8,2) null,
     field4 float(8,2) null,
@@ -64,6 +64,20 @@ create table log
     bytesRead varchar(20) null,
     bytesWritten varchar(20) null,
 	created_at timestamp not null default CURRENT_TIMESTAMP
+);
+
+create table deleted_feed
+(
+	id int not null,
+    ch_id int not null,
+    mc_cd varchar(10) null,
+    field1 varchar(100) null,
+    field2 float(8,2) null,
+    field3 float(8,2) null,
+    field4 float(8,2) null,
+    field5 varchar(100) null,
+	inserted_at varchar(50) not null, 
+	deleted_at timestamp not null default CURRENT_TIMESTAMP
 );
 
 /*
