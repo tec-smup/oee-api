@@ -164,7 +164,7 @@
                             <div class="panel-body">
                                 Retorna as medições inseridas em formato JSON conforme filtros enviados como parâmetros. 
                                 <br>Retorna erro 400 caso haja alguma exceção não tratada. 
-                                <pre>http://paul8liveira.blog.br/oee/api/CODIGO_CANAL/get?token=VALOR&fields=VALOR&results=VALOR</pre>
+                                <pre>http://paul8liveira.blog.br/oee/api/CODIGO_CANAL/get?token=VALOR&fields=VALOR&results=VALOR&toXml=VALOR</pre>
                                 <table class="table"> 
                                     <thead> 
                                         <tr> 
@@ -192,7 +192,17 @@
                                             <td>Inteiro</td> 
                                             <td>Não</td> 
                                             <td>Quantidade de registros que deseja que a API retorno. Se não passar valor, a API entenderá que deseja receber todos as medições.</td> 
-                                        </tr>                                                                                                                                                                                        
+                                        </tr>     
+                                        <tr> 
+                                            <td>&toXml</td> 
+                                            <td>Inteiro</td> 
+                                            <td>Não</td> 
+                                            <td>Formato de retorno dos dados. 
+                                                <br/>1 = XML 
+                                                <br/>0 = JSON 
+                                                <br/>Caso não passado o parâmetro, considera retorno padrão como JSON.
+                                            </td> 
+                                        </tr>                                                                                                                                                                                                                           
                                     </tbody> 
                                 </table>                                
                             </div> 
