@@ -2,6 +2,16 @@ create database oee;
 
 use oee;
 
+create table user
+(
+    id int not null auto_increment primary key,
+    username varchar(100) not null,
+    password varchar(500) not null,
+    active bit not null default true,
+    admin bit not null default false,
+    created_at timestamp not null default CURRENT_TIMESTAMP
+);
+
 create table channel 
 (
 	id int not null auto_increment primary key,
