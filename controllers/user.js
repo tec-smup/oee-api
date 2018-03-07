@@ -4,11 +4,10 @@ const jwt = require('jsonwebtoken');
 module.exports = function(app) {
     app.post('/oee/api/user/authentication', function(req, res) {
         var bodyData = req.body;
-        console.log(bodyData);
         if(!bodyData.username || !bodyData.password) {
             return res.send({
                 success: false, 
-                message: 'Usuário ou senha não informado'
+                message: 'Preencha os campos email e senha para se conectar'
             });
         }
         
@@ -22,13 +21,13 @@ module.exports = function(app) {
             if(!result[0]) {
                 return res.send({
                     success: false, 
-                    message: 'Usuário não existe'
+                    message: 'Ops, o e-mail informado é inválido'
                 });
             }
             if(!bcrypt.compareSync(bodyData.password, result[0].password)) {
                 return res.send({
                     success: false, 
-                    message: 'Usuário/senha incorreto'
+                    message: 'A senha informada está incorreta'
                 });
             }
 
