@@ -28,11 +28,18 @@ module.exports = function(app) {
             bodyData.last_maintenance = bodyData.last_maintenance || null;                       
             
             delete bodyData.token;
-            machine.save(bodyData, function(exception, result) {
+            machine.update(bodyData, function(exception, results, fields) {
                 if(exception) {
                     return res.status(400).send(exception);
                 }
-                res.send('OK. ' + bodyData.code + ' habilitada para medição.<br><a href="/oee/api/machine">Voltar</a>');                 
+                if(results.changedRows == 0) {
+                    machine.save(bodyData, function(exception, result) {
+                        if(exception) {
+                            return res.status(400).send(exception);
+                        }                 
+                    });
+                }      
+                res.send(bodyData);           
             });            
         });        
     });
