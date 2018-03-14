@@ -34,7 +34,7 @@ module.exports = function(app) {
             jwt.sign(
                 { username: result[0].username, admin: result[0].admin }, 
                 app.get('jwtSecret'), 
-                { expiresIn: '8h' }, 
+                { expiresIn: '2h' }, 
                 function(err, token) {
                     if(err) {
                         res.send({
@@ -49,7 +49,7 @@ module.exports = function(app) {
                             message: '',
                             token: token
                         });
-                    }              
+                    }
                 });
         });        
     });

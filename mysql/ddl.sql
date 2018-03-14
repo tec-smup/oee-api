@@ -61,6 +61,17 @@ create table machine_data
     next_maintenance date null
 );
 
+create table machine_pause
+(
+	id int not null primary key,
+    mc_cd varchar(10) not null,
+    pause_at date not null,
+    justification1 varchar(300) null,
+    justification2 varchar(300) null,
+    justification3 varchar(300) null
+);
+alter table machine_pause add constraint fk_pause_machine foreign key(mc_cd) references machine_data(code);
+
 create table log 
 (
 	id int not null auto_increment primary key,
