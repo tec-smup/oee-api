@@ -33,6 +33,6 @@
     "js2xmlparser": "^3.0.0",
     "jsonwebtoken": "^8.2.0",
     "mysql": "^2.15.0",
-    "nodemon": "^1.12.7"
+    "nodemon": "^1.17.2"
   }
 }
