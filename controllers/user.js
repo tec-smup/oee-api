@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt-nodejs');
 const jwt = require('jsonwebtoken');
 
 module.exports = function(app) {
-    app.post('/oee/api/user/authentication', function(req, res) {
+    app.post('/api/user/authentication', function(req, res) {
         var bodyData = req.body;
         if(!bodyData.username || !bodyData.password) {
             return res.send({

@@ -22,7 +22,7 @@ module.exports = function() {
             console.log('Time:', Date.now());
         next();
     });    
-    app.use('/oee/api', router);
+    app.use('/api', router);
 
     //somente para teste
     if(env == 'dev') {
