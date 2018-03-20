@@ -20,6 +20,10 @@ env_variables:
   SQL_USER: uoee
   SQL_PASSWORD: '!2o0e1e7#'
   SQL_DATABASE: oee
+  PUBSUB_TOPIC: oee
+  # This token is used to verify that requests originate from your
+  # application. It can be any sufficiently random string.
+  PUBSUB_VERIFICATION_TOKEN: w08GGF3KAxCt6yMcuFj8meZPhWqPJGqv  
   # e.g. my-awesome-project:us-central1:my-cloud-sql-instance
   INSTANCE_CONNECTION_NAME: /cloudsql/oee-server:us-east1:smup-mysql
 # [END env]

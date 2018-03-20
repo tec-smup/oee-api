@@ -3,12 +3,17 @@ const bodyParser = require('body-parser');
 const consign = require('consign');
 const expressValidator = require('express-validator');
 const config  = require('./config-app'); 
+
 const env = process.env.NODE_ENV || 'dev';
+const pubsub_verification_token = process.env.PUBSUB_VERIFICATION_TOKEN || '';
+const pubsub_topic = process.env.PUBSUB_TOPIC || '';
 
 module.exports = function() {
     var app = express(); 
     var router = express.Router();
     app.set('jwtSecret', config.jwtSecret);
+    app.set('PUBSUB_VERIFICATION_TOKEN', pubsub_verification_token);
+    app.set('PUBSUB_TOPIC', pubsub_topic);
     app.use(expressValidator());
 
     app.use(bodyParser.urlencoded({
