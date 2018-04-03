@@ -94,4 +94,17 @@ module.exports = function(app) {
             });            
         });         
     });     
+
+    app.get('/api/channel', function(req, res) {
+        var connection = app.database.connection();
+        var channel = new app.database.repository.channel(connection);   
+        
+        channel.list(function(exception, result) {
+            if(exception) {
+                return res.status(500).send(exception);
+            }
+            res.send(result);
+            connection.end();
+        });
+    });    
 }
