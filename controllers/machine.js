@@ -1,7 +1,7 @@
 const path = require('path');
 
 module.exports = function(app) {
-    app.post('/oee/api/machine', function(req, res) {
+    app.post('/api/machine', function(req, res) {
         var bodyData = req.body;
 
         //cria asserts para validação
@@ -37,7 +37,7 @@ module.exports = function(app) {
         });        
     });
 
-    app.post('/oee/api/machine/update', function(req, res) {
+    app.post('/api/machine/update', function(req, res) {
         var bodyData = req.body;
 
         //cria asserts para validação
@@ -73,7 +73,7 @@ module.exports = function(app) {
         });        
     });
 
-    app.post('/oee/api/machine/delete', function(req, res) {
+    app.post('/api/machine/delete', function(req, res) {
         var bodyData = req.body;
 
         //cria asserts para validação
@@ -104,7 +104,7 @@ module.exports = function(app) {
         });        
     });    
 
-    app.get('/oee/api/machine/list', function(req, res) {        
+    app.get('/api/machine/list', function(req, res) {        
         var connection = app.database.connection();
         var machine = new app.database.repository.machine(connection);   
         
@@ -117,7 +117,7 @@ module.exports = function(app) {
         });                    
     });      
 
-    app.get('/oee/api/machine', function(req, res) { 
+    app.get('/api/machine', function(req, res) { 
         res.sendFile(path.join(__dirname, '../public/', 'machine.html'));       
     });    
 }

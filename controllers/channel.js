@@ -6,7 +6,7 @@ const notFound = {
 };
 
 module.exports = function(app) {
-    app.get('/oee/api/:channel/get', function(req, res) {
+    app.get('/api/:channel/get', function(req, res) {
         var channelId = req.params.channel;
         var params = req.query;  
             params.channel_id = channelId;
@@ -43,7 +43,7 @@ module.exports = function(app) {
         });         
     });  
 
-    app.get('/oee/api/:channel/delete', function(req, res) {
+    app.get('/api/:channel/delete', function(req, res) {
         var channelId = req.params.channel;
         var params = req.query;  
             params.channel_id = channelId;
@@ -69,7 +69,7 @@ module.exports = function(app) {
         });         
     });    
 
-    app.get('/oee/api/:channel/timeShift', function(req, res) {
+    app.get('/api/:channel/timeShift', function(req, res) {
         var channelId = req.params.channel;
         var params = req.query;  
             params.channel_id = channelId;
@@ -94,4 +94,17 @@ module.exports = function(app) {
             });            
         });         
     });     
+
+    app.get('/api/channel', function(req, res) {
+        var connection = app.database.connection();
+        var channel = new app.database.repository.channel(connection);   
+        
+        channel.list(function(exception, result) {
+            if(exception) {
+                return res.status(500).send(exception);
+            }
+            res.send(result);
+            connection.end();
+        });
+    });    
 }

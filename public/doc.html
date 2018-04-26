@@ -92,7 +92,7 @@
                             <div class="panel-body">
                                 Insere medições no canal vinculado ao token informado, se ocorrer sucesso na requisição, retorna o ID gerado à medicação. 
                                 <br>Retorna erro 400 caso haja alguma exceção não tratada.
-                                <pre>http://paul8liveira.blog.br/oee/api/feed/update?token=VALOR&mc_cd=VALOR&field1=VALOR&field2=VALOR&field3=VALOR&field4=VALOR&field5=VALOR</pre>
+                                <pre><span class="origin"></span>/api/feed/update?token=VALOR&mc_cd=VALOR&field1=VALOR&field2=VALOR&field3=VALOR&field4=VALOR&field5=VALOR</pre>
                                 <p>
                                     Obs: A ordem dos parâmetros não interfere.
                                 </p> 
@@ -164,7 +164,7 @@
                             <div class="panel-body">
                                 Retorna as medições inseridas em formato JSON conforme filtros enviados como parâmetros. 
                                 <br>Retorna erro 400 caso haja alguma exceção não tratada. 
-                                <pre>http://paul8liveira.blog.br/oee/api/CODIGO_CANAL/get?token=VALOR&fields=VALOR&results=VALOR&toXml=VALOR</pre>
+                                <pre><span class="origin"></span>/api/CODIGO_CANAL/get?token=VALOR&fields=VALOR&results=VALOR&toXml=VALOR</pre>
                                 <table class="table"> 
                                     <thead> 
                                         <tr> 
@@ -217,7 +217,7 @@
                             <div class="panel-body">
                                 Deleta medições do canal mantendo uma cópia de cada registro deletado em uma tabela de log. 
                                 Permite passar um range de data e hora para deletar registros específicos. Caso o range nao for especificado, todos os registros do canal serão deletados.
-                                <pre>http://paul8liveira.blog.br/oee/api/CODIGO_CANAL/delete?token=VALOR&initial_date=99/99/9999 99:99&final_date=99/99/9999 99:99</pre>
+                                <pre><span class="origin"></span>/api/CODIGO_CANAL/delete?token=VALOR&initial_date=99/99/9999 99:99&final_date=99/99/9999 99:99</pre>
                                 <table class="table"> 
                                     <thead> 
                                         <tr> 
@@ -259,7 +259,7 @@
                             </div> 
                             <div class="panel-body">
                                 Exibe cadastro de máquinas. Obrigatório informar token, código da máquina e nome.
-                                <pre>http://paul8liveira.blog.br/oee/api/machine</pre>
+                                <pre><span class="origin"></span>/api/machine</pre>
                             </div> 
                         </div>
                     </div>
@@ -271,7 +271,7 @@
                             </div> 
                             <div class="panel-body">
                                 <p>Configura o turno do canal.</p>
-                                <pre>http://paul8liveira.blog.br/oee/api/CODIGO_CANAL/timeShift?token=VALOR&total=VALOR</pre>                                
+                                <pre><span class="origin"></span>/api/CODIGO_CANAL/timeShift?token=VALOR&total=VALOR</pre>                                
                                 <table class="table"> 
                                     <thead> 
                                         <tr> 
@@ -307,6 +307,14 @@
                 </div>
             </div>
         </div>
+        <script>
+            let origin = window.location.origin
+            var elements = document.getElementsByClassName("origin");
+            for (var i = 0; i < elements.length; ++i) {
+                let element = elements[i];  
+                element.innerHTML = origin;
+            }
+        </script>
   </body>
 </html>
 

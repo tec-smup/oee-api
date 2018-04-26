@@ -31,7 +31,7 @@
                     </table>
                 </div>
                 <div class="col-lg-5">
-                    <form action="/oee/api/machine" method="post">
+                    <form action="/api/machine" method="post">
 
                         <div class="form-group">
                             <label for="token">Token</label>
@@ -79,7 +79,7 @@
         crossorigin="anonymous"></script>
 
         <script>
-            $.get("/oee/api/machine/list", function(data) {
+            $.get("/api/machine/list", function(data) {
                 $(data).each(function (index, machine) { 
                     var row = "<tr>";
                     row += "<td>" + machine.code + "</td>";

@@ -3,12 +3,17 @@
   "version": "1.0.0",
   "description": "Serviço de Monitoramento de OEE de máquinas",
   "main": "api.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/paul8liveira/oee-api.git"
+  },
+  "engines": {
+    "node": ">=4.3.2"
+  },
+  "scripts": {
+    "start": "node api.js",
+    "deploy": "gcloud app deploy",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
     "oee",
@@ -26,6 +31,9 @@
   },
   "homepage": "https://github.com/paul8liveira/oee-api#readme",
   "dependencies": {
+    "@google-cloud/pubsub": "0.13.2",
+    "pug": "2.0.0-rc.3",
+    "safe-buffer": "5.1.1",
     "bcrypt-nodejs": "0.0.3",
     "consign": "^0.1.6",
     "express": "^4.16.2",
@@ -34,5 +42,30 @@
     "jsonwebtoken": "^8.2.0",
     "mysql": "^2.15.0",
     "nodemon": "^1.17.2"
-  }
+  },
+  "devDependencies": {
+    "@google-cloud/nodejs-repo-tools": "1.4.17",
+    "ava": "0.22.0",
+    "uuid": "3.1.0"
+  },
+  "cloud-repo-tools": {
+    "requiresProjectId": true,
+    "requiresKeyFile": true,
+    "test": {
+      "app": {
+        "requiredEnvVars": [
+          "PUBSUB_TOPIC",
+          "PUBSUB_VERIFICATION_TOKEN"
+        ],
+        "msg": "Messages received by this instance",
+        "substitutions": "YOUR_TOPIC_NAME=$PUBSUB_TOPIC,YOUR_VERIFICATION_TOKEN=$PUBSUB_VERIFICATION_TOKEN"
+      },
+      "build": {
+        "requiredEnvVars": [
+          "PUBSUB_TOPIC",
+          "PUBSUB_VERIFICATION_TOKEN"
+        ]
+      }
+    }
+  }    
 }

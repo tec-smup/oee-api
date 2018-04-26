@@ -63,6 +63,18 @@ channel.prototype.timeShift = function(params, callback) {
     this._connection.query(query, [parseInt(params.total), parseInt(params.channel_id)], callback);
 }
 
+channel.prototype.list = function(callback) {
+    var query = "select c.id"; 
+    query += "        , c.name";
+    query += "        , c.description";
+    query += "        , case c.active when 1 then 'Ativo' else 'Inativo' end as status";
+    query += "        , DATE_FORMAT(c.created_at, '%d/%m/%Y %H:%i:%s') as created_at";
+    query += "        , DATE_FORMAT(c.updated_at, '%d/%m/%Y %H:%i:%s') as updated_at";
+    query += "        , c.time_shift";
+    query += "     from channel c";
+    query += "    order by c.name"; 
+    this._connection.query(query, [], callback);
+}
 
 module.exports = function() {
     return channel;
