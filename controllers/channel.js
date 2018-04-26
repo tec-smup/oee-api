@@ -6,7 +6,9 @@ const notFound = {
 };
 
 module.exports = function(app) {
-    app.get('/api/:channel/get', function(req, res) {
+	const baseUrl = app.get('BASE_URL');
+	
+    app.get(baseUrl + ':channel/get', function(req, res) {
         var channelId = req.params.channel;
         var params = req.query;  
             params.channel_id = channelId;
@@ -43,7 +45,7 @@ module.exports = function(app) {
         });         
     });  
 
-    app.get('/api/:channel/delete', function(req, res) {
+    app.get(baseUrl + ':channel/delete', function(req, res) {
         var channelId = req.params.channel;
         var params = req.query;  
             params.channel_id = channelId;
@@ -69,7 +71,7 @@ module.exports = function(app) {
         });         
     });    
 
-    app.get('/api/:channel/timeShift', function(req, res) {
+    app.get(baseUrl + ':channel/timeShift', function(req, res) {
         var channelId = req.params.channel;
         var params = req.query;  
             params.channel_id = channelId;
@@ -95,7 +97,7 @@ module.exports = function(app) {
         });         
     });     
 
-    app.get('/api/channel', function(req, res) {
+    app.get(baseUrl + 'channel', function(req, res) {
         var connection = app.database.connection();
         var channel = new app.database.repository.channel(connection);   
         

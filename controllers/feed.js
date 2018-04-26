@@ -1,5 +1,7 @@
 module.exports = function(app) {
-    app.get('/api/feed/update', function(req, res) {
+	const baseUrl = app.get('BASE_URL');
+	
+    app.get(baseUrl + 'feed/update', function(req, res) {
         var query = req.query;        
         var connection = app.database.connection();
         var feed = new app.database.repository.feed(connection);  

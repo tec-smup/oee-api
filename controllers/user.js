@@ -2,7 +2,9 @@ const bcrypt = require('bcrypt-nodejs');
 const jwt = require('jsonwebtoken');
 
 module.exports = function(app) {
-    app.post('/api/user/authentication', function(req, res) {
+	const baseUrl = app.get('BASE_URL');
+	
+    app.post(baseUrl + 'user/authentication', function(req, res) {
         var bodyData = req.body;
         if(!bodyData.username || !bodyData.password) {
             return res.send({
@@ -33,7 +35,7 @@ module.exports = function(app) {
 
             jwt.sign(
                 { username: result[0].username, admin: result[0].admin }, 
-                app.get('jwtSecret'), 
+                app.get('JWT_SECRET'), 
                 { expiresIn: '2h' }, 
                 function(err, token) {
                     if(err) {

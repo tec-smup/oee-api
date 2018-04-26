@@ -16,11 +16,13 @@ const pubsub = PubSub();
 const messages = [];
 
 module.exports = function(app) {
-    app.get('/api/pubsub', (req, res) => {
+	const baseUrl = app.get('BASE_URL');
+	
+    app.get(baseUrl + 'pubsub', (req, res) => {
         res.send(messages);
     });
 
-    app.post('/api/pubsub/push', (req, res) => {
+    app.post(baseUrl + 'pubsub/push', (req, res) => {
         if (req.query.token !== app.get('PUBSUB_VERIFICATION_TOKEN')) {
             res.status(400).send();
             return;

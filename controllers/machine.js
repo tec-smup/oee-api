@@ -1,7 +1,9 @@
 const path = require('path');
 
 module.exports = function(app) {
-    app.post('/api/machine', function(req, res) {
+	const baseUrl = app.get('BASE_URL');
+	
+    app.post(baseUrl + 'machine', function(req, res) {
         var bodyData = req.body;
 
         //cria asserts para validação
@@ -37,7 +39,7 @@ module.exports = function(app) {
         });        
     });
 
-    app.post('/api/machine/update', function(req, res) {
+    app.post(baseUrl + 'machine/update', function(req, res) {
         var bodyData = req.body;
 
         //cria asserts para validação
@@ -73,7 +75,7 @@ module.exports = function(app) {
         });        
     });
 
-    app.post('/api/machine/delete', function(req, res) {
+    app.post(baseUrl + 'machine/delete', function(req, res) {
         var bodyData = req.body;
 
         //cria asserts para validação
@@ -104,7 +106,7 @@ module.exports = function(app) {
         });        
     });    
 
-    app.get('/api/machine/list', function(req, res) {        
+    app.get(baseUrl + 'machine/list', function(req, res) {        
         var connection = app.database.connection();
         var machine = new app.database.repository.machine(connection);   
         
@@ -117,7 +119,7 @@ module.exports = function(app) {
         });                    
     });      
 
-    app.get('/api/machine', function(req, res) { 
+    app.get(baseUrl + 'machine', function(req, res) { 
         res.sendFile(path.join(__dirname, '../public/', 'machine.html'));       
     });    
 }

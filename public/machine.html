@@ -79,7 +79,8 @@
         crossorigin="anonymous"></script>
 
         <script>
-            $.get("/api/machine/list", function(data) {
+			var path = window.location.pathname;
+            $.get(path + "/list", function(data) {
                 $(data).each(function (index, machine) { 
                     var row = "<tr>";
                     row += "<td>" + machine.code + "</td>";
