@@ -17,8 +17,8 @@ env: flex
 
 # [START env]
 env_variables:
-  BASE_URL: /api/
-  JWt_SECRET: 0S1t2a3r4t5M6e7U8p9!
+  BASE_URL: '/api/'
+  JWt_SECRET: '0S1t2a3r4t5M6e7U8p9!'
   SQL_USER: uoee
   SQL_PASSWORD: '!2o0e1e7#'
   SQL_DATABASE: oee

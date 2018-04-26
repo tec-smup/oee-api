@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const consign = require('consign');
 const expressValidator = require('express-validator');
 
-const baseUrl = process.env.BASE_URL || '';
+const baseUrl = process.env.BASE_URL || '/oee/api/';
 const jwtSecret = process.env.JWT_SECRET || '';
 const env = process.env.NODE_ENV || 'dev';
 const pubsub_verification_token = process.env.PUBSUB_VERIFICATION_TOKEN || '';
