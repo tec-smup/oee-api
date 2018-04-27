@@ -3,7 +3,7 @@ function feed(connection) {
 }
 
 feed.prototype.autenticateToken = function(token, callback) {
-    this._connection.query("select id from channel where token = ?", token, callback);
+    this._connection.query("select id, time_shift from channel where token = ?", token, callback);
 }
 
 feed.prototype.save = function(data, callback) {

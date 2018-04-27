@@ -15,12 +15,13 @@ module.exports = function(app) {
             }
             query.ch_id = result[0].id;
             delete query.token; //para não interferir no parse do insert
-
+            let timeShift = result[0].time_shift;           
+            
             feed.save(query, function(exception, result) {
                 if(exception) {
                     return res.status(400).send(exception);
                 }
-                res.send(result.insertId.toString());   //seguindo modelo do thingspeak  
+                res.send(timeShift.toString()); 
                 connection.end();                 
             });             
         });        
