@@ -109,4 +109,98 @@ module.exports = function(app) {
             connection.end();
         });
     });    
+
+    app.post(baseUrl + 'channel', function(req, res) {
+        var bodyData = req.body;
+
+        //cria asserts para validação
+        req.assert('name', 'Preencha o nome corretamente.').notEmpty();
+        req.assert('token', 'Preencha o token corretamente.').notEmpty();
+
+        var errors = req.validationErrors();
+        if(errors)
+            return res.status(400).send(errors);
+
+        var connection = app.database.connection();
+        var channel = new app.database.repository.channel(connection);
+
+        channel.autenticateToken(bodyData.token, function(exception, result) {
+            if(exception) {
+                return res.status(500).send(exception);
+            }
+            if(!result[0]) {
+                return res.status(401).send('Token inválido');
+            }
+            
+            channel.save(bodyData, function(exception, result) {
+                if(exception) {
+                    return res.status(500).send(exception);
+                }                 
+                return res.send(bodyData);
+            });          
+        });        
+    });
+
+    app.post(baseUrl + 'channel/update', function(req, res) {
+        var bodyData = req.body;
+
+        //cria asserts para validação
+        req.assert('id', 'Erro na edição do registro.').notEmpty();
+        req.assert('name', 'Preencha o nome corretamente.').notEmpty();
+        req.assert('token', 'Preencha o token corretamente.').notEmpty();
+
+        var errors = req.validationErrors();
+        if(errors)
+            return res.status(400).send(errors);       
+
+        var connection = app.database.connection();
+        var channel = new app.database.repository.channel(connection);
+
+        channel.autenticateToken(bodyData.token, function(exception, result) {
+            if(exception) {
+                return res.status(500).send(exception);
+            }
+            if(!result[0]) {
+                return res.status(401).send('Token inválido');
+            }                     
+            
+            channel.update(bodyData, function(exception, results, fields) {
+                if(exception) {
+                    return res.status(500).send(exception);
+                }    
+                return res.send(bodyData);           
+            });            
+        });        
+    });
+
+    app.post(baseUrl + 'channel/delete', function(req, res) {
+        var bodyData = req.body;
+
+        //cria asserts para validação
+        req.assert('id', 'Erro na edição do registro.').notEmpty();
+
+        var errors = req.validationErrors();
+        if(errors)
+            return res.status(400).send(errors);         
+
+        var connection = app.database.connection();
+        var channel = new app.database.repository.channel(connection);
+
+        channel.autenticateToken(bodyData.token, function(exception, result) {
+            if(exception) {
+                res.status(500).send(exception);
+            }
+            if(!result[0]) {
+                return res.status(401).send('Token inválido');
+            }
+                        
+            delete bodyData.token;
+            channel.delete(bodyData, function(exception, results, fields) {
+                if(exception) {
+                    return res.status(500).send(exception);
+                }
+                return res.send(bodyData);
+            });            
+        });        
+    });     
 }

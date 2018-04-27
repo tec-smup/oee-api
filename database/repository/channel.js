@@ -2,6 +2,10 @@ function channel(connection) {
     this._connection = connection;
 }
 
+channel.prototype.autenticateToken = function(token, callback) {
+    this._connection.query("select id from channel where token = ?", token, callback);
+}
+
 channel.prototype.getChannel = function(params, callback) {
     var query = "select c.id, c.name, c.description, c.time_shift";
         query += params.fields && params.fields.indexOf("1") >= 0 ? ", fc.field1" : "";
@@ -67,6 +71,7 @@ channel.prototype.list = function(callback) {
     var query = "select c.id"; 
     query += "        , c.name";
     query += "        , c.description";
+    query += "        , c.token"
     query += "        , case c.active when 1 then 'Ativo' else 'Inativo' end as status";
     query += "        , DATE_FORMAT(c.created_at, '%d/%m/%Y %H:%i:%s') as created_at";
     query += "        , DATE_FORMAT(c.updated_at, '%d/%m/%Y %H:%i:%s') as updated_at";
@@ -74,6 +79,21 @@ channel.prototype.list = function(callback) {
     query += "     from channel c";
     query += "    order by c.name"; 
     this._connection.query(query, [], callback);
+}
+
+channel.prototype.save = function(data, callback) {
+    this._connection.query("insert into channel set ?", data, callback);
+}
+
+channel.prototype.update = function(data, callback) {
+    let datetime = new Date();
+    let query = "update channel set name = ?, description = ?, token = ?, active = ?, updated_at = now(), time_shift = ?";
+        query += " where id = ?";
+    this._connection.query(query, [data.name, data.description, data.token, (data.status == 'Ativo' ? 1 : 0), data.time_shift, data.id], callback);    
+}
+
+channel.prototype.delete = function(data, callback) {
+    this._connection.query("delete from channel where id = ?", [data.id], callback);    
 }
 
 module.exports = function() {

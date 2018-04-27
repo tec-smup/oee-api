@@ -11,7 +11,7 @@ machine.prototype.save = function(data, callback) {
 }
 
 machine.prototype.update = function(data, callback) {
-    let query = "update machine_data set name = ?, department = ?, product = ?, last_maintenance = ?, next_maintenance = ?";
+    let query = "update machine_data set name = ?, department = ?, product = ?, last_maintenance = STR_TO_DATE(?, '%d/%m/%Y'), next_maintenance = STR_TO_DATE(?, '%d/%m/%Y')";
         query += " where code = ?";
     this._connection.query(query, [data.name, data.department, data.product, data.last_maintenance, data.next_maintenance, data.code], callback);    
 }
