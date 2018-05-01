@@ -72,7 +72,7 @@ channel.prototype.list = function(callback) {
     query += "        , c.name";
     query += "        , c.description";
     query += "        , c.token"
-    query += "        , case c.active when 1 then 'Ativo' else 'Inativo' end as status";
+    query += "        , case c.active when 1 then 'Ativo' else 'Inativo' end as active";
     query += "        , DATE_FORMAT(c.created_at, '%d/%m/%Y %H:%i:%s') as created_at";
     query += "        , DATE_FORMAT(c.updated_at, '%d/%m/%Y %H:%i:%s') as updated_at";
     query += "        , c.time_shift";
@@ -89,7 +89,7 @@ channel.prototype.update = function(data, callback) {
     let datetime = new Date();
     let query = "update channel set name = ?, description = ?, token = ?, active = ?, updated_at = now(), time_shift = ?";
         query += " where id = ?";
-    this._connection.query(query, [data.name, data.description, data.token, (data.status == 'Ativo' ? 1 : 0), data.time_shift, data.id], callback);    
+    this._connection.query(query, [data.name, data.description, data.token, parseInt(data.active), data.time_shift, data.id], callback);    
 }
 
 channel.prototype.delete = function(data, callback) {

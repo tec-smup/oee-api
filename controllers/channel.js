@@ -123,22 +123,14 @@ module.exports = function(app) {
 
         var connection = app.database.connection();
         var channel = new app.database.repository.channel(connection);
-
-        channel.autenticateToken(bodyData.token, function(exception, result) {
+        
+        channel.save(bodyData, function(exception, result) {
             if(exception) {
                 return res.status(500).send(exception);
-            }
-            if(!result[0]) {
-                return res.status(401).send('Token inválido');
-            }
-            
-            channel.save(bodyData, function(exception, result) {
-                if(exception) {
-                    return res.status(500).send(exception);
-                }                 
-                return res.send(bodyData);
-            });          
-        });        
+            }                 
+            return res.send(bodyData);
+        });          
+              
     });
 
     app.post(baseUrl + 'channel/update', function(req, res) {
@@ -156,21 +148,12 @@ module.exports = function(app) {
         var connection = app.database.connection();
         var channel = new app.database.repository.channel(connection);
 
-        channel.autenticateToken(bodyData.token, function(exception, result) {
+        channel.update(bodyData, function(exception, results, fields) {
             if(exception) {
                 return res.status(500).send(exception);
-            }
-            if(!result[0]) {
-                return res.status(401).send('Token inválido');
-            }                     
-            
-            channel.update(bodyData, function(exception, results, fields) {
-                if(exception) {
-                    return res.status(500).send(exception);
-                }    
-                return res.send(bodyData);           
-            });            
-        });        
+            }    
+            return res.send(bodyData);           
+        });
     });
 
     app.post(baseUrl + 'channel/delete', function(req, res) {
@@ -185,22 +168,14 @@ module.exports = function(app) {
 
         var connection = app.database.connection();
         var channel = new app.database.repository.channel(connection);
-
-        channel.autenticateToken(bodyData.token, function(exception, result) {
-            if(exception) {
-                res.status(500).send(exception);
-            }
-            if(!result[0]) {
-                return res.status(401).send('Token inválido');
-            }
                         
-            delete bodyData.token;
-            channel.delete(bodyData, function(exception, results, fields) {
-                if(exception) {
-                    return res.status(500).send(exception);
-                }
-                return res.send(bodyData);
-            });            
-        });        
+        delete bodyData.token;
+        channel.delete(bodyData, function(exception, results, fields) {
+            if(exception) {
+                return res.status(500).send(exception);
+            }
+            return res.send(bodyData);
+        });            
+               
     });     
 }
