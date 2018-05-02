@@ -15,6 +15,11 @@
 runtime: nodejs
 env: flex
 
+handlers:
+- url: /.*
+  http_headers:
+    Access-Control-Allow-Origin: https://oee-management.firebaseapp.com
+
 # [START env]
 env_variables:
   BASE_URL: '/api/'
