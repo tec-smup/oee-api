@@ -15,11 +15,6 @@
 runtime: nodejs
 env: flex
 
-handlers:
-- url: /.*
-  http_headers:
-    Access-Control-Allow-Origin: https://oee-management.firebaseapp.com
-
 # [START env]
 env_variables:
   BASE_URL: '/api/'
@@ -53,4 +48,12 @@ resources:
   cpu: 1
   memory_gb: 0.5
   disk_size_gb: 10
+
+# [START cors]
+handlers:
+- url: /.*
+  http_headers:
+    Access-Control-Allow-Origin: https://oee-management.firebaseapp.com
+# [END cors]
+  
 # [END app_yaml]
