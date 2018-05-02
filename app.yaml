@@ -23,6 +23,7 @@ env_variables:
   SQL_PASSWORD: '!2o0e1e7#'
   SQL_DATABASE: oee
   PUBSUB_TOPIC: oee
+  CORS_URL: 'https://oee-management.firebaseapp.com'
   # This token is used to verify that requests originate from your
   # application. It can be any sufficiently random string.
   PUBSUB_VERIFICATION_TOKEN: w08GGF3KAxCt6yMcuFj8meZPhWqPJGqv  
@@ -47,13 +48,5 @@ manual_scaling:
 resources:
   cpu: 1
   memory_gb: 0.5
-  disk_size_gb: 10
-
-# [START cors]
-handlers:
-- url: /.*
-  http_headers:
-    Access-Control-Allow-Origin: https://oee-management.firebaseapp.com
-# [END cors]
-  
+  disk_size_gb: 10  
 # [END app_yaml]
