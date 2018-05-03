@@ -2,6 +2,7 @@ create database oee;
 
 use oee;
 
+/*tables*/
 create table user
 (
     id int not null auto_increment primary key,
@@ -116,3 +117,28 @@ create table feed_field
     created_at timestamp not null default CURRENT_TIMESTAMP,
 );
 alter table channel_feed_config add constraint fk_feed_field_channel foreign key(channel_id) references channel(id);
+
+/*stored procedures*/
+DROP procedure IF EXISTS `prc_machine_data`;
+
+DELIMITER $$
+USE `oee`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `prc_machine_data`(
+	in p_code varchar(10),
+    in p_name varchar(20),
+    in p_department varchar(100),
+    in p_product varchar(100),
+    in p_last_maintenance date,
+    in p_next_maintenance date
+)
+begin   
+	if exists (select 1 from machine_data where code = p_code) then 
+		signal sqlstate '99999'
+		set message_text = 'Código informado já existe';
+    end if;
+    insert into machine_data(code, name, department, product, last_maintenance, next_maintenance)
+    values(p_code, p_name, p_department, p_product, p_last_maintenance, p_next_maintenance);
+end$$
+
+DELIMITER ;
+

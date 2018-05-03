@@ -6,14 +6,32 @@ machine.prototype.autenticateToken = function(token, callback) {
     this._connection.query("select id from channel where token = ?", token, callback);
 }
 
+// machine.prototype.save = function(data, callback) {
+//     this._connection.query("insert into machine_data set ?", data, callback);
+// }
+
 machine.prototype.save = function(data, callback) {
-    this._connection.query("insert into machine_data set ?", data, callback);
+    this._connection.query("call prc_machine_data(?,?,?,?,?,?)", [
+        data.code,
+        data.name,
+        data.department,
+        data.product,
+        data.last_maintenance,
+        data.next_maintenance
+    ], callback);
 }
 
 machine.prototype.update = function(data, callback) {
     let query = "update machine_data set name = ?, department = ?, product = ?, last_maintenance = STR_TO_DATE(?, '%d/%m/%Y'), next_maintenance = STR_TO_DATE(?, '%d/%m/%Y')";
         query += " where code = ?";
-    this._connection.query(query, [data.name, data.department, data.product, data.last_maintenance, data.next_maintenance, data.code], callback);    
+    this._connection.query(query, [
+        data.name, 
+        data.department, 
+        data.product, 
+        data.last_maintenance, 
+        data.next_maintenance, 
+        data.code
+    ], callback);    
 }
 
 machine.prototype.delete = function(data, callback) {

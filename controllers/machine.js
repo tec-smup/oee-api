@@ -32,8 +32,8 @@ module.exports = function(app) {
             delete bodyData.token;
             machine.save(bodyData, function(exception, result) {
                 if(exception) {
-                    return res.status(500).send(exception);
-                }                 
+                    return res.status(400).send(exception);
+                }
                 return res.send(bodyData);
             });          
         });        
