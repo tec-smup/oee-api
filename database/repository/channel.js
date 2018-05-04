@@ -82,7 +82,13 @@ channel.prototype.list = function(callback) {
 }
 
 channel.prototype.save = function(data, callback) {
-    this._connection.query("insert into channel set ?", data, callback);
+    this._connection.query("call prc_channel(?,?,?,?,?)", [
+        data.name,
+        data.description,
+        data.token,
+        data.active,
+        data.time_shift
+    ], callback);
 }
 
 channel.prototype.update = function(data, callback) {
@@ -93,7 +99,7 @@ channel.prototype.update = function(data, callback) {
 }
 
 channel.prototype.delete = function(data, callback) {
-    this._connection.query("delete from channel where id = ?", [data.id], callback);    
+    this._connection.query("call prc_delete_channel(?)", [data.id], callback);    
 }
 
 module.exports = function() {

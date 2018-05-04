@@ -117,6 +117,7 @@ create table feed_field
     created_at timestamp not null default CURRENT_TIMESTAMP,
 );
 alter table channel_feed_config add constraint fk_feed_field_channel foreign key(channel_id) references channel(id);
+/*tables*/
 
 /*stored procedures*/
 
@@ -124,7 +125,6 @@ alter table channel_feed_config add constraint fk_feed_field_channel foreign key
 DROP procedure IF EXISTS `prc_machine_data`;
 
 DELIMITER $$
-USE `oee`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `prc_machine_data`(
 	in p_code varchar(10),
     in p_name varchar(20),
@@ -143,23 +143,67 @@ begin
 end$$
 
 DELIMITER ;
+/*prc_machine_data*/
 
 /*prc_delete_machine_data*/
 DROP procedure IF EXISTS `prc_delete_machine_data`;
 
 DELIMITER $$
-USE `oee`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `prc_delete_machine_data`(in p_code varchar(10))
 BEGIN
-	declare msg varchar(100);
-    set msg = concat('Não é possível excluir a máquina ', p_code, ' pois existem medições vinculadas a ela');
+    set @msg = concat('Não é possível excluir a máquina ', p_code, '. Existem dados de medições vinculados a ela.');
 	if exists (select 1 from feed where mc_cd = p_code) then 
 		signal sqlstate '99999'
-		set message_text = msg;
+		set message_text = @msg;
     end if;
     delete from machine_data where code = p_code;
 END$$
 
 DELIMITER ;
+/*prc_delete_machine_data*/
 
 
+/*prc_delete_channel*/
+DROP procedure IF EXISTS `prc_delete_channel`;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `prc_delete_channel`(in p_channel_id int)
+BEGIN
+	set @name = (select name from channel where id = p_channel_id);
+    
+    set @msg = concat('Não é possível excluir o canal ', @name, '. Existem dados de medição vinculados a ele.');
+    
+	if exists (select 1 from feed where ch_id = p_channel_id) then 
+		signal sqlstate '99999'
+		set message_text = @msg;
+    end if;
+    delete from channel where id = p_channel_id; 
+END$$
+
+DELIMITER ;
+/*prc_delete_channel*/
+
+/*prc_channel*/
+DROP procedure IF EXISTS `prc_channel`;
+
+DELIMITER $$
+CREATE PROCEDURE `prc_channel` (
+	in p_name varchar(100),
+    in p_description varchar(500),
+    in p_token varchar(50),
+    in p_active bit,
+    in p_time_shift int(11)
+)
+BEGIN
+	if exists (select 1 from channel where token = p_token) then 
+		signal sqlstate '99999'
+		set message_text = 'Token informado já existe';
+    end if;
+    insert into channel(name, description, token, active, created_at, updated_at, time_shift)
+    values(p_name, p_description, p_token, p_active, now(), now(), p_time_shift);
+END$$
+
+DELIMITER ;
+/*prc_channel*/
+
+/*stored procedures*/

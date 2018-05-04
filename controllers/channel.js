@@ -126,7 +126,7 @@ module.exports = function(app) {
         
         channel.save(bodyData, function(exception, result) {
             if(exception) {
-                return res.status(500).send(exception);
+                return res.status(400).send(exception);
             }                 
             return res.send(bodyData);
         });          
@@ -172,10 +172,10 @@ module.exports = function(app) {
         delete bodyData.token;
         channel.delete(bodyData, function(exception, results, fields) {
             if(exception) {
-                return res.status(500).send(exception);
+                return res.status(400).send(exception);
             }
             return res.send(bodyData);
-        });            
+        });
                
     });     
 }
