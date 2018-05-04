@@ -6,10 +6,6 @@ machine.prototype.autenticateToken = function(token, callback) {
     this._connection.query("select id from channel where token = ?", token, callback);
 }
 
-// machine.prototype.save = function(data, callback) {
-//     this._connection.query("insert into machine_data set ?", data, callback);
-// }
-
 machine.prototype.save = function(data, callback) {
     this._connection.query("call prc_machine_data(?,?,?,?,?,?)", [
         data.code,
@@ -35,7 +31,7 @@ machine.prototype.update = function(data, callback) {
 }
 
 machine.prototype.delete = function(data, callback) {
-    this._connection.query("delete from machine_data where code = ?", [data.code], callback);    
+    this._connection.query("call prc_delete_machine_data(?)", [data.code], callback);    
 }
 
 machine.prototype.list = function(callback) {

@@ -119,6 +119,8 @@ create table feed_field
 alter table channel_feed_config add constraint fk_feed_field_channel foreign key(channel_id) references channel(id);
 
 /*stored procedures*/
+
+/*prc_machine_data*/
 DROP procedure IF EXISTS `prc_machine_data`;
 
 DELIMITER $$
@@ -141,4 +143,23 @@ begin
 end$$
 
 DELIMITER ;
+
+/*prc_delete_machine_data*/
+DROP procedure IF EXISTS `prc_delete_machine_data`;
+
+DELIMITER $$
+USE `oee`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `prc_delete_machine_data`(in p_code varchar(10))
+BEGIN
+	declare msg varchar(100);
+    set msg = concat('Não é possível excluir a máquina ', p_code, ' pois existem medições vinculadas a ela');
+	if exists (select 1 from feed where mc_cd = p_code) then 
+		signal sqlstate '99999'
+		set message_text = msg;
+    end if;
+    delete from machine_data where code = p_code;
+END$$
+
+DELIMITER ;
+
 

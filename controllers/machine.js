@@ -99,7 +99,7 @@ module.exports = function(app) {
             delete bodyData.token;
             machine.delete(bodyData, function(exception, results, fields) {
                 if(exception) {
-                    return res.status(500).send(exception);
+                    return res.status(400).send(exception);
                 }
                 return res.send(bodyData);
             });            
