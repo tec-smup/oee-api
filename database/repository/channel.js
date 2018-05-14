@@ -77,7 +77,7 @@ channel.prototype.list = function(callback) {
     query += "        , DATE_FORMAT(c.updated_at, '%d/%m/%Y %H:%i:%s') as updated_at";
     query += "        , c.time_shift";
     query += "     from channel c";
-    query += "    order by c.name"; 
+    query += "    order by c.id"; 
     this._connection.query(query, [], callback);
 }
 

@@ -26,4 +26,32 @@ module.exports = function(app) {
             });             
         });        
     });
+
+    app.get(baseUrl + 'feed/lastFeed', function(req, res) {
+        var query = req.query;        
+        var connection = app.database.connection();
+        var feed = new app.database.repository.feed(connection);  
+        
+        feed.lastFeed(query, function(exception, result) {
+            if(exception) {
+                return res.status(400).send(exception);
+            }
+            res.send(result); 
+            connection.end();                 
+        });                          
+    });  
+
+    app.get(baseUrl + 'feed/chart', function(req, res) {
+        var query = req.query;        
+        var connection = app.database.connection();
+        var feed = new app.database.repository.feed(connection);  
+        
+        feed.chart(query, function(exception, result) {
+            if(exception) {
+                return res.status(400).send(exception);
+            }
+            res.send(result); 
+            connection.end();                 
+        });                          
+    });      
 }
