@@ -61,16 +61,20 @@ create table machine_data
     last_maintenance date null,
     next_maintenance date null
 );
+alter table machine_data add unique key code_unique(code);
+CREATE INDEX code_idx ON machine_data(code);
 
 create table machine_pause
 (
 	id int not null primary key,
-    mc_cd varchar(10) not null,
-    pause_at date not null,
+    mc_cd varchar(10) not null COLLATE latin1_swedish_ci,
+    pause_ini datetime not null,
+    pause_fin datetime not null,
     justification1 varchar(300) null,
     justification2 varchar(300) null,
     justification3 varchar(300) null
 );
+CREATE INDEX code_idx ON machine_pause(mc_cd);
 alter table machine_pause add constraint fk_pause_machine foreign key(mc_cd) references machine_data(code);
 
 create table log 
@@ -205,5 +209,48 @@ END$$
 
 DELIMITER ;
 /*prc_channel*/
+
+/*prc_machine_pause*/
+DROP procedure IF EXISTS `prc_machine_pause`;
+
+DELIMITER $$
+USE `oee`$$
+CREATE PROCEDURE prc_machine_pause (
+	in p_mc_cd varchar(10),
+	in p_pause_ini datetime,
+	in p_pause_fin datetime,
+	in p_justification1 varchar(300),
+    in p_justification2 varchar(300),
+    in p_justification3 varchar(300)
+)
+BEGIN
+	if exists (
+		select 1 from machine_pause 
+         where mc_cd = p_mc_cd
+           and pause_ini = p_pause_ini
+           and pause_fin = p_pause_fin
+    ) then 
+		signal sqlstate '99999'
+		set message_text = 'Pausa com dados informados já existe';
+    end if;
+    insert into machine_pause(mc_cd, pause_ini, pause_fin, justification1, justification2, justification3)
+    values(p_mc_cd, p_pause_ini, p_pause_fin, p_justification1, p_justification2, p_justification3);
+END$$
+
+DELIMITER ;
+/*prc_machine_pause*/
+
+/*prc_delete_machine_pause*/
+DROP procedure IF EXISTS `prc_delete_machine_pause`;
+
+DELIMITER $$
+USE `oee`$$
+CREATE PROCEDURE prc_delete_machine_pause (in p_id int)
+BEGIN
+	delete from machine_pause where id = p_id; 
+END$$
+
+DELIMITER ;
+/*prc_delete_machine_pause*/
 
 /*stored procedures*/

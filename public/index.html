@@ -51,7 +51,7 @@
         <h1>StartMeUp!</h1>
       </div>
       <p class="lead">API para monitoramento online de produção.</p>
-      <p><a href="/api/docs">Ver documentação.</a></p>
+      <p><a href="#" onclick="docs()">Ver documentação.</a></p>
     </div>
 
     <footer class="footer">
@@ -63,4 +63,14 @@
       </div>
     </footer>
   </body>
+  <script type="text/javascript">
+    function docs() {
+      let origin = window.location.origin;
+      let part = '/api/docs';
+      if(origin.indexOf('localhost') || origin.indexOf('paul8')) {
+        part = '/oee/api/docs';
+      }
+      window.location.href = origin + part;
+    }
+  </script>  
 </html>

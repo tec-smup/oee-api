@@ -120,6 +120,6 @@ module.exports = function(app) {
     });      
 
     app.get(baseUrl + 'machine', function(req, res) { 
-        res.sendFile(path.join(__dirname, '../public/', 'machine.html'));       
+        res.sendFile(path.join(__dirname, '../public/', 'index.html'));       
     });    
 }

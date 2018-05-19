@@ -35,9 +35,16 @@ machine.prototype.delete = function(data, callback) {
 }
 
 machine.prototype.list = function(callback) {
-    var query = "select code, name, department, product, DATE_FORMAT(last_maintenance, '%d/%m/%Y') as last_maintenance"; 
-    query += ", DATE_FORMAT(next_maintenance, '%d/%m/%Y') as next_maintenance";
-    query += " from machine_data"; 
+    var query = `
+		select code
+			 , name
+			 , department
+			 , product
+			 , DATE_FORMAT(last_maintenance, '%d/%m/%Y') as last_maintenance 
+			 , DATE_FORMAT(next_maintenance, '%d/%m/%Y') as next_maintenance
+			 , concat('[', code, '] ', name) as dropdown_label
+		  from machine_data	
+	`;
     this._connection.query(query, [], callback);
 }
 
