@@ -42,18 +42,24 @@ machinePause.prototype.delete = function(data, callback) {
     this._connection.query("call prc_delete_machine_pause(?)", [data.id], callback);    
 }
 
-machinePause.prototype.list = function(callback) {
+machinePause.prototype.list = function(data, callback) {
     var query = `
-        select id
-             , mc_cd
-             , DATE_FORMAT(pause_ini, '%d/%m/%Y')
-             , DATE_FORMAT(pause_fin, '%d/%m/%Y')
-             , justification1
-             , justification2
-             , justification3
-          from machine_pause
+        select f.mc_cd
+            , concat(f.mc_cd, ' - ', md.name) as mc_name 
+            , max(f.field4 - f.field2) as pause
+            , time_format(
+                sec_to_time(
+                    max(f.field4 - f.field2) - (select coalesce(sum(pause), 0) from machine_pause where mc_cd = f.mc_cd)
+                ), '%H:%i:%s'
+            ) as pause_to_time
+            , date_format(max(inserted_at), '%d/%m/%Y %H:%i:%s') as date
+            , null as justification
+        from feed	f
+        inner join machine_data md on md.code = f.mc_cd
+        where date_format(f.inserted_at, '%d/%m/%Y') = ?
+        group by f.mc_cd
     `;    
-    this._connection.query(query, [], callback);
+    this._connection.query(query, [data.date], callback);
 }
 
 module.exports = function() {

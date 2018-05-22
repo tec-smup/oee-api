@@ -80,11 +80,12 @@ module.exports = function(app) {
         });            
     });    
 
-    app.get(baseUrl + 'machinepause/list', function(req, res) {        
+    app.get(baseUrl + 'machinepause/list', function(req, res) {  
+        var query = req.query;      
         var connection = app.database.connection();
         var machinePause = new app.database.repository.machinePause(connection);   
         
-        machinePause.list(function(exception, result) {
+        machinePause.list(query, function(exception, result) {
             if(exception) {
                 return res.status(500).send(exception);
             }

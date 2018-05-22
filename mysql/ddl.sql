@@ -66,13 +66,12 @@ CREATE INDEX code_idx ON machine_data(code);
 
 create table machine_pause
 (
-	id int not null primary key,
+	id int not null auto_increment primary key,
     mc_cd varchar(10) not null COLLATE latin1_swedish_ci,
-    pause_ini datetime not null,
-    pause_fin datetime not null,
-    justification1 varchar(300) null,
-    justification2 varchar(300) null,
-    justification3 varchar(300) null
+    pause int not null,
+    date_ref date not null,
+    inserted_at timestamp not null default CURRENT_TIMESTAMP,
+    justification varchar(5000) null
 );
 CREATE INDEX code_idx ON machine_pause(mc_cd);
 alter table machine_pause add constraint fk_pause_machine foreign key(mc_cd) references machine_data(code);
