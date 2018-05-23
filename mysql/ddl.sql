@@ -214,42 +214,20 @@ DROP procedure IF EXISTS `prc_machine_pause`;
 
 DELIMITER $$
 USE `oee`$$
-CREATE PROCEDURE prc_machine_pause (
+CREATE DEFINER=`root`@`localhost` PROCEDURE `prc_machine_pause`(
 	in p_mc_cd varchar(10),
-	in p_pause_ini datetime,
-	in p_pause_fin datetime,
-	in p_justification1 varchar(300),
-    in p_justification2 varchar(300),
-    in p_justification3 varchar(300)
+	in p_pause int,
+	in p_date_ref varchar(10),
+	in p_justification varchar(5000)
 )
 BEGIN
-	if exists (
-		select 1 from machine_pause 
-         where mc_cd = p_mc_cd
-           and pause_ini = p_pause_ini
-           and pause_fin = p_pause_fin
-    ) then 
-		signal sqlstate '99999'
-		set message_text = 'Pausa com dados informados já existe';
-    end if;
-    insert into machine_pause(mc_cd, pause_ini, pause_fin, justification1, justification2, justification3)
-    values(p_mc_cd, p_pause_ini, p_pause_fin, p_justification1, p_justification2, p_justification3);
+    insert into machine_pause(mc_cd, pause, date_ref, justification)
+    values(p_mc_cd, p_pause, STR_TO_DATE(p_date_ref, '%d/%m/%Y'), p_justification);
 END$$
 
 DELIMITER ;
+
+
 /*prc_machine_pause*/
-
-/*prc_delete_machine_pause*/
-DROP procedure IF EXISTS `prc_delete_machine_pause`;
-
-DELIMITER $$
-USE `oee`$$
-CREATE PROCEDURE prc_delete_machine_pause (in p_id int)
-BEGIN
-	delete from machine_pause where id = p_id; 
-END$$
-
-DELIMITER ;
-/*prc_delete_machine_pause*/
 
 /*stored procedures*/
