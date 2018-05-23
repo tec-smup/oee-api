@@ -128,7 +128,7 @@ alter table channel_feed_config add constraint fk_feed_field_channel foreign key
 DROP procedure IF EXISTS `prc_machine_data`;
 
 DELIMITER $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `prc_machine_data`(
+CREATE PROCEDURE `prc_machine_data`(
 	in p_code varchar(10),
     in p_name varchar(20),
     in p_department varchar(100),
@@ -152,7 +152,7 @@ DELIMITER ;
 DROP procedure IF EXISTS `prc_delete_machine_data`;
 
 DELIMITER $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `prc_delete_machine_data`(in p_code varchar(10))
+CREATE PROCEDURE `prc_delete_machine_data`(in p_code varchar(10))
 BEGIN
     set @msg = concat('Não é possível excluir a máquina ', p_code, '. Existem dados de medições vinculados a ela.');
 	if exists (select 1 from feed where mc_cd = p_code) then 
@@ -170,7 +170,7 @@ DELIMITER ;
 DROP procedure IF EXISTS `prc_delete_channel`;
 
 DELIMITER $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `prc_delete_channel`(in p_channel_id int)
+CREATE PROCEDURE `prc_delete_channel`(in p_channel_id int)
 BEGIN
 	set @name = (select name from channel where id = p_channel_id);
     
@@ -213,8 +213,7 @@ DELIMITER ;
 DROP procedure IF EXISTS `prc_machine_pause`;
 
 DELIMITER $$
-USE `oee`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `prc_machine_pause`(
+CREATE PROCEDURE `prc_machine_pause`(
 	in p_mc_cd varchar(10),
 	in p_pause int,
 	in p_date_ref varchar(10),
