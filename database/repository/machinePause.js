@@ -19,16 +19,16 @@ machinePause.prototype.list = function(data, callback) {
     var query = `
         select f.mc_cd
             , concat(f.mc_cd, ' - ', md.name) as mc_name 
-            , max(f.field4 - f.field2) - (select coalesce(sum(pause), 0) 
+            , (max(f.field4 - f.field2) - (select coalesce(sum(pause), 0) 
                                             from machine_pause 
                                             where mc_cd = f.mc_cd
-                                            and date_ref = date(max(f.inserted_at))) as pause
+                                            and date_ref = date(max(f.inserted_at)))) as pause
             , time_format(
                 sec_to_time(
-                    max(f.field4 - f.field2) - (select coalesce(sum(pause), 0) 
-                                                from machine_pause 
-                                                where mc_cd = f.mc_cd
-                                                and date_ref = date(max(f.inserted_at)))
+                    (max(f.field4 - f.field2)*60) - (select coalesce(sum(pause)*60, 0) 
+                                                        from machine_pause 
+                                                    where mc_cd = f.mc_cd
+                                                        and date_ref = date(max(f.inserted_at)))
                 ), '%H:%i:%s'
             ) as pause_to_time
             , date_format(max(inserted_at), '%d/%m/%Y %H:%i:%s') as date
@@ -36,7 +36,7 @@ machinePause.prototype.list = function(data, callback) {
             , null as justification
         from feed	f
         inner join machine_data md on md.code = f.mc_cd
-        where date_format(f.inserted_at, '%d/%m/%Y') = ? 
+        where date_format(f.inserted_at, '%d/%m/%Y') = ?
         group by f.mc_cd
     `;    
     this._connection.query(query, [data.date], callback);
