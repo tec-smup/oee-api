@@ -195,15 +195,17 @@ CREATE PROCEDURE `prc_channel` (
     in p_description varchar(500),
     in p_token varchar(50),
     in p_active bit,
-    in p_time_shift int(11)
+    in p_time_shift int(11),
+	in p_initial_turn char(5),
+	in p_final_turn char(5)
 )
 BEGIN
 	if exists (select 1 from channel where token = p_token) then 
 		signal sqlstate '99999'
 		set message_text = 'Token informado já existe';
     end if;
-    insert into channel(name, description, token, active, created_at, updated_at, time_shift)
-    values(p_name, p_description, p_token, p_active, now(), now(), p_time_shift);
+    insert into channel(name, description, token, active, created_at, updated_at, time_shift, initial_turn, final_turn)
+    values(p_name, p_description, p_token, p_active, now(), now(), p_time_shift, p_initial_turn, p_final_turn);
 END$$
 
 DELIMITER ;
