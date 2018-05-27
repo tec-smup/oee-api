@@ -33,14 +33,23 @@ module.exports = function(app) {
         var query = req.query;      
         var connection = app.database.connection();
         var machinePause = new app.database.repository.machinePause(connection);   
+        var data = {};
         
         machinePause.list(query, function(exception, result) {
             if(exception) {
                 return res.status(500).send(exception);
             }
-            res.send(result);
+            data.list = result;
+            
+            machinePause.listPauses(query, function(exception, result) {
+                if(exception) {
+                    return res.status(500).send(exception);
+                }
+                data.pauses = result;
+                res.send(data);                
+            });            
             connection.end();
-        });                    
+        });
     });      
 
     app.get(baseUrl + 'machinepause', function(req, res) { 

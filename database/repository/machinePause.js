@@ -42,6 +42,22 @@ machinePause.prototype.list = function(data, callback) {
     this._connection.query(query, [data.date], callback);
 }
 
+machinePause.prototype.listPauses = function(data, callback) {
+    var query = `
+		select mp.id
+			 , mp.mc_cd 
+			 , md.name
+			 , date_format(mp.date_ref, '%d/%m/%Y') as date_ref
+			 , mp.justification
+			 , date_format(mp.inserted_at, '%d/%m/%Y %H:%i:%s') as inserted_at
+		  from machine_pause mp
+		 inner join machine_data md on md.code = mp.mc_cd
+		 where date_format(mp.date_ref, '%d/%m/%Y') = ?
+		 order by mp.inserted_at desc
+    `;    
+    this._connection.query(query, [data.date], callback);
+}
+
 module.exports = function() {
     return machinePause;
 };

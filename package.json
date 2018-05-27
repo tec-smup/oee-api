@@ -32,8 +32,6 @@
   "homepage": "https://github.com/paul8liveira/oee-api#readme",
   "dependencies": {
     "@google-cloud/pubsub": "0.13.2",
-    "pug": "2.0.0-rc.3",
-    "safe-buffer": "5.1.1",
     "bcrypt-nodejs": "0.0.3",
     "consign": "^0.1.6",
     "express": "^4.16.2",
@@ -41,7 +39,9 @@
     "js2xmlparser": "^3.0.0",
     "jsonwebtoken": "^8.2.0",
     "mysql": "^2.15.0",
-    "nodemon": "^1.17.2"
+    "nodemon": "^1.17.5",
+    "pug": "2.0.0-rc.3",
+    "safe-buffer": "5.1.1"
   },
   "devDependencies": {
     "@google-cloud/nodejs-repo-tools": "1.4.17",
