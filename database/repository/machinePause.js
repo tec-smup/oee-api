@@ -49,7 +49,8 @@ machinePause.prototype.listPauses = function(data, callback) {
 			 , md.name
 			 , date_format(mp.date_ref, '%d/%m/%Y') as date_ref
 			 , mp.justification
-			 , date_format(mp.inserted_at, '%d/%m/%Y %H:%i:%s') as inserted_at
+             , date_format(mp.inserted_at, '%d/%m/%Y %H:%i:%s') as inserted_at
+             , time_format(sec_to_time(mp.pause*60), '%H:%i:%s') as pause
 		  from machine_pause mp
 		 inner join machine_data md on md.code = mp.mc_cd
 		 where date_format(mp.date_ref, '%d/%m/%Y') = ?
