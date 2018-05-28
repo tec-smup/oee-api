@@ -54,7 +54,7 @@ machinePause.prototype.listPauses = function(data, callback) {
 		  from machine_pause mp
 		 inner join machine_data md on md.code = mp.mc_cd
 		 where date_format(mp.date_ref, '%d/%m/%Y') = ?
-		 order by mp.inserted_at desc
+		 order by mp.mc_cd, mp.inserted_at desc 
     `;    
     this._connection.query(query, [data.date], callback);
 }
