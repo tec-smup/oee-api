@@ -25,6 +25,30 @@ create table channel
     time_shift int null default 0,
 );
 
+create table channel_machine 
+(
+	channel_id int not null,
+    machine_code varchar(10) not null COLLATE latin1_swedish_ci,
+	created_at timestamp not null default CURRENT_TIMESTAMP,
+	updated_at timestamp not null default CURRENT_TIMESTAMP,
+	primary key(channel_id, machine_code)
+	
+);
+alter table channel_machine add constraint fk_channel_machine_channel foreign key(channel_id) references channel(id);
+alter table channel_machine add constraint fk_channel_machine_machine foreign key(machine_code) references machine_data(code);
+
+create table user_channel 
+(
+	user_id int not null,
+	channel_id int not null,
+	created_at timestamp not null default CURRENT_TIMESTAMP,
+	updated_at timestamp not null default CURRENT_TIMESTAMP,
+	primary key(user_id, channel_id)
+	
+);
+alter table user_channel add constraint fk_user_channel_channel foreign key(channel_id) references channel(id);
+alter table user_channel add constraint fk_user_channel_user foreign key(user_id) references user(id);
+
 create table feed_config
 (
     id int not null auto_increment primary key,

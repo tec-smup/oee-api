@@ -19,7 +19,7 @@ feed.prototype.lastFeed = function(data, callback) {
     let sql = `
         select c.name as channel_name
             , md.code as machine_code
-            , md.name as machine_name
+            , concat('[', md.code, '] ', md.name) as machine_name
             , f.field1
             , f.field2
             , f.field3

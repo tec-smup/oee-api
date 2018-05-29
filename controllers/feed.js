@@ -30,13 +30,23 @@ module.exports = function(app) {
     app.get(baseUrl + 'feed/lastFeed', function(req, res) {
         var query = req.query;        
         var connection = app.database.connection();
-        var feed = new app.database.repository.feed(connection);  
+        var feed = new app.database.repository.feed(connection);
+		var machinePause = new app.database.repository.machinePause(connection);	
+		var data = {};		
         
         feed.lastFeed(query, function(exception, result) {
             if(exception) {
                 return res.status(400).send(exception);
             }
-            res.send(result); 
+			data.lastFeeds = result;
+			
+			machinePause.listPauses(query, function(exception, result) {
+				if(exception) {
+					return res.status(400).send(exception);
+				}
+				data.pauses = result;
+				res.send(data);            
+			});
             connection.end();                 
         });                          
     });  
