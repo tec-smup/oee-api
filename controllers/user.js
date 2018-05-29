@@ -42,17 +42,32 @@ module.exports = function(app) {
                         res.send({
                             success: false,
                             message: 'Erro na geração do token de autenticação',
-                            token: ''
+                            token: '',
+                            admin: false
                         });
                     }
                     else {
                         res.send({
                             success: true,
                             message: '',
-                            token: token
+                            token: token,
+                            admin: result[0].admin
                         });
                     }
                 });
-        });        
+        });          
     });
+
+    app.get(baseUrl + 'user', function(req, res) {
+        var connection = app.database.connection();
+        var user = new app.database.repository.user(connection);   
+        
+        user.list(function(exception, result) {
+            if(exception) {
+                return res.status(500).send(exception);
+            }
+            res.send(result);
+            connection.end();
+        });
+    });     
 }
