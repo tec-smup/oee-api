@@ -251,8 +251,51 @@ BEGIN
 END$$
 
 DELIMITER ;
-
-
 /*prc_machine_pause*/
+
+/*prc_user*/
+DROP procedure IF EXISTS `prc_user`;
+
+DELIMITER $$
+USE `oee`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `prc_user`(
+	in p_username varchar(100),
+	in p_password varchar(500),
+	in p_active bit,
+	in p_admin bit
+)
+BEGIN
+	if exists (select 1 from user where username = p_username) then 
+		signal sqlstate '99999'
+		set message_text = 'Usuário informado já existe';
+    end if;
+    insert into user(username, password, active, admin)
+    values(p_username, p_password, p_active, p_admin);
+END$$
+
+DELIMITER ;
+
+/*prc_user*/
+
+/*prc_delete_user*/
+DROP procedure IF EXISTS `prc_delete_user`;
+
+DELIMITER $$
+USE `oee`$$
+CREATE PROCEDURE prc_delete_user (in p_user_id int)
+BEGIN
+	/*set @name = (select name from channel where id = p_channel_id);
+    
+    set @msg = concat('Não é possível excluir o canal ', @name, '. Existem dados de medição vinculados a ele.');
+    
+	if exists (select 1 from feed where ch_id = p_channel_id) then 
+		signal sqlstate '99999'
+		set message_text = @msg;
+    end if;*/
+    delete from user where id = p_user_id; 
+END$$
+
+DELIMITER ;
+/*prc_delete_user*/
 
 /*stored procedures*/

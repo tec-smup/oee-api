@@ -1,3 +1,6 @@
+const bcrypt = require('bcrypt-nodejs');
+const saltRounds = 10;
+
 function user(connection) {
     this._connection = connection;
 }
@@ -25,6 +28,34 @@ user.prototype.list = function(callback) {
          from user u	
 	`; 
     this._connection.query(query, [], callback);
+}
+
+user.prototype.save = function(data, callback) {
+    let salt = bcrypt.genSaltSync(saltRounds);
+    this._connection.query("call prc_user(?,?,?,?)", [
+        data.username,
+        bcrypt.hashSync(data.password, salt),
+        data.active,
+        data.admin
+    ], callback);
+}
+
+user.prototype.update = function(data, callback) {
+    let datetime = new Date();
+    let query = `
+        update user set active = ?
+                      , admin = ? 	
+				  where id = ?
+	`;
+    this._connection.query(query, [
+		data.active, 
+		data.admin, 
+		data.id
+	], callback);    
+}
+
+user.prototype.delete = function(data, callback) {
+    this._connection.query("call prc_delete_user(?)", [data.id], callback);    
 }
 
 module.exports = function() {

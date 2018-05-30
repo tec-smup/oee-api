@@ -70,4 +70,69 @@ module.exports = function(app) {
             connection.end();
         });
     });     
+
+    app.post(baseUrl + 'user', function(req, res) {
+        var bodyData = req.body;
+
+        //cria asserts para validação
+        req.assert('username', 'Preencha o usuário corretamente.').notEmpty();
+        req.assert('password', 'Preencha a senha corretamente.').notEmpty();
+
+        var errors = req.validationErrors();
+        if(errors)
+            return res.status(400).send(errors);
+
+        var connection = app.database.connection();
+        var user = new app.database.repository.user(connection);
+        
+        user.save(bodyData, function(exception, result) {
+            if(exception) {
+                return res.status(400).send(exception);
+            }                 
+            return res.send(bodyData);
+        });                   
+    });  
+    
+    app.post(baseUrl + 'user/update', function(req, res) {
+        var bodyData = req.body;
+
+        //cria asserts para validação
+        req.assert('id', 'Erro na edição do registro.').notEmpty();
+
+        var errors = req.validationErrors();
+        if(errors)
+            return res.status(400).send(errors);       
+
+        var connection = app.database.connection();
+        var user = new app.database.repository.user(connection);
+
+        user.update(bodyData, function(exception, results, fields) {
+            if(exception) {
+                return res.status(500).send(exception);
+            }    
+            return res.send(bodyData);           
+        });
+    });
+
+    app.post(baseUrl + 'user/delete', function(req, res) {
+        var bodyData = req.body;
+
+        //cria asserts para validação
+        req.assert('id', 'Erro na edição do registro.').notEmpty();
+
+        var errors = req.validationErrors();
+        if(errors)
+            return res.status(400).send(errors);         
+
+        var connection = app.database.connection();
+        var user = new app.database.repository.user(connection);
+                        
+        user.delete(bodyData, function(exception, results, fields) {
+            if(exception) {
+                return res.status(400).send(exception);
+            }
+            return res.send(bodyData);
+        });
+               
+    });     
 }
