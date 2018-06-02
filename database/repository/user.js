@@ -32,12 +32,23 @@ user.prototype.list = function(callback) {
 
 user.prototype.save = function(data, callback) {
     let salt = bcrypt.genSaltSync(saltRounds);
-    this._connection.query("call prc_user(?,?,?,?)", [
-        data.username,
-        bcrypt.hashSync(data.password, salt),
-        data.active,
-        data.admin
-    ], callback);
+    if(data.isMobile) {
+        this._connection.query("call prc_user_mobile(?,?,?,?,?)", [
+            data.company_name,
+            data.username,
+            bcrypt.hashSync(data.password, salt),
+            data.active,
+            data.admin
+        ], callback);
+    }
+    else {
+        this._connection.query("call prc_user(?,?,?,?)", [
+            data.username,
+            bcrypt.hashSync(data.password, salt),
+            data.active,
+            data.admin
+        ], callback);
+    }
 }
 
 user.prototype.update = function(data, callback) {

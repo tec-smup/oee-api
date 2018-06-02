@@ -10,6 +10,7 @@ create table user
     password varchar(500) not null,
     active bit not null default true,
     admin bit not null default false,
+	comnpany_name varchar(200) null,
     created_at timestamp not null default CURRENT_TIMESTAMP
 );
 
@@ -23,6 +24,8 @@ create table channel
 	created_at timestamp not null default CURRENT_TIMESTAMP,
 	updated_at timestamp not null default CURRENT_TIMESTAMP,
     time_shift int null default 0,
+	initial_turn char(5) null,
+	final_turn char(5) null
 );
 
 create table channel_machine 
@@ -214,14 +217,16 @@ DELIMITER ;
 DROP procedure IF EXISTS `prc_channel`;
 
 DELIMITER $$
-CREATE PROCEDURE `prc_channel` (
+USE `oee`$$
+CREATE PROCEDURE `prc_channel`(
 	in p_name varchar(100),
     in p_description varchar(500),
     in p_token varchar(50),
     in p_active bit,
     in p_time_shift int(11),
 	in p_initial_turn char(5),
-	in p_final_turn char(5)
+	in p_final_turn char(5),
+    out p_channel_id int(11)
 )
 BEGIN
 	if exists (select 1 from channel where token = p_token) then 
@@ -230,9 +235,11 @@ BEGIN
     end if;
     insert into channel(name, description, token, active, created_at, updated_at, time_shift, initial_turn, final_turn)
     values(p_name, p_description, p_token, p_active, now(), now(), p_time_shift, p_initial_turn, p_final_turn);
+    set p_channel_id = LAST_INSERT_ID();
 END$$
 
 DELIMITER ;
+
 /*prc_channel*/
 
 /*prc_machine_pause*/
@@ -262,15 +269,18 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `prc_user`(
 	in p_username varchar(100),
 	in p_password varchar(500),
 	in p_active bit,
-	in p_admin bit
+	in p_admin bit,
+    in p_company_name varchar(200),
+    out p_user_id int(11)
 )
 BEGIN
 	if exists (select 1 from user where username = p_username) then 
 		signal sqlstate '99999'
 		set message_text = 'Usuário informado já existe';
     end if;
-    insert into user(username, password, active, admin)
-    values(p_username, p_password, p_active, p_admin);
+    insert into user(username, password, active, admin, company_name)
+    values(p_username, p_password, p_active, p_admin, p_company_name);
+    set p_user_id = LAST_INSERT_ID();
 END$$
 
 DELIMITER ;
@@ -297,5 +307,86 @@ END$$
 
 DELIMITER ;
 /*prc_delete_user*/
+
+/*prc_user_channel*/
+DROP procedure IF EXISTS `prc_user_channel`;
+
+CREATE PROCEDURE prc_user_channel (
+	in p_user_id int(11),
+	in p_channel_id int(11)
+)
+BEGIN
+	insert into user_channel(user_id, channel_id)
+    values(p_user_id, p_channel_id);
+END$$
+
+DELIMITER;
+/*prc_user_channel*/
+
+/*prc_channel_machine*/
+DROP procedure IF EXISTS `prc_channel_machine`;
+
+CREATE PROCEDURE prc_channel_machine (
+	in p_channel_id int(11),
+    in p_machine_code varchar(10)
+)
+BEGIN
+	insert into channel_machine(channel_id, machine_code)
+    values(p_channel_id, p_machine_code);
+END$$
+
+DELIMITER ;
+/*prc_channel_machine*/
+
+/*prc_user_mobile*/
+DROP procedure IF EXISTS `prc_user_mobile`;
+
+DELIMITER $$
+USE `oee`$$
+CREATE PROCEDURE prc_user_mobile (
+	in p_company_name varchar(200),
+	in p_username varchar(100),
+	in p_password varchar(500),
+    in p_active bit,
+	in p_admin bit
+)
+BEGIN
+    set @v_maq1_test = 'MAQ1*';
+    set @v_maq2_test = 'MAQ2*';
+    set @v_maq3_test = 'MAQ3*';
+
+	if exists (select 1 from user where username = p_username) then 
+		signal sqlstate '99999'
+		set message_text = 'Usuário informado já existe';
+    end if;
+    
+    /*testa se maquinas de teste já existem*/
+	if not exists (select 1 from machine_data where code = @v_maq1_test) then 
+		CALL prc_machine_data(@v_maq1_test, 'Máquina 1', null, null, null, null);
+    end if;   
+	if not exists (select 1 from machine_data where code = @v_maq2_test) then 
+		CALL prc_machine_data(@v_maq2_test, 'Máquina 2', null, null, null, null);
+    end if; 
+	if not exists (select 1 from machine_data where code = @v_maq3_test) then 
+		CALL prc_machine_data(@v_maq3_test, 'Máquina 3', null, null, null, null);
+    end if;     
+    
+    /*cria usuário*/	
+    CALL prc_user(p_username, p_password, p_active, p_admin, p_company_name, @v_user_id);
+    
+    /*cria canal do usuário*/
+    CALL prc_channel(p_company_name, p_company_name, '-', p_active, null, null, null, @v_channel_id);
+
+    /*vincula canal ao usuário*/
+    CALL prc_user_channel(@v_user_id, @v_channel_id);
+    
+    /*vincula maquinas ao canal*/
+    CALL prc_channel_machine(@v_channel_id, @v_maq1_test);
+    CALL prc_channel_machine(@v_channel_id, @v_maq2_test);
+    CALL prc_channel_machine(@v_channel_id, @v_maq3_test);
+END$$
+
+DELIMITER ;
+/*prc_user_mobile*/
 
 /*stored procedures*/

@@ -77,6 +77,8 @@ module.exports = function(app) {
         //cria asserts para validação
         req.assert('username', 'Preencha o usuário corretamente.').notEmpty();
         req.assert('password', 'Preencha a senha corretamente.').notEmpty();
+        if(bodyData.isMobile)
+            req.assert('company_name', 'Preencha a empresa corretamente.').notEmpty();
 
         var errors = req.validationErrors();
         if(errors)
@@ -90,8 +92,8 @@ module.exports = function(app) {
                 return res.status(400).send(exception);
             }                 
             return res.send(bodyData);
-        });                   
-    });  
+        });
+    });
     
     app.post(baseUrl + 'user/update', function(req, res) {
         var bodyData = req.body;
@@ -132,7 +134,6 @@ module.exports = function(app) {
                 return res.status(400).send(exception);
             }
             return res.send(bodyData);
-        });
-               
+        });   
     });     
 }
