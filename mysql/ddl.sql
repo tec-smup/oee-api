@@ -343,7 +343,7 @@ DROP procedure IF EXISTS `prc_user_mobile`;
 
 DELIMITER $$
 USE `oee`$$
-CREATE PROCEDURE prc_user_mobile (
+CREATE DEFINER=`root`@`localhost` PROCEDURE `prc_user_mobile`(
 	in p_company_name varchar(200),
 	in p_username varchar(100),
 	in p_password varchar(500),
@@ -375,7 +375,7 @@ BEGIN
     CALL prc_user(p_username, p_password, p_active, p_admin, p_company_name, @v_user_id);
     
     /*cria canal do usuário*/
-    CALL prc_channel(p_company_name, p_company_name, '-', p_active, null, null, null, @v_channel_id);
+    CALL prc_channel(p_company_name, p_company_name, date_format(now(), '%d%m%Y%H%i%s'), p_active, null, null, null, @v_channel_id);
 
     /*vincula canal ao usuário*/
     CALL prc_user_channel(@v_user_id, @v_channel_id);
