@@ -97,11 +97,13 @@ module.exports = function(app) {
         });         
     });     
 
-    app.get(baseUrl + 'channel', function(req, res) {
+    app.get(baseUrl + ':user/channel', function(req, res) {
+        var userId = req.params.user;
+
         var connection = app.database.connection();
         var channel = new app.database.repository.channel(connection);   
         
-        channel.list(function(exception, result) {
+        channel.list(userId, function(exception, result) {
             if(exception) {
                 return res.status(500).send(exception);
             }

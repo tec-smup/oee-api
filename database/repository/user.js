@@ -10,6 +10,7 @@ user.prototype.autentication = function(username, callback) {
         select case admin when 1 then 1 else 0 end as admin
              , username
              , password 
+             , id
           from user 
          where username = ? 
            and active = true

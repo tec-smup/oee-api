@@ -67,7 +67,7 @@ channel.prototype.timeShift = function(params, callback) {
     this._connection.query(query, [parseInt(params.total), parseInt(params.channel_id)], callback);
 }
 
-channel.prototype.list = function(callback) {
+channel.prototype.list = function(userId, callback) {
     var query = `
 		select c.id
 			 , c.name
@@ -79,10 +79,12 @@ channel.prototype.list = function(callback) {
 			 , c.time_shift
 			 , initial_turn
 			 , final_turn
-		  from channel c
+          from channel c
+         inner join user_channel uc on uc.channel_id = c.id
+         where uc.user_id = ?
 		 order by c.id	
 	`; 
-    this._connection.query(query, [], callback);
+    this._connection.query(query, [parseInt(userId)], callback);
 }
 
 channel.prototype.save = function(data, callback) {

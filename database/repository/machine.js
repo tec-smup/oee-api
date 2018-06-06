@@ -34,9 +34,9 @@ machine.prototype.delete = function(data, callback) {
     this._connection.query("call prc_delete_machine_data(?)", [data.code], callback);    
 }
 
-machine.prototype.list = function(callback) {
+machine.prototype.list = function(userId, callback) {
     var query = `
-		select code
+		select distinct code
 			 , name
 			 , department
 			 , product
@@ -44,8 +44,11 @@ machine.prototype.list = function(callback) {
 			 , DATE_FORMAT(next_maintenance, '%d/%m/%Y') as next_maintenance
 			 , concat('[', code, '] ', name) as dropdown_label
 		  from machine_data	
+         inner join channel_machine cm on cm.machine_code = code
+         inner join user_channel uc on uc.channel_id = cm.channel_id
+         where uc.user_id = ?
 	`;
-    this._connection.query(query, [], callback);
+    this._connection.query(query, [parseInt(userId)], callback);
 }
 
 module.exports = function() {

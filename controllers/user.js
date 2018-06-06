@@ -34,7 +34,7 @@ module.exports = function(app) {
             }
 
             jwt.sign(
-                { username: result[0].username, admin: result[0].admin }, 
+                { username: result[0].username, admin: result[0].admin, id: result[0].id }, 
                 app.get('JWT_SECRET'), 
                 { expiresIn: '2h' }, 
                 function(err, token) {
@@ -43,7 +43,8 @@ module.exports = function(app) {
                             success: false,
                             message: 'Erro na geração do token de autenticação',
                             token: '',
-                            admin: false
+                            admin: false,
+                            id: 0
                         });
                     }
                     else {
@@ -51,7 +52,8 @@ module.exports = function(app) {
                             success: true,
                             message: '',
                             token: token,
-                            admin: result[0].admin
+                            admin: result[0].admin,
+                            id: result[0].id
                         });
                     }
                 });
