@@ -88,14 +88,15 @@ channel.prototype.list = function(userId, callback) {
 }
 
 channel.prototype.save = function(data, callback) {
-    this._connection.query("call prc_channel(?,?,?,?,?,?,?)", [
+    this._connection.query("set @channelId = 0; call prc_channel(?,?,?,?,?,?,?,?,@channelId)", [
         data.name,
         data.description,
         data.token,
         data.active,
         data.time_shift,
 		data.initial_turn,
-		data.final_turn
+        data.final_turn,
+        data.userId
     ], callback);
 }
 

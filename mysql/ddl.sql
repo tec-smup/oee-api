@@ -155,13 +155,15 @@ alter table channel_feed_config add constraint fk_feed_field_channel foreign key
 DROP procedure IF EXISTS `prc_machine_data`;
 
 DELIMITER $$
+USE `oee`$$
 CREATE PROCEDURE `prc_machine_data`(
 	in p_code varchar(10),
     in p_name varchar(20),
     in p_department varchar(100),
     in p_product varchar(100),
     in p_last_maintenance date,
-    in p_next_maintenance date
+    in p_next_maintenance date,
+    in p_user_id int
 )
 begin   
 	if exists (select 1 from machine_data where code = p_code) then 
@@ -170,6 +172,9 @@ begin
     end if;
     insert into machine_data(code, name, department, product, last_maintenance, next_maintenance)
     values(p_code, p_name, p_department, p_product, p_last_maintenance, p_next_maintenance);
+    
+    insert into channel_machine(channel_id, machine_code)
+    select channel_id, p_code from user_channel where user_id = p_user_id;
 end$$
 
 DELIMITER ;
@@ -179,17 +184,21 @@ DELIMITER ;
 DROP procedure IF EXISTS `prc_delete_machine_data`;
 
 DELIMITER $$
+USE `oee`$$
 CREATE PROCEDURE `prc_delete_machine_data`(in p_code varchar(10))
 BEGIN
-    set @msg = concat('Não é possível excluir a máquina ', p_code, '. Existem dados de medições vinculados a ela.');
+	declare msg varchar(100);
+    set msg = concat('Não é possível excluir a máquina ', p_code, ' pois existem medições vinculadas a ela');
 	if exists (select 1 from feed where mc_cd = p_code) then 
 		signal sqlstate '99999'
-		set message_text = @msg;
+		set message_text = msg;
     end if;
+    delete from channel_machine where machine_code = p_code;
     delete from machine_data where code = p_code;
 END$$
 
 DELIMITER ;
+
 /*prc_delete_machine_data*/
 
 
@@ -207,10 +216,12 @@ BEGIN
 		signal sqlstate '99999'
 		set message_text = @msg;
     end if;
+    delete from user_channel where channel_id = p_channel_id;
     delete from channel where id = p_channel_id; 
 END$$
 
 DELIMITER ;
+
 /*prc_delete_channel*/
 
 /*prc_channel*/
@@ -226,6 +237,7 @@ CREATE PROCEDURE `prc_channel`(
     in p_time_shift int(11),
 	in p_initial_turn char(5),
 	in p_final_turn char(5),
+    in p_user_id int,
     out p_channel_id int(11)
 )
 BEGIN
@@ -236,6 +248,7 @@ BEGIN
     insert into channel(name, description, token, active, created_at, updated_at, time_shift, initial_turn, final_turn)
     values(p_name, p_description, p_token, p_active, now(), now(), p_time_shift, p_initial_turn, p_final_turn);
     set p_channel_id = LAST_INSERT_ID();
+    call prc_user_channel(p_user_id, p_channel_id);
 END$$
 
 DELIMITER ;
@@ -265,7 +278,7 @@ DROP procedure IF EXISTS `prc_user`;
 
 DELIMITER $$
 USE `oee`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `prc_user`(
+CREATE PROCEDURE `prc_user`(
 	in p_username varchar(100),
 	in p_password varchar(500),
 	in p_active bit,
@@ -311,16 +324,19 @@ DELIMITER ;
 /*prc_user_channel*/
 DROP procedure IF EXISTS `prc_user_channel`;
 
-CREATE PROCEDURE prc_user_channel (
+DELIMITER $$
+USE `oee`$$
+CREATE PROCEDURE `prc_user_channel`(
 	in p_user_id int(11),
 	in p_channel_id int(11)
 )
 BEGIN
-	insert into user_channel(user_id, channel_id)
-    values(p_user_id, p_channel_id);
+	if not exists (select 1 from user_channel where user_id = p_user_id and channel_id = p_channel_id) then 
+		insert into user_channel(user_id, channel_id) values(p_user_id, p_channel_id);
+    end if;
 END$$
 
-DELIMITER;
+DELIMITER ;
 /*prc_user_channel*/
 
 /*prc_channel_machine*/
@@ -343,7 +359,7 @@ DROP procedure IF EXISTS `prc_user_mobile`;
 
 DELIMITER $$
 USE `oee`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `prc_user_mobile`(
+CREATE PROCEDURE `prc_user_mobile`(
 	in p_company_name varchar(200),
 	in p_username varchar(100),
 	in p_password varchar(500),
@@ -375,7 +391,7 @@ BEGIN
     CALL prc_user(p_username, p_password, p_active, p_admin, p_company_name, @v_user_id);
     
     /*cria canal do usuário*/
-    CALL prc_channel(p_company_name, p_company_name, date_format(now(), '%d%m%Y%H%i%s'), p_active, null, null, null, @v_channel_id);
+    CALL prc_channel(p_company_name, p_company_name, date_format(now(), '%d%m%Y%H%i%s'), p_active, null, null, null, @v_user_id, @v_channel_id);
 
     /*vincula canal ao usuário*/
     CALL prc_user_channel(@v_user_id, @v_channel_id);
