@@ -300,27 +300,6 @@ DELIMITER ;
 
 /*prc_user*/
 
-/*prc_delete_user*/
-DROP procedure IF EXISTS `prc_delete_user`;
-
-DELIMITER $$
-USE `oee`$$
-CREATE PROCEDURE prc_delete_user (in p_user_id int)
-BEGIN
-	/*set @name = (select name from channel where id = p_channel_id);
-    
-    set @msg = concat('Não é possível excluir o canal ', @name, '. Existem dados de medição vinculados a ele.');
-    
-	if exists (select 1 from feed where ch_id = p_channel_id) then 
-		signal sqlstate '99999'
-		set message_text = @msg;
-    end if;*/
-    delete from user where id = p_user_id; 
-END$$
-
-DELIMITER ;
-/*prc_delete_user*/
-
 /*prc_user_channel*/
 DROP procedure IF EXISTS `prc_user_channel`;
 
