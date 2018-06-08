@@ -11,6 +11,7 @@ create table user
     active bit not null default true,
     admin bit not null default false,
 	comnpany_name varchar(200) null,
+    phone varchar(11) null,
     created_at timestamp not null default CURRENT_TIMESTAMP
 );
 
@@ -284,6 +285,7 @@ CREATE PROCEDURE `prc_user`(
 	in p_active bit,
 	in p_admin bit,
     in p_company_name varchar(200),
+    in p_phone varchar(11),
     out p_user_id int(11)
 )
 BEGIN
@@ -291,8 +293,8 @@ BEGIN
 		signal sqlstate '99999'
 		set message_text = 'Usuário informado já existe';
     end if;
-    insert into user(username, password, active, admin, company_name)
-    values(p_username, p_password, p_active, p_admin, p_company_name);
+    insert into user(username, password, active, admin, company_name, phone)
+    values(p_username, p_password, p_active, p_admin, p_company_name, p_phone);
     set p_user_id = LAST_INSERT_ID();
 END$$
 
@@ -343,7 +345,8 @@ CREATE PROCEDURE `prc_user_mobile`(
 	in p_username varchar(100),
 	in p_password varchar(500),
     in p_active bit,
-	in p_admin bit
+	in p_admin bit,
+    in p_phone varchar(11)
 )
 BEGIN
     set @v_maq1_test = 'MAQ1*';
@@ -367,7 +370,7 @@ BEGIN
     end if;     
     
     /*cria usuário*/	
-    CALL prc_user(p_username, p_password, p_active, p_admin, p_company_name, @v_user_id);
+    CALL prc_user(p_username, p_password, p_active, p_admin, p_company_name, p_phone, @v_user_id);
     
     /*cria canal do usuário*/
     CALL prc_channel(p_company_name, p_company_name, date_format(now(), '%d%m%Y%H%i%s'), p_active, null, null, null, @v_user_id, @v_channel_id);

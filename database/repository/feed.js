@@ -68,6 +68,36 @@ feed.prototype.chart = function(data, callback) {
         , callback);
 }
 
+feed.prototype.mobile = function(user, date, limit, callback) {
+    let sql = `
+        select f.id
+            , f.ch_id
+            , f.mc_cd
+            , f.field2
+            , f.field4
+            , date_format(f.inserted_at, '%H:%i:%s') as time  
+            , concat(
+                case f.field4 when 0
+                then 0 
+                else 
+                round(((f.field2 / f.field4)*100),2) 
+                end, '%') as oee
+        from feed f
+        inner join channel_machine cm on cm.channel_id = f.ch_id and cm.machine_code = f.mc_cd
+        inner join user_channel uc on uc.channel_id = cm.channel_id
+        where uc.user_id = ?
+        and DATE_FORMAT(f.inserted_at, '%d%m%Y') = ? 
+        order by f.inserted_at desc
+        limit ?
+    `;
+    this._connection.query(sql, [
+            parseInt(user), 
+            date, 
+            parseInt(limit),
+        ]
+        , callback);
+}
+
 module.exports = function() {
     return feed;
 };

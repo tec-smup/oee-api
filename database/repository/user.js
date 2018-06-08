@@ -35,12 +35,13 @@ user.prototype.list = function(callback) {
 user.prototype.save = function(data, callback) {
     let salt = bcrypt.genSaltSync(saltRounds);
     if(data.isMobile) {
-        this._connection.query("call prc_user_mobile(?,?,?,?,?)", [
+        this._connection.query("call prc_user_mobile(?,?,?,?,?,?)", [
             data.company_name,
             data.username,
             bcrypt.hashSync(data.password, salt),
             data.active,
-            data.admin
+            data.admin,
+            data.phone
         ], callback);
     }
     else {

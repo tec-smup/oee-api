@@ -79,8 +79,10 @@ module.exports = function(app) {
         //cria asserts para validação
         req.assert('username', 'Preencha o usuário corretamente.').notEmpty();
         req.assert('password', 'Preencha a senha corretamente.').notEmpty();
-        if(bodyData.isMobile)
+        if(bodyData.isMobile) {
             req.assert('company_name', 'Preencha a empresa corretamente.').notEmpty();
+            req.assert('phone', 'Preencha o telefone corretamente.').notEmpty();
+        }
 
         var errors = req.validationErrors();
         if(errors)
