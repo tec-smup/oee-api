@@ -27,6 +27,7 @@ user.prototype.list = function(callback) {
             , case u.admin when 1 then 'Sim' else 'Não' end as admin
             , DATE_FORMAT(u.created_at, '%d/%m/%Y %H:%i:%s') as created_at
             , company_name
+            , phone
          from user u	
 	`; 
     this._connection.query(query, [], callback);
@@ -45,12 +46,13 @@ user.prototype.save = function(data, callback) {
         ], callback);
     }
     else {
-        this._connection.query("set @userId = 0; call prc_user(?,?,?,?,?,@userId)", [
+        this._connection.query("set @userId = 0; call prc_user(?,?,?,?,?,?,@userId)", [
             data.username,
             bcrypt.hashSync(data.password, salt),
             data.active,
             data.admin,
-            data.company_name
+            data.company_name,
+            data.phone
         ], callback);
     }
 }
