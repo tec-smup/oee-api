@@ -62,11 +62,15 @@ user.prototype.update = function(data, callback) {
     let query = `
         update user set active = ?
                       , admin = ? 	
+                      , company_name = ?
+                      , phone = ?
 				  where id = ?
 	`;
     this._connection.query(query, [
 		data.active, 
-		data.admin, 
+        data.admin, 
+        data.company_name,
+        data.phone,
 		data.id
 	], callback);    
 }
