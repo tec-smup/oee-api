@@ -43,26 +43,12 @@ feed.prototype.lastFeed = function(data, callback) {
 }
 
 feed.prototype.chart = function(data, callback) {
-    let sql = `
-        select date_format(f.inserted_at, '%H:%i:%s') as time  
-            , case f.field4 when 0
-                then 0 
-            else 
-                round(((f.field2 / f.field4)*100),2) 
-            end as oee            
-        from feed f
-        inner join channel c on c.id = f.ch_id
-        inner join machine_data md on md.code = f.mc_cd
-        inner join feed_config fc on fc.channel_id = c.id
-        where date_format(f.inserted_at, '%d/%m/%Y %H:%i') between ? and ?
-        and ch_id = ?
-        and mc_cd = ?
-        order by f.inserted_at
-    `;
+    let sql = 'call prc_chart(?,?,?,?)';
+
     this._connection.query(sql, [
             data.date_ini, 
             data.date_fin, 
-            data.ch_id, 
+            parseInt(data.ch_id), 
             data.mc_cd
         ]
         , callback);

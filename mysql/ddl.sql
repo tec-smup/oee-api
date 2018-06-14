@@ -61,7 +61,8 @@ create table feed_config
     field2 varchar(100) not null,
     field3 varchar(100) not null,
     field4 varchar(100) not null,
-    field5 varchar(100) not null
+    field5 varchar(100) not null,
+    chart_sql text null,
 );
 alter table feed_config add constraint fk_feed_config_channel foreign key(channel_id) references channel(id);
 
@@ -386,5 +387,34 @@ END$$
 
 DELIMITER ;
 /*prc_user_mobile*/
+
+/*prc_chart*/
+DROP procedure IF EXISTS `prc_chart`;
+
+DELIMITER $$
+USE `oee`$$
+CREATE PROCEDURE prc_chart (
+	in p_date_ini varchar(20),
+    in p_date_fin varchar(20),
+    in p_ch_id int(11),
+    in p_mc_cd varchar(10)
+)
+BEGIN
+	SET @chart_sql = (select chart_sql 
+					   from feed_config 
+					  where channel_id = p_ch_id);
+	
+    SET @chart_sql = REPLACE(@chart_sql, '__date_ini', p_date_ini);
+    SET @chart_sql = REPLACE(@chart_sql, '__date_fin', p_date_fin);
+    SET @chart_sql = REPLACE(@chart_sql, '__ch_id', p_ch_id);
+    SET @chart_sql = REPLACE(@chart_sql, '__mc_cd', p_mc_cd);
+    
+    PREPARE stmt FROM @chart_sql;
+	EXECUTE stmt;
+	DEALLOCATE PREPARE stmt;
+END$$
+
+DELIMITER ;
+/*prc_chart*/
 
 /*stored procedures*/

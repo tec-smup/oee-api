@@ -60,7 +60,7 @@ module.exports = function(app) {
             if(exception) {
                 return res.status(400).send(exception);
             }
-            res.send(result); 
+            res.send(result[0]); 
             connection.end();                 
         });                          
     });   
