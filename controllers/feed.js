@@ -65,15 +65,17 @@ module.exports = function(app) {
         });                          
     });   
     
-    app.get(baseUrl + ':user/:date/:limit/feed/mobile', function(req, res) {
+    app.get(baseUrl + ':user/:channel/:machine/:date/:limit/feed/mobile', function(req, res) {
         var userId = req.params.user;
+        var channelId = req.params.channel;
+        var machineCode = req.params.machine;
         var date = req.params.date;
         var limit = req.params.limit;
 
         var connection = app.database.connection();
         var feed = new app.database.repository.feed(connection);  
         
-        feed.mobile(userId, date, limit, function(exception, result) {
+        feed.mobile(userId, channelId, machineCode, date, limit, function(exception, result) {
             if(exception) {
                 return res.status(400).send(exception);
             }
