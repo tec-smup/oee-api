@@ -393,16 +393,21 @@ DROP procedure IF EXISTS `prc_chart`;
 
 DELIMITER $$
 USE `oee`$$
-CREATE PROCEDURE prc_chart (
+CREATE DEFINER=`root`@`localhost` PROCEDURE `prc_chart`(
 	in p_date_ini varchar(20),
     in p_date_fin varchar(20),
     in p_ch_id int(11),
     in p_mc_cd varchar(10)
 )
 BEGIN
-	SET @chart_sql = (select chart_sql 
+    SET @chart_sql = (select chart_sql 
 					   from feed_config 
 					  where channel_id = p_ch_id);
+                      
+	if @chart_sql is null then 
+		signal sqlstate '99999'
+		set message_text = 'É necessário configurar a fórmula do gráfico para este canal.';
+    end if;                      
 	
     SET @chart_sql = REPLACE(@chart_sql, '__date_ini', p_date_ini);
     SET @chart_sql = REPLACE(@chart_sql, '__date_fin', p_date_fin);
