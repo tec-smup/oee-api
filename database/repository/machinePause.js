@@ -36,10 +36,13 @@ machinePause.prototype.list = function(data, callback) {
             , null as justification
         from feed	f
         inner join machine_data md on md.code = f.mc_cd
+        inner join channel_machine cm on cm.machine_code = md.code
+        inner join user_channel uc on uc.channel_id = cm.channel_id
         where date_format(f.inserted_at, '%d/%m/%Y') = ?
+          and uc.user_id = 1 
         group by f.mc_cd
     `;    
-    this._connection.query(query, [data.date], callback);
+    this._connection.query(query, [data.date, parseInt(data.userId)], callback);
 }
 
 machinePause.prototype.listPauses = function(data, callback) {
@@ -52,11 +55,14 @@ machinePause.prototype.listPauses = function(data, callback) {
              , date_format(mp.inserted_at, '%d/%m/%Y %H:%i:%s') as inserted_at
              , time_format(sec_to_time(mp.pause*60), '%H:%i:%s') as pause
 		  from machine_pause mp
-		 inner join machine_data md on md.code = mp.mc_cd
-		 where date_format(mp.date_ref, '%d/%m/%Y') = ?
+         inner join machine_data md on md.code = mp.mc_cd
+         inner join channel_machine cm on cm.machine_code = md.code
+         inner join user_channel uc on uc.channel_id = cm.channel_id
+         where date_format(mp.date_ref, '%d/%m/%Y') = ?
+           and uc.user_id = ?
 		 order by mp.mc_cd, mp.inserted_at desc 
     `;    
-    this._connection.query(query, [data.date], callback);
+    this._connection.query(query, [data.date, parseInt(data.userId)], callback);
 }
 
 module.exports = function() {

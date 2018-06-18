@@ -31,16 +31,18 @@ feed.prototype.lastFeed = function(data, callback) {
             , fc.field3 as field3_desc
             , fc.field4 as field4_desc
             , fc.field5 as field5_desc
+            , fc.refresh_time
         from feed f
         inner join channel c on c.id = f.ch_id
         inner join machine_data md on md.code = f.mc_cd
         inner join feed_config fc on fc.channel_id = c.id
         where date_format(f.inserted_at, '%d/%m/%Y') = ?
           and f.ch_id = ?
+          and f.mc_cd = ?
         order by f.inserted_at desc
         limit 100
     `;
-    this._connection.query(sql, [data.date, parseInt(data.ch_id)], callback);
+    this._connection.query(sql, [data.date, parseInt(data.ch_id), data.mc_cd], callback);
 }
 
 feed.prototype.chart = function(data, callback) {

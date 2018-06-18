@@ -63,6 +63,7 @@ create table feed_config
     field4 varchar(100) not null,
     field5 varchar(100) not null,
     chart_sql text null,
+    refresh_time int null
 );
 alter table feed_config add constraint fk_feed_config_channel foreign key(channel_id) references channel(id);
 
