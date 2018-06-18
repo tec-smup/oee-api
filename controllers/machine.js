@@ -106,13 +106,14 @@ module.exports = function(app) {
         });        
     });    
 
-    app.get(baseUrl + ':user/machine/list', function(req, res) {
+    app.get(baseUrl + ':user/:channel/machine/list', function(req, res) {
         var userId = req.params.user;
+        var channelId = req.params.channel;
 
         var connection = app.database.connection();
         var machine = new app.database.repository.machine(connection);   
         
-        machine.list(userId, function(exception, result) {
+        machine.list(userId, channelId, function(exception, result) {
             if(exception) {
                 return res.status(500).send(exception);
             }

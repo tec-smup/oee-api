@@ -36,10 +36,11 @@ feed.prototype.lastFeed = function(data, callback) {
         inner join machine_data md on md.code = f.mc_cd
         inner join feed_config fc on fc.channel_id = c.id
         where date_format(f.inserted_at, '%d/%m/%Y') = ?
+          and f.ch_id = ?
         order by f.inserted_at desc
         limit 100
     `;
-    this._connection.query(sql, [data.date], callback);
+    this._connection.query(sql, [data.date, parseInt(data.ch_id)], callback);
 }
 
 feed.prototype.chart = function(data, callback) {
