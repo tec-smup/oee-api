@@ -63,7 +63,8 @@ create table feed_config
     field4 varchar(100) not null,
     field5 varchar(100) not null,
     chart_sql text null,
-    refresh_time int null
+    refresh_time int null,
+    chart_tooltip_desc varchar(50) null
 );
 alter table feed_config add constraint fk_feed_config_channel foreign key(channel_id) references channel(id);
 
@@ -105,6 +106,17 @@ create table machine_pause
 );
 CREATE INDEX code_idx ON machine_pause(mc_cd);
 alter table machine_pause add constraint fk_pause_machine foreign key(mc_cd) references machine_data(code);
+
+create table machine_config
+(
+	id int not null auto_increment primary key,
+    machine_code varchar(10) not null COLLATE latin1_swedish_ci,
+    chart_tooltip_desc varchar(50) null,
+    chart_sql text null,
+    inserted_at timestamp not null default CURRENT_TIMESTAMP
+);
+CREATE INDEX machine_config_idx ON machine_config(machine_code);
+alter table machine_config add constraint fk_machine_config foreign key(machine_code) references machine_data(code);
 
 create table log 
 (
@@ -401,14 +413,14 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `prc_chart`(
     in p_mc_cd varchar(10)
 )
 BEGIN
-    SET @chart_sql = (select chart_sql 
-					   from feed_config 
-					  where channel_id = p_ch_id);
-                      
-	if @chart_sql is null then 
-		signal sqlstate '99999'
-		set message_text = 'É necessário configurar a fórmula do gráfico para este canal.';
-    end if;                      
+	SET @chart_sql = coalesce(
+		(select chart_sql 
+           from machine_config 
+		  where machine_code = p_mc_cd),
+		(select chart_sql 
+		   from feed_config 
+		  where channel_id = p_ch_id)
+	);
 	
     SET @chart_sql = REPLACE(@chart_sql, '__date_ini', p_date_ini);
     SET @chart_sql = REPLACE(@chart_sql, '__date_fin', p_date_fin);
