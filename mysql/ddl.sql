@@ -64,7 +64,8 @@ create table feed_config
     field5 varchar(100) not null,
     chart_sql text null,
     refresh_time int null,
-    chart_tooltip_desc varchar(50) null
+    chart_tooltip_desc varchar(50) null,
+    mobile_sql text null
 );
 alter table feed_config add constraint fk_feed_config_channel foreign key(channel_id) references channel(id);
 
@@ -113,7 +114,8 @@ create table machine_config
     machine_code varchar(10) not null COLLATE latin1_swedish_ci,
     chart_tooltip_desc varchar(50) null,
     chart_sql text null,
-    inserted_at timestamp not null default CURRENT_TIMESTAMP
+    mobile_sql text null
+    inserted_at timestamp not null default CURRENT_TIMESTAMP    
 );
 CREATE INDEX machine_config_idx ON machine_config(machine_code);
 alter table machine_config add constraint fk_machine_config foreign key(machine_code) references machine_data(code);
@@ -434,5 +436,42 @@ END$$
 
 DELIMITER ;
 /*prc_chart*/
+
+/*prc_mobile*/
+DROP procedure IF EXISTS `prc_mobile`;
+
+DELIMITER $$
+USE `oee`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `prc_mobile`(
+	in p_user_id int(11),
+	in p_date varchar(8),
+    in p_ch_id int(11),
+    in p_mc_cd varchar(10),
+    in p_limit int(11)
+)
+BEGIN
+	SET @mobile_sql = coalesce(
+		(select mobile_sql 
+           from machine_config 
+		  where machine_code = p_mc_cd),
+		(select mobile_sql 
+		   from feed_config 
+		  where channel_id = p_ch_id)
+	);
+	
+    SET @mobile_sql = REPLACE(@mobile_sql, '__user_id', p_user_id);
+    SET @mobile_sql = REPLACE(@mobile_sql, '__date', p_date);
+    SET @mobile_sql = REPLACE(@mobile_sql, '__ch_id', p_ch_id);
+    SET @mobile_sql = REPLACE(@mobile_sql, '__mc_cd', p_mc_cd);
+    SET @mobile_sql = REPLACE(@mobile_sql, '__limit', p_limit);
+    
+    PREPARE stmt FROM @mobile_sql;
+	EXECUTE stmt;
+	DEALLOCATE PREPARE stmt;
+END$$
+
+DELIMITER ;
+
+/*prc_mobile*/
 
 /*stored procedures*/
