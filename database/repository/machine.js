@@ -19,10 +19,17 @@ machine.prototype.save = function(data, callback) {
 }
 
 machine.prototype.update = function(data, callback) {
-    let query = "update machine_data set name = ?, department = ?, product = ?, last_maintenance = STR_TO_DATE(?, '%d/%m/%Y'), next_maintenance = STR_TO_DATE(?, '%d/%m/%Y')";
-        query += " where code = ?";
+    let query = `update machine_data 
+                    set name = ?, 
+                        mobile_name = ?,
+                        department = ?, 
+                        product = ?, 
+                        last_maintenance = STR_TO_DATE(?, '%d/%m/%Y'), 
+                        next_maintenance = STR_TO_DATE(?, '%d/%m/%Y')
+                  where code = ?`;
     this._connection.query(query, [
         data.name, 
+        data.mobile_name,
         data.department, 
         data.product, 
         data.last_maintenance, 
@@ -38,7 +45,8 @@ machine.prototype.delete = function(data, callback) {
 machine.prototype.list = function(userId, channelId, callback) {
     var query = `
 		select code
-			 , name
+             , name
+             , mobile_name
 			 , department
 			 , product
 			 , DATE_FORMAT(last_maintenance, '%d/%m/%Y') as last_maintenance 

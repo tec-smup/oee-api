@@ -88,7 +88,7 @@ create table machine_data
 (
     code varchar(10) not null primary key,
     name varchar(20) not null,
-	mobile_name varchar(5) null
+	mobile_name varchar(5) null,
     department varchar(100) null,
     product varchar(100) null,
     last_maintenance date null,
