@@ -7,9 +7,10 @@ machine.prototype.autenticateToken = function(token, callback) {
 }
 
 machine.prototype.save = function(data, callback) {
-    this._connection.query("call prc_machine_data(?,?,?,?,?,?,?)", [
+    this._connection.query("call prc_machine_data(?,?,?,?,?,?,?,?)", [
         data.code,
         data.name,
+        data.mobile_name,
         data.department,
         data.product,
         data.last_maintenance,

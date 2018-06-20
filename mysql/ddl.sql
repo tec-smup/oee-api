@@ -174,9 +174,10 @@ DROP procedure IF EXISTS `prc_machine_data`;
 
 DELIMITER $$
 USE `oee`$$
-CREATE PROCEDURE `prc_machine_data`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `prc_machine_data`(
 	in p_code varchar(10),
     in p_name varchar(20),
+    in p_mobile_name varchar(5),
     in p_department varchar(100),
     in p_product varchar(100),
     in p_last_maintenance date,
@@ -188,14 +189,15 @@ begin
 		signal sqlstate '99999'
 		set message_text = 'Código informado já existe';
     end if;
-    insert into machine_data(code, name, department, product, last_maintenance, next_maintenance)
-    values(p_code, p_name, p_department, p_product, p_last_maintenance, p_next_maintenance);
+    insert into machine_data(code, name, mobile_name, department, product, last_maintenance, next_maintenance)
+    values(p_code, p_name, p_mobile_name, p_department, p_product, p_last_maintenance, p_next_maintenance);
     
-    insert into channel_machine(channel_id, machine_code)
-    select channel_id, p_code from user_channel where user_id = p_user_id;
+    /*insert into channel_machine(channel_id, machine_code)
+    select channel_id, p_code from user_channel where user_id = p_user_id;*/
 end$$
 
 DELIMITER ;
+
 /*prc_machine_data*/
 
 /*prc_delete_machine_data*/
