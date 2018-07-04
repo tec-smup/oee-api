@@ -62,6 +62,22 @@ machine.prototype.list = function(userId, channelId, callback) {
     this._connection.query(query, [parseInt(userId), parseInt(channelId), parseInt(channelId)], callback);
 }
 
+machine.prototype.getMax = function(params, callback) {
+    var query = `
+        select f.field1
+             , f.field2
+             , f.field3
+             , f.field4
+             , f.field5
+          from feed f
+         where id = (select max(id) 
+                       from feed 
+                      where mc_cd = ? 
+                        and ch_id = ?)
+	`;
+    this._connection.query(query, [params.mc_cd, parseInt(params.ch_id)], callback);
+}
+
 module.exports = function() {
     return machine;
 };

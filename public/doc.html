@@ -300,6 +300,36 @@
                         </div>
                     </div>                    
 
+                    <div class="bs-example"> 
+                        <div class="panel panel-primary"> 
+                            <div class="panel-heading"> 
+                                <h3 class="panel-title"><a id="getMax">Última medição</a></h3> 
+                            </div> 
+                            <div class="panel-body">
+                                <p>Obter última medição da máquina.</p>
+                                <pre><span class="origin"></span>/api/CODIGO_MAQ/getMax?token=VALOR</pre>                                
+                                <table class="table"> 
+                                    <thead> 
+                                        <tr> 
+                                            <th>Parâmetro</th> 
+                                            <th>Tipo</th>
+                                            <th>Obrigatório</th> 
+                                            <th>Descrição</th>
+                                        </tr> 
+                                    </thead> 
+                                    <tbody> 
+                                        <tr> 
+                                            <td>&token</td> 
+                                            <td>String</td> 
+                                            <td>Sim</td> 
+                                            <td>Chave de autenticação do canal. Retorna erro 404 caso não informado ou incorreto.</td> 
+                                        </tr>
+                                    </tbody> 
+                                </table>                                
+                            </div> 
+                        </div>
+                    </div>                    
+
                     <footer class="footer">
                         <br/>
                         <p>&copy; StartMeUp!</p>

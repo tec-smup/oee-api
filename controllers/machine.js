@@ -122,6 +122,32 @@ module.exports = function(app) {
         });                    
     });      
 
+    app.get(baseUrl + ':machine/getMax', function(req, res) {
+        var machineId = req.params.machine;
+        var params = req.query;  
+            params.mc_cd = machineId;
+        
+        var connection = app.database.connection();
+        var machine = new app.database.repository.machine(connection);   
+        
+        machine.autenticateToken(params.token, function(exception, result) {
+            if(exception) {
+                res.status(500).send(exception);
+            }
+            if(!result[0]) {
+                return res.status(401).send('Token inválido');
+            }
+            
+            params.ch_id = result[0].id;
+            machine.getMax(params, function(exception, results, fields) {
+                if(exception) {
+                    return res.status(400).send(exception);
+                }
+                return res.send(results);
+            });            
+        });         
+    }); 
+
     app.get(baseUrl + 'machine', function(req, res) { 
         res.sendFile(path.join(__dirname, '../public/', 'index.html'));       
     });    
