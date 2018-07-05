@@ -68,7 +68,7 @@ machine.prototype.getMax = function(params, callback) {
         ${params.fields == 1 ? ", f.field1 as value" 
             : params.fields == 2 ? ", CONVERT(coalesce(f.field2, 0), char) as value" 
             : params.fields == 3 ? ", CONVERT(coalesce(f.field3, 0), char) as value" 
-            : params.fields == 4 ? ", f.field5 as value" 
+            : params.fields == 4 ? ", f.field4 as value" 
             : params.fields == 5 ? ", f.field5 as value": "" }
           from feed f
          where id = (select max(id) 
