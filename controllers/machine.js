@@ -122,12 +122,10 @@ module.exports = function(app) {
         });                    
     });      
 
-    app.get(baseUrl + ':machine/:field/getMax', function(req, res) {
+    app.get(baseUrl + ':machine/getMax', function(req, res) {
         var machineId = req.params.machine;
-        var field = req.params.field;
         var params = req.query;  
             params.mc_cd = machineId;
-            params.field = field;
         
         var connection = app.database.connection();
         var machine = new app.database.repository.machine(connection);   
