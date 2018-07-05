@@ -143,7 +143,7 @@ module.exports = function(app) {
                 if(exception) {
                     return res.status(400).send(exception);
                 }
-                return res.send(results);
+                return res.status(200).send(results[0].value || "");
             });            
         });         
     }); 

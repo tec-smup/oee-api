@@ -65,11 +65,11 @@ machine.prototype.list = function(userId, channelId, callback) {
 machine.prototype.getMax = function(params, callback) {
     var query = `
         select id
-        ${params.fields.indexOf("1") >= 0 ? ", f.field1" : ""}
-        ${params.fields.indexOf("2") >= 0 ? ", f.field2" : ""}
-        ${params.fields.indexOf("3") >= 0 ? ", f.field3" : ""}
-        ${params.fields.indexOf("4") >= 0 ? ", f.field4" : ""}
-        ${params.fields.indexOf("5") >= 0 ? ", f.field5" : ""}
+        ${params.fields == 1 ? ", f.field1 as value" 
+            : params.fields == 2 ? ", CONVERT(coalesce(f.field2, 0), char) as value" 
+            : params.fields == 3 ? ", CONVERT(coalesce(f.field3, 0), char) as value" 
+            : params.fields == 4 ? ", f.field5 as value" 
+            : params.fields == 5 ? ", f.field5 as value": "" }
           from feed f
          where id = (select max(id) 
                        from feed 
