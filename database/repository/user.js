@@ -7,13 +7,20 @@ function user(connection) {
 
 user.prototype.autentication = function(username, callback) {
     let query = `
-        select case admin when 1 then 1 else 0 end as admin
-             , username
-             , password 
-             , id
-          from user 
-         where username = ? 
-           and active = true
+        select case u.admin when 1 then 1 else 0 end as admin
+             , u.username
+             , u.password 
+             , u.id             
+             , c.name
+             , c.initial_turn
+             , c.final_turn
+          from user u
+          left join user_channel uc on uc.user_id = u.id
+          left join channel c on c.id = uc.channel_id
+         where u.username = ?
+           and u.active = true
+         order by c.id
+         limit 1
     `;
     this._connection.query(query, username, callback);
 }

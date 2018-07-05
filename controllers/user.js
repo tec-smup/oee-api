@@ -44,7 +44,10 @@ module.exports = function(app) {
                             message: 'Erro na geração do token de autenticação',
                             token: '',
                             admin: false,
-                            id: 0
+                            id: 0,
+                            channel: '',
+                            initial_turn: '08:00',
+                            final_turn: '18:00'
                         });
                     }
                     else {
@@ -53,7 +56,10 @@ module.exports = function(app) {
                             message: '',
                             token: token,
                             admin: result[0].admin,
-                            id: result[0].id
+                            id: result[0].id,
+                            channel: result[0].name,
+                            initial_turn: result[0].initial_turn,
+                            final_turn: result[0].final_turn                            
                         });
                     }
                 });
