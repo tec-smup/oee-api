@@ -307,7 +307,7 @@
                             </div> 
                             <div class="panel-body">
                                 <p>Obter última medição da máquina.</p>
-                                <pre><span class="origin"></span>/api/CODIGO_MAQ/getMax?token=VALOR</pre>                                
+                                <pre><span class="origin"></span>/api/CODIGO_MAQ/getMax?token=VALOR&fields=VALOR</pre>                                
                                 <table class="table"> 
                                     <thead> 
                                         <tr> 
@@ -323,7 +323,14 @@
                                             <td>String</td> 
                                             <td>Sim</td> 
                                             <td>Chave de autenticação do canal. Retorna erro 404 caso não informado ou incorreto.</td> 
-                                        </tr>
+                                        </tr>   
+                                        <tr> 
+                                            <td>&fields</td> 
+                                            <td>String</td> 
+                                            <td>Não</td> 
+                                            <td>Quantidade de campos que deseja selecionar para retorno. Atualmente são de 1 a 5. Devem ser informados separados por virgula (ex:1,2,3,4,5). 
+                                                Se caso não informado, a API retornará somente o id da última medição.</td> 
+                                        </tr>                                                                             
                                     </tbody> 
                                 </table>                                
                             </div> 
