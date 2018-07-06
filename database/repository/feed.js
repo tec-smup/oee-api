@@ -7,7 +7,18 @@ feed.prototype.autenticateToken = function(token, callback) {
 }
 
 feed.prototype.save = function(data, callback) {
-    this._connection.query("insert into feed set ?", data, callback);
+    this._connection.query(`
+        call prc_feed_update(?,?,?,?,?,?,?,@timeShift);
+        select @timeShift as timeShift;`, 
+    [
+        data.token,
+        data.mc_cd,
+        data.field1,
+        data.field2,
+        data.field3,
+        data.field4,
+        data.field5,
+    ], callback);    
 }
 
 feed.prototype.update = function(data, callback) {

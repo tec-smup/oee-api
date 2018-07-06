@@ -65,7 +65,7 @@ machine.prototype.list = function(userId, channelId, callback) {
 machine.prototype.getMax = function(params, callback) {
     var query = `
         select id
-        ${params.field == 1 ? ", f.field1 as value" 
+        ${params.fields == 1 ? ", coalesce(f.field1, '') as value" 
             : params.fields == 2 ? ", convert(coalesce(f.field2, 0), char) as value" 
             : params.fields == 3 ? ", convert(coalesce(f.field3, 0), char) as value" 
             : params.fields == 4 ? ", coalesce(f.field4, '') as value" 

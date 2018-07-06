@@ -5,26 +5,15 @@ module.exports = function(app) {
         var query = req.query;        
         var connection = app.database.connection();
         var feed = new app.database.repository.feed(connection);  
-        
-        feed.autenticateToken(query.token, function(exception, result) {
+                      
+        feed.save(query, function(exception, result) {
             if(exception) {
-                return res.status(400).send(exception);
+                return res.status(400).send(exception.sqlMessage);
             }
-            if(!result[0]) {
-                return res.send('0'); //seguindo modelo do thingspeak
-            }
-            query.ch_id = result[0].id;
-            delete query.token; //para não interferir no parse do insert
-            let timeShift = result[0].time_shift;           
-            
-            feed.save(query, function(exception, result) {
-                if(exception) {
-                    return res.status(400).send(exception);
-                }
-                res.send(timeShift.toString()); 
-                connection.end();                 
-            });             
-        });        
+            res.status(200).send(result[1][0].timeShift.toString()); 
+            connection.end();                 
+        });             
+              
     });
 
     app.get(baseUrl + 'feed/lastFeed', function(req, res) {
@@ -45,7 +34,7 @@ module.exports = function(app) {
 					return res.status(400).send(exception);
 				}
 				data.pauses = result;
-				res.send(data);            
+				res.status(200).send(data);            
 			});
             connection.end();                 
         });                          
@@ -60,7 +49,7 @@ module.exports = function(app) {
             if(exception) {
                 return res.status(400).send(exception);
             }
-            res.send(result[0]); 
+            res.status(200).send(result[0]); 
             connection.end();                 
         });                          
     });   
@@ -79,7 +68,7 @@ module.exports = function(app) {
             if(exception) {
                 return res.status(400).send(exception);
             }
-            res.send(result[0]); 
+            res.status(200).send(result[0]); 
             connection.end();                 
         });                          
     });     

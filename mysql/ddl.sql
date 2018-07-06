@@ -483,11 +483,62 @@ DELIMITER ;
 set global event_scheduler = ON;
 
 create event if not exists resetTimeShift 
-	on schedule every 1 day starts '2018-07-05 23:59:59' do	
+	on schedule every 1 day starts '2018-07-05 23:59:00' do	
 	update channel 
 	   set time_shift = 0 
 	 where reset_time_shift = 1;
 
 /*resetTimeShift*/     
+
+/*prc_feed_update*/
+DROP procedure IF EXISTS `prc_feed_update`;
+
+DELIMITER $$
+USE `oee`$$
+CREATE PROCEDURE `prc_feed_update`(
+	in p_token varchar(50),
+    in p_mc_cd varchar(10),
+    in p_field1 varchar(100),
+    in p_field2 float(8,2),
+    in p_field3 float(8,2),
+    in p_field4 float(8,2),
+    in p_field5 varchar(100),
+    out p_time_shift int(11)
+)
+BEGIN
+	declare v_count int(11);
+    declare v_ch_id int(11);
+    declare v_time_shift int(11);
+    
+    select count(*) into v_count 
+      from channel 
+	 where token = p_token;
+    
+    /*canal não existe ou token está duplicado*/
+	if (v_count = 0 or v_count > 1) then 
+		signal sqlstate '99999'
+		set message_text = 'Token inválido';
+    end if;        
+    
+	select id, time_shift 
+      into v_ch_id, v_time_shift
+      from channel 
+	 where token = p_token;
+     
+	/*maquina pertence ao canal?*/
+	if not exists (select 1 from channel_machine where channel_id = v_ch_id and machine_code = p_mc_cd) then 
+		signal sqlstate '99999'
+		set message_text = 'Máquina informada não pertence ao canal';
+    end if;     
+			
+    set p_time_shift = v_time_shift;
+    
+    insert into feed(ch_id, mc_cd, field1, field2, field3, field4, field5)
+    values(v_ch_id, p_mc_cd, p_field1, p_field2, p_field3, p_field4, p_field5);
+    
+END$$
+
+DELIMITER ;
+/*prc_feed_update*/
 
 /*stored procedures*/
