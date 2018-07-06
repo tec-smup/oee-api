@@ -26,7 +26,8 @@ create table channel
 	updated_at timestamp not null default CURRENT_TIMESTAMP,
     time_shift int null default 0,
 	initial_turn char(5) null,
-	final_turn char(5) null
+	final_turn char(5) null,
+    reset_time_shift bit null
 );
 
 create table channel_machine 
@@ -476,5 +477,17 @@ END$$
 DELIMITER ;
 
 /*prc_mobile*/
+
+/*resetTimeShift*/
+
+set global event_scheduler = ON;
+
+create event if not exists resetTimeShift 
+	on schedule every 1 day starts '2018-07-05 23:59:59' do	
+	update channel 
+	   set time_shift = 0 
+	 where reset_time_shift = 1;
+
+/*resetTimeShift*/     
 
 /*stored procedures*/
