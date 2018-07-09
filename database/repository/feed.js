@@ -1,29 +1,60 @@
-function feed(connection) {
-    this._connection = connection;
+function feed(pool) {
+    this.pool = pool;
 }
 
 feed.prototype.autenticateToken = function(token, callback) {
-    this._connection.query("select id, time_shift from channel where token = ?", token, callback);
+    this.pool.getConnection(function(err, connection) {
+        connection.query("select id, time_shift from channel where token = ?", token, function(error, result) {
+            connection.release();
+            callback(error, result);
+        });
+    });    
 }
 
 feed.prototype.save = function(data, callback) {
-    this._connection.query(`
+    this.pool.getConnection(function(err, connection) {
+        connection.query(`
         call prc_feed_update(?,?,?,?,?,?,?,@timeShift);
-        select @timeShift as timeShift;`, 
-    [
-        data.token,
-        data.mc_cd,
-        data.field1,
-        data.field2,
-        data.field3,
-        data.field4,
-        data.field5,
-    ], callback);    
+        select @timeShift as timeShift;`,     
+        [
+            data.token,
+            data.mc_cd,
+            data.field1,
+            data.field2,
+            data.field3,
+            data.field4,
+            data.field5,
+        ], 
+        function(error, result) {
+            connection.release();
+            callback(error, result);
+        });
+    });       
 }
 
 feed.prototype.update = function(data, callback) {
-    this._connection.query("update feed set field1 = ?, field2 = ?, field3 = ?, field4 = ?, field5 = ? where id = ?"
-        , [data.field1, data.field2, data.field3, data.field4, data.field5, data.id], callback);
+    this.pool.getConnection(function(err, connection) {
+        connection.query(`
+        update feed 
+           set field1 = ?
+             , field2 = ?
+             , field3 = ?
+             , field4 = ?
+             , field5 = ? 
+         where id = ?`,     
+        [
+            data.field1, 
+            data.field2, 
+            data.field3, 
+            data.field4, 
+            data.field5, 
+            data.id
+        ], 
+        function(error, result) {
+            connection.release();
+            callback(error, result);
+        });
+    });     
 }
 
 feed.prototype.lastFeed = function(data, callback) {
@@ -53,31 +84,54 @@ feed.prototype.lastFeed = function(data, callback) {
         order by f.inserted_at desc
         limit 100
     `;
-    this._connection.query(sql, [data.date, parseInt(data.ch_id), data.mc_cd], callback);
+    this.pool.getConnection(function(err, connection) {
+        connection.query(sql,     
+        [
+            data.date, 
+            parseInt(data.ch_id), 
+            data.mc_cd
+        ], 
+        function(error, result) {
+            connection.release();
+            callback(error, result);
+        });
+    });    
 }
 
 feed.prototype.chart = function(data, callback) {
     let sql = 'call prc_chart(?,?,?,?)';
 
-    this._connection.query(sql, [
+    this.pool.getConnection(function(err, connection) {
+        connection.query(sql,     
+        [
             data.date_ini, 
             data.date_fin, 
             parseInt(data.ch_id), 
             data.mc_cd
-        ]
-        , callback);
+        ], 
+        function(error, result) {
+            connection.release();
+            callback(error, result);
+        });
+    });
 }
 
 feed.prototype.mobile = function(user, channelId, machineCode, date, limit, callback) {
     let sql = 'call prc_mobile(?,?,?,?,?)';
-    this._connection.query(sql, [
+    this.pool.getConnection(function(err, connection) {
+        connection.query(sql,     
+        [
             parseInt(user), 
             date, 
             parseInt(channelId),
             machineCode,
             parseInt(limit),
-        ]
-        , callback);
+        ], 
+        function(error, result) {
+            connection.release();
+            callback(error, result);
+        });
+    });
 }
 
 module.exports = function() {

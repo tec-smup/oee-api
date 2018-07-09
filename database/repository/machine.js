@@ -1,22 +1,34 @@
-function machine(connection) {
-    this._connection = connection;
+function machine(pool) {
+    this.pool = pool;
 }
 
 machine.prototype.autenticateToken = function(token, callback) {
-    this._connection.query("select id from channel where token = ?", token, callback);
+    this.pool.getConnection(function(err, connection) {
+        connection.query("select id from channel where token = ?", token, function(error, result) {
+            connection.release();
+            callback(error, result);
+        });
+    });    
 }
 
 machine.prototype.save = function(data, callback) {
-    this._connection.query("call prc_machine_data(?,?,?,?,?,?,?,?)", [
-        data.code,
-        data.name,
-        data.mobile_name,
-        data.department,
-        data.product,
-        data.last_maintenance,
-        data.next_maintenance,
-        data.userId
-    ], callback);
+    this.pool.getConnection(function(err, connection) {
+        connection.query("call prc_machine_data(?,?,?,?,?,?,?,?)", 
+        [
+            data.code,
+            data.name,
+            data.mobile_name,
+            data.department,
+            data.product,
+            data.last_maintenance,
+            data.next_maintenance,
+            data.userId
+        ], 
+        function(error, result) {
+            connection.release();
+            callback(error, result);
+        });
+    });
 }
 
 machine.prototype.update = function(data, callback) {
@@ -28,19 +40,36 @@ machine.prototype.update = function(data, callback) {
                         last_maintenance = STR_TO_DATE(?, '%d/%m/%Y'), 
                         next_maintenance = STR_TO_DATE(?, '%d/%m/%Y')
                   where code = ?`;
-    this._connection.query(query, [
-        data.name, 
-        data.mobile_name,
-        data.department, 
-        data.product, 
-        data.last_maintenance, 
-        data.next_maintenance, 
-        data.code
-    ], callback);    
+    
+    this.pool.getConnection(function(err, connection) {
+        connection.query(query, 
+        [
+            data.name, 
+            data.mobile_name,
+            data.department, 
+            data.product, 
+            data.last_maintenance, 
+            data.next_maintenance, 
+            data.code
+        ], 
+        function(error, result) {
+            connection.release();
+            callback(error, result);
+        });
+    });
 }
 
-machine.prototype.delete = function(data, callback) {
-    this._connection.query("call prc_delete_machine_data(?)", [data.code], callback);    
+machine.prototype.delete = function(data, callback) {    
+    this.pool.getConnection(function(err, connection) {
+        connection.query("call prc_delete_machine_data(?)", 
+        [
+            data.code
+        ], 
+        function(error, result) {
+            connection.release();
+            callback(error, result);
+        });
+    });    
 }
 
 machine.prototype.list = function(userId, channelId, callback) {
@@ -58,8 +87,19 @@ machine.prototype.list = function(userId, channelId, callback) {
          inner join user_channel uc on uc.channel_id = cm.channel_id
          where uc.user_id = ?
            and ((uc.channel_id = ?) or ? = 0)
-	`;
-    this._connection.query(query, [parseInt(userId), parseInt(channelId), parseInt(channelId)], callback);
+    `;
+    this.pool.getConnection(function(err, connection) {
+        connection.query(query, 
+        [
+            parseInt(userId), 
+            parseInt(channelId), 
+            parseInt(channelId)
+        ], 
+        function(error, result) {
+            connection.release();
+            callback(error, result);
+        });
+    });
 }
 
 machine.prototype.getMax = function(params, callback) {
@@ -76,7 +116,17 @@ machine.prototype.getMax = function(params, callback) {
                       where mc_cd = ? 
                         and ch_id = ?)
 	`;
-    this._connection.query(query, [params.mc_cd, parseInt(params.ch_id)], callback);
+    this.pool.getConnection(function(err, connection) {
+        connection.query(query, 
+        [
+            params.mc_cd, 
+            parseInt(params.ch_id)
+        ], 
+        function(error, result) {
+            connection.release();
+            callback(error, result);
+        });
+    });
 }
 
 module.exports = function() {

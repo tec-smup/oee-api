@@ -485,7 +485,8 @@ set global event_scheduler = ON;
 create event if not exists resetTimeShift 
 	on schedule every 1 day starts '2018-07-05 23:59:00' do	
 	update channel 
-	   set time_shift = 0 
+	   set time_shift = 0,
+           updated_at = now() 
 	 where reset_time_shift = 1;
 
 /*resetTimeShift*/     

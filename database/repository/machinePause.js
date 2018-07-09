@@ -1,18 +1,30 @@
-function machinePause(connection) {
-    this._connection = connection;
+function machinePause(pool) {
+    this.pool = pool;
 }
 
 machinePause.prototype.autenticateToken = function(token, callback) {
-    this._connection.query("select id from channel where token = ?", token, callback);
+    this.pool.getConnection(function(err, connection) {
+        connection.query("select id from channel where token = ?", token, function(error, result) {
+            connection.release();
+            callback(error, result);
+        });
+    });     
 }
 
-machinePause.prototype.save = function(data, callback) {
-    this._connection.query("call prc_machine_pause(?,?,?,?)", [
-        data.mc_cd,
-        data.pause,
-        data.date_ref,
-        data.justification
-    ], callback);
+machinePause.prototype.save = function(data, callback) {    
+    this.pool.getConnection(function(err, connection) {
+        connection.query("call prc_machine_pause(?,?,?,?)", 
+        [
+            data.mc_cd,
+            data.pause,
+            data.date_ref,
+            data.justification
+        ], 
+        function(error, result) {
+            connection.release();
+            callback(error, result);
+        });
+    });     
 }
 
 machinePause.prototype.list = function(data, callback) {
@@ -41,8 +53,18 @@ machinePause.prototype.list = function(data, callback) {
         where date_format(f.inserted_at, '%d/%m/%Y') = ?
           and uc.user_id = 1 
         group by f.mc_cd
-    `;    
-    this._connection.query(query, [data.date, parseInt(data.userId)], callback);
+    `;  
+    this.pool.getConnection(function(err, connection) {
+        connection.query(query, 
+        [
+            data.date, 
+            parseInt(data.userId)
+        ], 
+        function(error, result) {
+            connection.release();
+            callback(error, result);
+        });
+    });
 }
 
 machinePause.prototype.listPauses = function(data, callback) {
@@ -61,8 +83,18 @@ machinePause.prototype.listPauses = function(data, callback) {
          where date_format(mp.date_ref, '%d/%m/%Y') = ?
            and uc.user_id = ?
 		 order by mp.mc_cd, mp.inserted_at desc 
-    `;    
-    this._connection.query(query, [data.date, parseInt(data.userId)], callback);
+    `; 
+    this.pool.getConnection(function(err, connection) {
+        connection.query(query, 
+        [
+            data.date, 
+            parseInt(data.userId)
+        ], 
+        function(error, result) {
+            connection.release();
+            callback(error, result);
+        });
+    });
 }
 
 module.exports = function() {

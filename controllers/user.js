@@ -13,8 +13,8 @@ module.exports = function(app) {
             });
         }
         
-        var connection = app.database.connection();
-        var user = new app.database.repository.user(connection);
+        var pool = app.database.connection.getPool();
+        var user = new app.database.repository.user(pool);
 
         user.autentication(bodyData.username, function(exception, result) {
             if(exception) {
@@ -67,15 +67,14 @@ module.exports = function(app) {
     });
 
     app.get(baseUrl + 'user', function(req, res) {
-        var connection = app.database.connection();
-        var user = new app.database.repository.user(connection);   
+        var pool = app.database.connection.getPool();
+        var user = new app.database.repository.user(pool);        
         
         user.list(function(exception, result) {
             if(exception) {
                 return res.status(500).send(exception);
             }
             res.send(result);
-            connection.end();
         });
     });     
 
@@ -94,9 +93,9 @@ module.exports = function(app) {
         if(errors)
             return res.status(400).send(errors);
 
-        var connection = app.database.connection();
-        var user = new app.database.repository.user(connection);
-        
+        var pool = app.database.connection.getPool();
+        var user = new app.database.repository.user(pool);
+
         user.save(bodyData, function(exception, result) {
             if(exception) {
                 return res.status(400).send(exception);
@@ -115,8 +114,8 @@ module.exports = function(app) {
         if(errors)
             return res.status(400).send(errors);       
 
-        var connection = app.database.connection();
-        var user = new app.database.repository.user(connection);
+        var pool = app.database.connection.getPool();
+        var user = new app.database.repository.user(pool);        
 
         user.update(bodyData, function(exception, results, fields) {
             if(exception) {
@@ -136,8 +135,8 @@ module.exports = function(app) {
         if(errors)
             return res.status(400).send(errors);         
 
-        var connection = app.database.connection();
-        var user = new app.database.repository.user(connection);
+        var pool = app.database.connection.getPool();
+        var user = new app.database.repository.user(pool);          
                         
         user.delete(bodyData, function(exception, results, fields) {
             if(exception) {

@@ -16,8 +16,8 @@ module.exports = function(app) {
         if(errors)
             return res.status(400).send(errors);
 
-        var connection = app.database.connection();
-        var machinePause = new app.database.repository.machinePause(connection);
+        var pool = app.database.connection.getPool();
+        var machinePause = new app.database.repository.machinePause(pool);
         
         delete bodyData.token;
         machinePause.save(bodyData, function(exception, result) {
@@ -31,8 +31,8 @@ module.exports = function(app) {
 
     app.get(baseUrl + 'machinepause/list', function(req, res) {  
         var query = req.query;      
-        var connection = app.database.connection();
-        var machinePause = new app.database.repository.machinePause(connection);   
+        var pool = app.database.connection.getPool();
+        var machinePause = new app.database.repository.machinePause(pool);   
         var data = {};
         
         machinePause.list(query, function(exception, result) {
@@ -48,7 +48,6 @@ module.exports = function(app) {
                 data.pauses = result;
                 res.send(data);                
             });            
-            connection.end();
         });
     });      
 

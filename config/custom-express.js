@@ -40,8 +40,8 @@ module.exports = function() {
     });
 
     consign()
-        .include('controllers')
-        .then('database')
+        .include('database')
+        .then('controllers')
         .into(app);
 
     return app;

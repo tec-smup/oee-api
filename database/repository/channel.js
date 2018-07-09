@@ -1,9 +1,14 @@
-function channel(connection) {
-    this._connection = connection;
+function channel(pool) {
+    this.pool = pool;
 }
 
 channel.prototype.autenticateToken = function(token, callback) {
-    this._connection.query("select id from channel where token = ?", token, callback);
+    this.pool.getConnection(function(err, connection) {
+        connection.query("select id from channel where token = ?", token, function(error, result) {
+            connection.release();
+            callback(error, result);
+        });
+    });
 }
 
 channel.prototype.getChannel = function(params, callback) {
@@ -18,7 +23,12 @@ channel.prototype.getChannel = function(params, callback) {
         query += " where c.id = ?";
         query += "   and c.token = ?";
 
-    this._connection.query(query, [params.channel_id, params.token], callback);
+    this.pool.getConnection(function(err, connection) {
+        connection.query(query, [params.channel_id, params.token], function(error, result) {
+            connection.release();
+            callback(error, result);
+        });
+    });
 }
 
 channel.prototype.getFeeds = function(params, callback) {
@@ -39,7 +49,12 @@ channel.prototype.getFeeds = function(params, callback) {
         query += " order by f.inserted_at desc";
         query += params.results ? " limit " + params.results : "";
          
-    this._connection.query(query, params.channel_id, callback);
+    this.pool.getConnection(function(err, connection) {
+        connection.query(query, params.channel_id, function(error, result) {
+            connection.release();
+            callback(error, result);
+        });
+    });    
 }
 
 channel.prototype.deleteFeeds = function(params, callback) {
@@ -54,17 +69,27 @@ channel.prototype.deleteFeeds = function(params, callback) {
     var query = " delete from feed";
         query += " where ch_id = ?";
         query += and;
-    
-    this._connection.query(bkpQuery, parseInt(params.channel_id));
-    this._connection.query(query, parseInt(params.channel_id), callback);
+
+    this.pool.getConnection(function(err, connection) {
+        connection.query(bkpQuery, parseInt(params.channel_id));
+        connection.query(query, parseInt(params.channel_id), function(error, result) {
+            connection.release();
+            callback(error, result);
+        });
+    });
 }
 
 channel.prototype.timeShift = function(params, callback) {
     var query = " update channel";
         query += "   set time_shift = ?";
         query += " where id = ?";
-         
-    this._connection.query(query, [parseInt(params.total), parseInt(params.channel_id)], callback);
+       
+    this.pool.getConnection(function(err, connection) {
+        connection.query(query, [parseInt(params.total), parseInt(params.channel_id)], function(error, result) {
+            connection.release();
+            callback(error, result);
+        });
+    });
 }
 
 channel.prototype.list = function(userId, callback) {
@@ -83,21 +108,33 @@ channel.prototype.list = function(userId, callback) {
          inner join user_channel uc on uc.channel_id = c.id
          where uc.user_id = ?
 		 order by c.id	
-	`; 
-    this._connection.query(query, [parseInt(userId)], callback);
+    `; 
+    this.pool.getConnection(function(err, connection) {
+        connection.query(query, [parseInt(userId)], function(error, result) {
+            connection.release();
+            callback(error, result);
+        });
+    });
 }
 
 channel.prototype.save = function(data, callback) {
-    this._connection.query("set @channelId = 0; call prc_channel(?,?,?,?,?,?,?,?,@channelId)", [
-        data.name,
-        data.description,
-        data.token,
-        data.active,
-        data.time_shift,
-		data.initial_turn,
-        data.final_turn,
-        data.userId
-    ], callback);
+    this.pool.getConnection(function(err, connection) {
+        connection.query("set @channelId = 0; call prc_channel(?,?,?,?,?,?,?,?,@channelId)", 
+        [
+            data.name,
+            data.description,
+            data.token,
+            data.active,
+            data.time_shift,
+            data.initial_turn,
+            data.final_turn,
+            data.userId
+        ], 
+        function(error, result) {
+            connection.release();
+            callback(error, result);
+        });
+    });
 }
 
 channel.prototype.update = function(data, callback) {
@@ -112,21 +149,37 @@ channel.prototype.update = function(data, callback) {
 						 , initial_turn = ?
 						 , final_turn = ?	
 				     where id = ?
-	`;
-    this._connection.query(query, [
-		data.name, 
-		data.description, 
-		data.token, 
-		parseInt(data.active), 
-		data.time_shift, 
-		data.initial_turn, 
-		data.final_turn, 
-		data.id
-	], callback);    
+    `;
+    this.pool.getConnection(function(err, connection) {
+        connection.query(query, 
+        [
+            data.name, 
+            data.description, 
+            data.token, 
+            parseInt(data.active), 
+            data.time_shift, 
+            data.initial_turn, 
+            data.final_turn, 
+            data.id
+        ], 
+        function(error, result) {
+            connection.release();
+            callback(error, result);
+        });
+    });
 }
 
 channel.prototype.delete = function(data, callback) {
-    this._connection.query("call prc_delete_channel(?)", [data.id], callback);    
+    this.pool.getConnection(function(err, connection) {
+        connection.query("call prc_delete_channel(?)", 
+        [
+            data.id
+        ], 
+        function(error, result) {
+            connection.release();
+            callback(error, result);
+        });
+    });    
 }
 
 module.exports = function() {

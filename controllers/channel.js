@@ -14,8 +14,8 @@ module.exports = function(app) {
             params.channel_id = channelId;
         var data = {};
         
-        var connection = app.database.connection();
-        var channel = new app.database.repository.channel(connection);   
+        var pool = app.database.connection.getPool();
+        var channel = new app.database.repository.channel(pool);   
         
         channel.getChannel(params, function(exception, result) {
             if(exception) {
@@ -40,7 +40,6 @@ module.exports = function(app) {
                 else {
                     res.send(data);
                 }
-                connection.end();
             });            
         });         
     });  
@@ -50,8 +49,8 @@ module.exports = function(app) {
         var params = req.query;  
             params.channel_id = channelId;
         
-        var connection = app.database.connection();
-        var channel = new app.database.repository.channel(connection);   
+        var pool = app.database.connection.getPool();
+        var channel = new app.database.repository.channel(pool);   
         
         channel.getChannel(params, function(exception, result) {
             if(exception) {
@@ -65,8 +64,7 @@ module.exports = function(app) {
                 if(exception) {
                     return res.status(400).send(exception);
                 }
-                res.send('deleted rows: ' + result.affectedRows); 
-                connection.end();               
+                res.send('deleted rows: ' + result.affectedRows);               
             });            
         });         
     });    
@@ -76,8 +74,8 @@ module.exports = function(app) {
         var params = req.query;  
             params.channel_id = channelId;
         
-        var connection = app.database.connection();
-        var channel = new app.database.repository.channel(connection);   
+        var pool = app.database.connection.getPool();
+        var channel = new app.database.repository.channel(pool);   
         
         channel.getChannel(params, function(exception, result) {
             if(exception) {
@@ -92,7 +90,6 @@ module.exports = function(app) {
                     return res.status(400).send(exception);
                 }
                 res.send(result);
-                connection.end();
             });            
         });         
     });     
@@ -100,15 +97,14 @@ module.exports = function(app) {
     app.get(baseUrl + ':user/channel', function(req, res) {
         var userId = req.params.user;
 
-        var connection = app.database.connection();
-        var channel = new app.database.repository.channel(connection);   
+        var pool = app.database.connection.getPool();
+        var channel = new app.database.repository.channel(pool);   
         
         channel.list(userId, function(exception, result) {
             if(exception) {
                 return res.status(500).send(exception);
             }
             res.send(result);
-            connection.end();
         });
     });    
 
@@ -123,8 +119,8 @@ module.exports = function(app) {
         if(errors)
             return res.status(400).send(errors);
 
-        var connection = app.database.connection();
-        var channel = new app.database.repository.channel(connection);
+        var pool = app.database.connection.getPool();
+        var channel = new app.database.repository.channel(pool);
         
         channel.save(bodyData, function(exception, result) {
             if(exception) {
@@ -147,8 +143,8 @@ module.exports = function(app) {
         if(errors)
             return res.status(400).send(errors);       
 
-        var connection = app.database.connection();
-        var channel = new app.database.repository.channel(connection);
+        var pool = app.database.connection.getPool();
+        var channel = new app.database.repository.channel(pool);
 
         channel.update(bodyData, function(exception, results, fields) {
             if(exception) {
@@ -168,8 +164,8 @@ module.exports = function(app) {
         if(errors)
             return res.status(400).send(errors);         
 
-        var connection = app.database.connection();
-        var channel = new app.database.repository.channel(connection);
+        var pool = app.database.connection.getPool();
+        var channel = new app.database.repository.channel(pool);
                         
         delete bodyData.token;
         channel.delete(bodyData, function(exception, results, fields) {

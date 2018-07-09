@@ -1,8 +1,8 @@
 const bcrypt = require('bcrypt-nodejs');
 const saltRounds = 10;
 
-function user(connection) {
-    this._connection = connection;
+function user(pool) {
+    this.pool = pool;
 }
 
 user.prototype.autentication = function(username, callback) {
@@ -22,7 +22,13 @@ user.prototype.autentication = function(username, callback) {
          order by c.id
          limit 1
     `;
-    this._connection.query(query, username, callback);
+
+    this.pool.getConnection(function(err, connection) {
+        connection.query(query, username, function(error, result) {
+            connection.release();
+            callback(error, result);
+        });
+    });    
 }
 
 user.prototype.list = function(callback) {
@@ -36,31 +42,51 @@ user.prototype.list = function(callback) {
             , company_name
             , phone
          from user u	
-	`; 
-    this._connection.query(query, [], callback);
+    `; 
+    
+    this.pool.getConnection(function(err, connection) {
+        connection.query(query, [], function(error, result) {
+            connection.release();
+            callback(error, result);
+        });
+    });
 }
 
 user.prototype.save = function(data, callback) {
     let salt = bcrypt.genSaltSync(saltRounds);
     if(data.isMobile) {
-        this._connection.query("call prc_user_mobile(?,?,?,?,?,?)", [
-            data.company_name,
-            data.username,
-            bcrypt.hashSync(data.password, salt),
-            data.active,
-            data.admin,
-            data.phone
-        ], callback);
+        this.pool.getConnection(function(err, connection) {
+            connection.query("call prc_user_mobile(?,?,?,?,?,?)", 
+            [
+                data.company_name,
+                data.username,
+                bcrypt.hashSync(data.password, salt),
+                data.active,
+                data.admin,
+                data.phone
+            ], 
+            function(error, result) {
+                connection.release();
+                callback(error, result);
+            });
+        });
     }
     else {
-        this._connection.query("set @userId = 0; call prc_user(?,?,?,?,?,?,@userId)", [
-            data.username,
-            bcrypt.hashSync(data.password, salt),
-            data.active,
-            data.admin,
-            data.company_name,
-            data.phone
-        ], callback);
+        this.pool.getConnection(function(err, connection) {
+            connection.query("set @userId = 0; call prc_user(?,?,?,?,?,?,@userId)", 
+            [
+                data.username,
+                bcrypt.hashSync(data.password, salt),
+                data.active,
+                data.admin,
+                data.company_name,
+                data.phone
+            ], 
+            function(error, result) {
+                connection.release();
+                callback(error, result);
+            });
+        });
     }
 }
 
@@ -72,18 +98,32 @@ user.prototype.update = function(data, callback) {
                       , company_name = ?
                       , phone = ?
 				  where id = ?
-	`;
-    this._connection.query(query, [
-		data.active, 
-        data.admin, 
-        data.company_name,
-        data.phone,
-		data.id
-	], callback);    
+    `;
+    
+    this.pool.getConnection(function(err, connection) {
+        connection.query(query, 
+        [
+            data.active, 
+            data.admin, 
+            data.company_name,
+            data.phone,
+            data.id
+        ], 
+        function(error, result) {
+            connection.release();
+            callback(error, result);
+        });
+    });
 }
 
 user.prototype.delete = function(data, callback) {
-    this._connection.query("call prc_delete_user(?)", [data.id], callback);    
+    this.pool.getConnection(function(err, connection) {
+        connection.query("call prc_delete_user(?)", [data.id], 
+        function(error, result) {
+            connection.release();
+            callback(error, result);
+        });
+    });    
 }
 
 module.exports = function() {
