@@ -1,4 +1,5 @@
 node_modules
 iisnode
 .vscode/
-app.yaml
+/app.yaml
+/nodemon.json
