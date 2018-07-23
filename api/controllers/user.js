@@ -32,7 +32,7 @@ module.exports = function(api) {
 
             jwt.sign(
                 { username: result[0].username, admin: result[0].admin, id: result[0].id }, 
-                app.get('JWT_SECRET'), 
+                process.env.JWT_SECRET, 
                 { expiresIn: '2h' }, 
                 function(err, token) {
                     if(err) {

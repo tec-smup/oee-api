@@ -20,7 +20,7 @@ api.use(channel_route, api.routes.channel);
 api.use(feed_route, api.routes.feed);
 api.use(machinePause_route, api.routes.machinePause);
 api.use(pubsub_route, api.routes.pubSub);
-api.use(user_route, api.routes.pubSub);
+api.use(user_route, api.routes.user);
 
 //rotas não encontradas serão respondidas por essa
 api.use((req, res, next) => {

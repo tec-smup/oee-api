@@ -16,7 +16,7 @@ const messages = [];
 module.exports = function(api) {
 
     this.post = function(req, res, next) {
-        if (req.query.token !== app.get('PUBSUB_VERIFICATION_TOKEN')) {
+        if (req.query.token !== process.env.PUBSUB_VERIFICATION_TOKEN) {
             res.status(400).send();
             return;
         } 
