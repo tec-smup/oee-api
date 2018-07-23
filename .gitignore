@@ -3,3 +3,4 @@ iisnode
 .vscode/
 /app.yaml
 /nodemon.json
+/web.config
