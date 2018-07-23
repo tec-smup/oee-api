@@ -56,7 +56,7 @@ module.exports = function(api) {
         _pool.getConnection(function(err, connection) {
             connection.query(query, 
             [
-                data.date, 
+                data.dateIni, 
                 parseInt(data.userId)
             ], 
             function(error, result) {
@@ -79,14 +79,15 @@ module.exports = function(api) {
              inner join machine_data md on md.code = mp.mc_cd
              inner join channel_machine cm on cm.machine_code = md.code
              inner join user_channel uc on uc.channel_id = cm.channel_id
-             where date_format(mp.date_ref, '%d/%m/%Y') = ?
+             where date_format(mp.date_ref, '%d/%m/%Y') between ? and ?
                and uc.user_id = ?
              order by mp.mc_cd, mp.inserted_at desc 
         `; 
         _pool.getConnection(function(err, connection) {
             connection.query(query, 
             [
-                data.date, 
+                data.dateIni, 
+                data.dateFin, 
                 parseInt(data.userId)
             ], 
             function(error, result) {

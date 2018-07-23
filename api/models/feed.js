@@ -77,7 +77,7 @@ module.exports = function(api) {
             inner join channel c on c.id = f.ch_id
             inner join machine_data md on md.code = f.mc_cd
             inner join feed_config fc on fc.channel_id = c.id
-            where date_format(f.inserted_at, '%d/%m/%Y') = ?
+            where date_format(f.inserted_at, '%d/%m/%Y') between ? and ?
               and f.ch_id = ?
               and f.mc_cd = ?
             order by f.inserted_at desc
@@ -86,7 +86,8 @@ module.exports = function(api) {
         _pool.getConnection(function(err, connection) {
             connection.query(sql,     
             [
-                data.date, 
+                data.dateIni, 
+                data.dateFin, 
                 parseInt(data.ch_id), 
                 data.mc_cd
             ], 
