@@ -1,9 +1,7 @@
-const path = require('path');
+module.exports = function(api) {
+    let _machine = api.models.machine;
 
-module.exports = function(app) {
-	const baseUrl = app.get('BASE_URL');
-	
-    app.post(baseUrl + 'machine', function(req, res) {
+    this.post = function(req, res, next) {
         var bodyData = req.body;
 
         //cria asserts para validação
@@ -14,10 +12,7 @@ module.exports = function(app) {
         if(errors)
             return res.status(400).send(errors);
 
-        var pool = app.database.connection.getPool();
-        var machine = new app.database.repository.machine(pool);
-
-        machine.autenticateToken(bodyData.token, function(exception, result) {
+            _machine.autenticateToken(bodyData.token, function(exception, result) {
             if(exception) {
                 return res.status(500).send(exception);
             }
@@ -30,16 +25,16 @@ module.exports = function(app) {
             bodyData.last_maintenance = bodyData.last_maintenance || null;                       
             
             delete bodyData.token;
-            machine.save(bodyData, function(exception, result) {
+            _machine.save(bodyData, function(exception, result) {
                 if(exception) {
                     return res.status(400).send(exception);
                 }
-                return res.send(bodyData);
+                return res.status(200).send(bodyData);
             });          
-        });        
-    });
+        });                  
+    }; 
 
-    app.post(baseUrl + 'machine/update', function(req, res) {
+    this.update = function(req, res, next) {
         var bodyData = req.body;
 
         //cria asserts para validação
@@ -50,10 +45,7 @@ module.exports = function(app) {
         if(errors)
             return res.status(400).send(errors);       
 
-        var pool = app.database.connection.getPool();
-        var machine = new app.database.repository.machine(pool);
-
-        machine.autenticateToken(bodyData.token, function(exception, result) {
+            _machine.autenticateToken(bodyData.token, function(exception, result) {
             if(exception) {
                 return res.status(500).send(exception);
             }
@@ -66,16 +58,16 @@ module.exports = function(app) {
             bodyData.last_maintenance = bodyData.last_maintenance || null;                       
             
             delete bodyData.token;
-            machine.update(bodyData, function(exception, results, fields) {
+            _machine.update(bodyData, function(exception, results, fields) {
                 if(exception) {
                     return res.status(500).send(exception);
                 }    
                 return res.send(bodyData);           
             });            
-        });        
-    });
+        });                 
+    };
 
-    app.post(baseUrl + 'machine/delete', function(req, res) {
+    this.delete = function(req, res, next) {
         var bodyData = req.body;
 
         //cria asserts para validação
@@ -85,10 +77,7 @@ module.exports = function(app) {
         if(errors)
             return res.status(400).send(errors);         
 
-        var pool = app.database.connection.getPool();
-        var machine = new app.database.repository.machine(pool);
-
-        machine.autenticateToken(bodyData.token, function(exception, result) {
+        _machine.autenticateToken(bodyData.token, function(exception, result) {
             if(exception) {
                 res.status(500).send(exception);
             }
@@ -97,39 +86,33 @@ module.exports = function(app) {
             }
                         
             delete bodyData.token;
-            machine.delete(bodyData, function(exception, results, fields) {
+            _machine.delete(bodyData, function(exception, results, fields) {
                 if(exception) {
                     return res.status(400).send(exception);
                 }
                 return res.send(bodyData);
             });            
-        });        
-    });    
-
-    app.get(baseUrl + ':user/:channel/machine/list', function(req, res) {
+        });                
+    };
+    
+    this.list = function(req, res, next) {
         var userId = req.params.user;
         var channelId = req.params.channel;
-
-        var pool = app.database.connection.getPool();
-        var machine = new app.database.repository.machine(pool);   
         
-        machine.list(userId, channelId, function(exception, result) {
+        _machine.list(userId, channelId, function(exception, result) {
             if(exception) {
                 return res.status(500).send(exception);
             }
             res.send(result);
-        });                    
-    });      
-
-    app.get(baseUrl + ':machine/getMax', function(req, res) {
+        });                
+    }; 
+    
+    this.getMax = function(req, res, next) {
         var machineId = req.params.machine;
         var params = req.query;  
             params.mc_cd = machineId;
-        
-        var pool = app.database.connection.getPool();
-        var machine = new app.database.repository.machine(pool);   
-        
-        machine.autenticateToken(params.token, function(exception, result) {
+                
+        _machine.autenticateToken(params.token, function(exception, result) {
             if(exception) {
                 res.status(500).send(exception);
             }
@@ -138,16 +121,14 @@ module.exports = function(app) {
             }
             
             params.ch_id = result[0].id;
-            machine.getMax(params, function(exception, results, fields) {
+            _machine.getMax(params, function(exception, results, fields) {
                 if(exception) {
                     return res.status(400).send(exception);
                 }
                 return res.status(200).send(results[0].value);
             });            
-        });         
-    }); 
-
-    app.get(baseUrl + 'machine', function(req, res) { 
-        res.sendFile(path.join(__dirname, '../public/', 'index.html'));       
-    });    
-}
+        });                
+    }; 
+    
+    return this;
+};

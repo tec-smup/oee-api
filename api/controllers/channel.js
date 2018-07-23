@@ -5,19 +5,16 @@ const notFound = {
     error: "Not Found"
 };
 
-module.exports = function(app) {
-	const baseUrl = app.get('BASE_URL');
-	
-    app.get(baseUrl + ':channel/get', function(req, res) {
+module.exports = function(api) {
+    let _channel = api.models.channel;
+
+    this.get = function(req, res, next) {
         var channelId = req.params.channel;
         var params = req.query;  
             params.channel_id = channelId;
         var data = {};
         
-        var pool = app.database.connection.getPool();
-        var channel = new app.database.repository.channel(pool);   
-        
-        channel.getChannel(params, function(exception, result) {
+        _channel.getChannel(params, function(exception, result) {
             if(exception) {
                 return res.status(400).send(exception);
             }
@@ -26,7 +23,7 @@ module.exports = function(app) {
             }
             data.channel = result;
 
-            channel.getFeeds(params, function(exception, result) {
+            _channel.getFeeds(params, function(exception, result) {
                 if(exception) {
                     return res.status(400).send(exception);
                 }
@@ -41,18 +38,15 @@ module.exports = function(app) {
                     res.send(data);
                 }
             });            
-        });         
-    });  
+        });                    
+    }; 
 
-    app.get(baseUrl + ':channel/delete', function(req, res) {
+    this.deleteFeeds = function(req, res, next) {
         var channelId = req.params.channel;
         var params = req.query;  
             params.channel_id = channelId;
         
-        var pool = app.database.connection.getPool();
-        var channel = new app.database.repository.channel(pool);   
-        
-        channel.getChannel(params, function(exception, result) {
+        _channel.getChannel(params, function(exception, result) {
             if(exception) {
                 return res.status(400).send(exception);
             }
@@ -60,24 +54,21 @@ module.exports = function(app) {
                 return res.send(notFound); //seguindo modelo do thingspeak
             }
 
-            channel.deleteFeeds(params, function(exception, result) {
+            _channel.deleteFeeds(params, function(exception, result) {
                 if(exception) {
                     return res.status(400).send(exception);
                 }
                 res.send('deleted rows: ' + result.affectedRows);               
             });            
-        });         
-    });    
+        });                 
+    };
 
-    app.get(baseUrl + ':channel/timeShift', function(req, res) {
+    this.timeShift = function(req, res, next) {
         var channelId = req.params.channel;
         var params = req.query;  
             params.channel_id = channelId;
-        
-        var pool = app.database.connection.getPool();
-        var channel = new app.database.repository.channel(pool);   
-        
-        channel.getChannel(params, function(exception, result) {
+                
+        _channel.getChannel(params, function(exception, result) {
             if(exception) {
                 return res.status(400).send(exception);
             }
@@ -85,30 +76,27 @@ module.exports = function(app) {
                 return res.send(notFound); //seguindo modelo do thingspeak
             }
 
-            channel.timeShift(params, function(exception, result) {
+            _channel.timeShift(params, function(exception, result) {
                 if(exception) {
                     return res.status(400).send(exception);
                 }
                 res.send(result);
             });            
-        });         
-    });     
-
-    app.get(baseUrl + ':user/channel', function(req, res) {
+        });               
+    };
+    
+    this.userChannel = function(req, res, next) {
         var userId = req.params.user;
-
-        var pool = app.database.connection.getPool();
-        var channel = new app.database.repository.channel(pool);   
         
-        channel.list(userId, function(exception, result) {
+        _channel.list(userId, function(exception, result) {
             if(exception) {
                 return res.status(500).send(exception);
             }
             res.send(result);
-        });
-    });    
-
-    app.post(baseUrl + 'channel', function(req, res) {
+        });              
+    }; 
+    
+    this.post = function(req, res, next) {
         var bodyData = req.body;
 
         //cria asserts para validação
@@ -118,20 +106,16 @@ module.exports = function(app) {
         var errors = req.validationErrors();
         if(errors)
             return res.status(400).send(errors);
-
-        var pool = app.database.connection.getPool();
-        var channel = new app.database.repository.channel(pool);
         
-        channel.save(bodyData, function(exception, result) {
+        _channel.save(bodyData, function(exception, result) {
             if(exception) {
                 return res.status(400).send(exception);
             }                 
             return res.send(bodyData);
-        });          
-              
-    });
+        });                 
+    }; 
 
-    app.post(baseUrl + 'channel/update', function(req, res) {
+    this.update = function(req, res, next) {
         var bodyData = req.body;
 
         //cria asserts para validação
@@ -143,18 +127,15 @@ module.exports = function(app) {
         if(errors)
             return res.status(400).send(errors);       
 
-        var pool = app.database.connection.getPool();
-        var channel = new app.database.repository.channel(pool);
-
-        channel.update(bodyData, function(exception, results, fields) {
+        _channel.update(bodyData, function(exception, results, fields) {
             if(exception) {
                 return res.status(500).send(exception);
             }    
             return res.send(bodyData);           
         });
-    });
-
-    app.post(baseUrl + 'channel/delete', function(req, res) {
+    };
+    
+    this.delete = function(req, res, next) {
         var bodyData = req.body;
 
         //cria asserts para validação
@@ -164,16 +145,14 @@ module.exports = function(app) {
         if(errors)
             return res.status(400).send(errors);         
 
-        var pool = app.database.connection.getPool();
-        var channel = new app.database.repository.channel(pool);
-                        
         delete bodyData.token;
-        channel.delete(bodyData, function(exception, results, fields) {
+        _channel.delete(bodyData, function(exception, results, fields) {
             if(exception) {
                 return res.status(400).send(exception);
             }
             return res.send(bodyData);
         });
-               
-    });     
-}
+    };
+
+    return this;
+};

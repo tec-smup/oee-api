@@ -1,10 +1,10 @@
 const bcrypt = require('bcrypt-nodejs');
 const jwt = require('jsonwebtoken');
 
-module.exports = function(app) {
-	const baseUrl = app.get('BASE_URL');
-	
-    app.post(baseUrl + 'user/authentication', function(req, res) {
+module.exports = function(api) {
+    let _user = api.models.user;
+
+    this.authentication = function(req, res, next) {
         var bodyData = req.body;
         if(!bodyData.username || !bodyData.password) {
             return res.send({
@@ -13,10 +13,7 @@ module.exports = function(app) {
             });
         }
         
-        var pool = app.database.connection.getPool();
-        var user = new app.database.repository.user(pool);
-
-        user.autentication(bodyData.username, function(exception, result) {
+        _user.autentication(bodyData.username, function(exception, result) {
             if(exception) {
                 return res.status(400).send(exception);
             }
@@ -63,22 +60,19 @@ module.exports = function(app) {
                         });
                     }
                 });
-        });          
-    });
+        });                   
+    }; 
 
-    app.get(baseUrl + 'user', function(req, res) {
-        var pool = app.database.connection.getPool();
-        var user = new app.database.repository.user(pool);        
-        
-        user.list(function(exception, result) {
+    this.list = function(req, res, next) {        
+        _user.list(function(exception, result) {
             if(exception) {
                 return res.status(500).send(exception);
             }
-            res.send(result);
-        });
-    });     
+            res.status(200).send(result);
+        });                 
+    };
 
-    app.post(baseUrl + 'user', function(req, res) {
+    this.post = function(req, res, next) {
         var bodyData = req.body;
 
         //cria asserts para validação
@@ -93,18 +87,15 @@ module.exports = function(app) {
         if(errors)
             return res.status(400).send(errors);
 
-        var pool = app.database.connection.getPool();
-        var user = new app.database.repository.user(pool);
-
-        user.save(bodyData, function(exception, result) {
+        _user.save(bodyData, function(exception, result) {
             if(exception) {
                 return res.status(400).send(exception);
             }                 
             return res.send(bodyData);
-        });
-    });
-    
-    app.post(baseUrl + 'user/update', function(req, res) {
+        });        
+    };
+
+    this.update = function(req, res, next) {
         var bodyData = req.body;
 
         //cria asserts para validação
@@ -114,18 +105,15 @@ module.exports = function(app) {
         if(errors)
             return res.status(400).send(errors);       
 
-        var pool = app.database.connection.getPool();
-        var user = new app.database.repository.user(pool);        
-
-        user.update(bodyData, function(exception, results, fields) {
+        _user.update(bodyData, function(exception, results, fields) {
             if(exception) {
                 return res.status(500).send(exception);
             }    
             return res.send(bodyData);           
         });
-    });
+    };
 
-    app.post(baseUrl + 'user/delete', function(req, res) {
+    this.delete = function(req, res, next) {
         var bodyData = req.body;
 
         //cria asserts para validação
@@ -134,15 +122,14 @@ module.exports = function(app) {
         var errors = req.validationErrors();
         if(errors)
             return res.status(400).send(errors);         
-
-        var pool = app.database.connection.getPool();
-        var user = new app.database.repository.user(pool);          
                         
-        user.delete(bodyData, function(exception, results, fields) {
+        _user.delete(bodyData, function(exception, results, fields) {
             if(exception) {
                 return res.status(400).send(exception);
             }
             return res.send(bodyData);
-        });   
-    });     
-}
+        });        
+    };
+    
+    return this;
+};
