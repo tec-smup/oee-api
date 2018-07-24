@@ -250,7 +250,7 @@ DROP procedure IF EXISTS `prc_channel`;
 
 DELIMITER $$
 USE `oee`$$
-CREATE PROCEDURE `prc_channel`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `prc_channel`(
 	in p_name varchar(100),
     in p_description varchar(500),
     in p_token varchar(50),
@@ -259,6 +259,7 @@ CREATE PROCEDURE `prc_channel`(
 	in p_initial_turn char(5),
 	in p_final_turn char(5),
     in p_user_id int,
+    in p_reset_time_shift bit,
     out p_channel_id int(11)
 )
 BEGIN
@@ -266,8 +267,8 @@ BEGIN
 		signal sqlstate '99999'
 		set message_text = 'Token informado já existe';
     end if;
-    insert into channel(name, description, token, active, created_at, updated_at, time_shift, initial_turn, final_turn)
-    values(p_name, p_description, p_token, p_active, now(), now(), p_time_shift, p_initial_turn, p_final_turn);
+    insert into channel(name, description, token, active, created_at, updated_at, time_shift, initial_turn, final_turn, reset_time_shift)
+    values(p_name, p_description, p_token, p_active, now(), now(), p_time_shift, p_initial_turn, p_final_turn, p_reset_time_shift);
     set p_channel_id = LAST_INSERT_ID();
     call prc_user_channel(p_user_id, p_channel_id);
 END$$

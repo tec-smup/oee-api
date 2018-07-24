@@ -103,6 +103,7 @@ module.exports = function(api) {
                  , c.time_shift
                  , initial_turn
                  , final_turn
+                 , case c.reset_time_shift when 1 then 'Sim' else 'Não' end as reset_time_shift
               from channel c
              inner join user_channel uc on uc.channel_id = c.id
              where uc.user_id = ?
@@ -118,7 +119,7 @@ module.exports = function(api) {
     
     this.save = function(data, callback) {
         _pool.getConnection(function(err, connection) {
-            connection.query("set @channelId = 0; call prc_channel(?,?,?,?,?,?,?,?,@channelId)", 
+            connection.query("set @channelId = 0; call prc_channel(?,?,?,?,?,?,?,?,?,@channelId)", 
             [
                 data.name,
                 data.description,
@@ -127,7 +128,8 @@ module.exports = function(api) {
                 data.time_shift,
                 data.initial_turn,
                 data.final_turn,
-                data.userId
+                data.userId,
+                data.reset_time_shift
             ], 
             function(error, result) {
                 connection.release();
@@ -146,6 +148,7 @@ module.exports = function(api) {
                              , time_shift = ?
                              , initial_turn = ?
                              , final_turn = ?	
+                             , reset_time_shift = ?
                          where id = ?
         `;
         _pool.getConnection(function(err, connection) {
@@ -158,6 +161,7 @@ module.exports = function(api) {
                 data.time_shift, 
                 data.initial_turn, 
                 data.final_turn, 
+                data.reset_time_shift, 
                 data.id
             ], 
             function(error, result) {
