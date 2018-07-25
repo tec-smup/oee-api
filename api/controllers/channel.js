@@ -88,7 +88,7 @@ module.exports = function(api) {
     this.userChannel = function(req, res, next) {
         var userId = req.params.user;
         
-        _channel.list(userId, function(exception, result) {
+        _channel.listByUser(userId, function(exception, result) {
             if(exception) {
                 return res.status(500).send(exception);
             }

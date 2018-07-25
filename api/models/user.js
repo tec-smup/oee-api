@@ -89,6 +89,23 @@ module.exports = function(api) {
         }
     };
     
+    this.changePass = function(data, callback) {
+        let salt = bcrypt.genSaltSync(saltRounds);
+        
+        _pool.getConnection(function(err, connection) {
+            connection.query("update user set password = ? where id = ?", 
+            [
+                bcrypt.hashSync(data.password, salt),
+                data.id
+            ], 
+            function(error, result) {
+                connection.release();
+                callback(error, result);
+            });
+        });
+        
+    };
+
     this.update = function(data, callback) {
         let query = `
             update user set active = ?

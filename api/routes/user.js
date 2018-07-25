@@ -8,6 +8,7 @@ module.exports = function(api) {
     router.post('/', _userController.post);
     router.post('/update', _userController.update);
     router.post('/delete', _userController.delete);
+    router.post('/changePass', _userController.changePass);
 
     return router;
 };

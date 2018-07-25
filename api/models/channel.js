@@ -91,19 +91,12 @@ module.exports = function(api) {
         });
     };
     
-    this.list = function(userId, callback) {
+    this.listByUser = function(userId, callback) {
         var query = `
             select c.id
                  , c.name
                  , c.description
-                 , c.token
                  , case c.active when 1 then 'Ativo' else 'Inativo' end as active
-                 , DATE_FORMAT(c.created_at, '%d/%m/%Y %H:%i:%s') as created_at
-                 , DATE_FORMAT(c.updated_at, '%d/%m/%Y %H:%i:%s') as updated_at
-                 , c.time_shift
-                 , initial_turn
-                 , final_turn
-                 , case c.reset_time_shift when 1 then 'Sim' else 'Não' end as reset_time_shift
               from channel c
              inner join user_channel uc on uc.channel_id = c.id
              where uc.user_id = ?
@@ -117,15 +110,24 @@ module.exports = function(api) {
         });
     };
     
-    this.listAll = function(userId, callback) {
+    this.listAll = function(callback) {
         var query = `
             select c.id
                  , c.name
+                 , c.description
+                 , c.token
+                 , case c.active when 1 then 'Ativo' else 'Inativo' end as active
+                 , DATE_FORMAT(c.created_at, '%d/%m/%Y %H:%i:%s') as created_at
+                 , DATE_FORMAT(c.updated_at, '%d/%m/%Y %H:%i:%s') as updated_at
+                 , c.time_shift
+                 , initial_turn
+                 , final_turn
+                 , case c.reset_time_shift when 1 then 'Sim' else 'Não' end as reset_time_shift
               from channel c
              order by c.name	
         `; 
         _pool.getConnection(function(err, connection) {
-            connection.query(query, [parseInt(userId)], function(error, result) {
+            connection.query(query, [], function(error, result) {
                 connection.release();
                 callback(error, result);
             });

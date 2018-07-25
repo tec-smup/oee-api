@@ -130,6 +130,25 @@ module.exports = function(api) {
             return res.send(bodyData);
         });        
     };
+
+    this.changePass = function(req, res, next) {
+        var bodyData = req.body;
+
+        //cria asserts para validação
+        req.assert('id', 'Usuário não informado.').notEmpty();
+        req.assert('password', 'Senha não informada.').notEmpty();
+
+        var errors = req.validationErrors();
+        if(errors)
+            return res.status(400).send(errors);       
+
+        _user.changePass(bodyData, function(exception, results, fields) {
+            if(exception) {
+                return res.status(500).send(exception);
+            }    
+            return res.send(bodyData);           
+        });
+    };    
     
     return this;
 };
