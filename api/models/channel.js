@@ -117,6 +117,21 @@ module.exports = function(api) {
         });
     };
     
+    this.listAll = function(userId, callback) {
+        var query = `
+            select c.id
+                 , c.name
+              from channel c
+             order by c.name	
+        `; 
+        _pool.getConnection(function(err, connection) {
+            connection.query(query, [parseInt(userId)], function(error, result) {
+                connection.release();
+                callback(error, result);
+            });
+        });
+    };
+
     this.save = function(data, callback) {
         _pool.getConnection(function(err, connection) {
             connection.query("set @channelId = 0; call prc_channel(?,?,?,?,?,?,?,?,?,@channelId)", 

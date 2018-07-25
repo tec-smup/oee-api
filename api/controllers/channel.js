@@ -95,6 +95,15 @@ module.exports = function(api) {
             res.send(result);
         });              
     }; 
+
+    this.listAll = function(req, res, next) {        
+        _channel.listAll(function(exception, result) {
+            if(exception) {
+                return res.status(500).send(exception);
+            }
+            res.send(result);
+        });              
+    };     
     
     this.post = function(req, res, next) {
         var bodyData = req.body;

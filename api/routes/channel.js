@@ -12,6 +12,7 @@ module.exports = function(api) {
     router.post('/', _channelController.post);
     router.post('/update', _channelController.update);
     router.post('/delete', _channelController.delete);
+    router.get('/all', _channelController.listAll);
 
     return router;
 };
