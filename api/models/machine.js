@@ -101,6 +101,43 @@ module.exports = function(api) {
         });
     };
     
+    this.listAll = function(callback) {
+        var query = `
+            select code
+                 , name
+                 , concat('[', code, '] ', name) as dropdown_label
+              from machine_data
+        `;
+        _pool.getConnection(function(err, connection) {
+            connection.query(query, 
+            [], 
+            function(error, result) {
+                connection.release();
+                callback(error, result);
+            });
+        });
+    };
+
+    this.listByChannel = function(channelId, callback) {
+        var query = `
+            select code
+                 , name
+              from machine_data	
+             inner join channel_machine cm on cm.machine_code = code
+             where cm.channel_id = ?
+        `;
+        _pool.getConnection(function(err, connection) {
+            connection.query(query, 
+            [
+                parseInt(channelId)
+            ], 
+            function(error, result) {
+                connection.release();
+                callback(error, result);
+            });
+        });
+    };
+
     this.getMax = function(params, callback) {
         var query = `
             select id

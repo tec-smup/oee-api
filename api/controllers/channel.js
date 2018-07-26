@@ -124,6 +124,26 @@ module.exports = function(api) {
         });                 
     }; 
 
+    this.addMachine = function(req, res, next) {
+        var bodyData = req.body;
+
+        //cria asserts para validação
+        req.assert('channelId', 'Canal não informado.').notEmpty();
+        req.assert('machineCode', 'Máquina não informada.').notEmpty();
+
+        var errors = req.validationErrors();
+        if(errors)
+            return res.status(400).send(errors);
+        
+        _channel.addMachine(bodyData, function(exception, result) {
+            if(exception) {
+                return res.status(400).send(exception);
+            }                 
+            return res.send(bodyData);
+        });                 
+    }; 
+
+
     this.update = function(req, res, next) {
         var bodyData = req.body;
 
@@ -162,6 +182,25 @@ module.exports = function(api) {
             return res.send(bodyData);
         });
     };
+
+    this.deleteMachine = function(req, res, next) {
+        var bodyData = req.body;
+
+        //cria asserts para validação
+        req.assert('channelId', 'Canal não informado.').notEmpty();
+        req.assert('machineCode', 'Máquina não informada.').notEmpty();
+
+        var errors = req.validationErrors();
+        if(errors)
+            return res.status(400).send(errors);         
+
+        _channel.deleteMachine(bodyData, function(exception, results, fields) {
+            if(exception) {
+                return res.status(400).send(exception);
+            }
+            return res.status(200).send(bodyData);
+        });
+    };    
 
     return this;
 };

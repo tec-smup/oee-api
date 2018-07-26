@@ -201,5 +201,33 @@ module.exports = function(api) {
         });    
     };   
 
+    this.addMachine = function(data, callback) {
+        _pool.getConnection(function(err, connection) {
+            connection.query("call prc_channel_machine(?,?)", 
+            [
+                data.channelId,
+                data.machineCode
+            ], 
+            function(error, result) {
+                connection.release();
+                callback(error, result);
+            });
+        });    
+    };
+
+    this.deleteMachine = function(data, callback) {
+        _pool.getConnection(function(err, connection) {
+            connection.query("delete from channel_machine where channel_id = ? and machine_code = ?", 
+            [
+                data.channelId,
+                data.machineCode
+            ], 
+            function(error, result) {
+                connection.release();
+                callback(error, result);
+            });
+        });    
+    };
+
     return this;
 };

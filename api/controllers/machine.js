@@ -106,6 +106,26 @@ module.exports = function(api) {
             res.send(result);
         });                
     }; 
+
+    this.listAll = function(req, res, next) {        
+        _machine.listAll(function(exception, result) {
+            if(exception) {
+                return res.status(500).send(exception);
+            }
+            res.send(result);
+        });                
+    };     
+
+    this.listByChannel = function(req, res, next) {
+        var channelId = req.params.channel;
+        
+        _machine.listByChannel(channelId, function(exception, result) {
+            if(exception) {
+                return res.status(500).send(exception);
+            }
+            res.send(result);
+        });                
+    };     
     
     this.getMax = function(req, res, next) {
         var machineId = req.params.machine;

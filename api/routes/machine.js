@@ -10,6 +10,8 @@ module.exports = function(api) {
     router.post('/', _machineController.post);
     router.post('/update', _machineController.update);
     router.post('/delete', _machineController.delete);    
+    router.get('/channel/:channel', _machineController.listByChannel);    
+    router.get('/list', _machineController.listAll);    
 
     return router;
 };

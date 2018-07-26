@@ -10,8 +10,10 @@ module.exports = function(api) {
 
     router.get('/:channel/delete', _channelController.deleteFeeds); 
     router.post('/', _channelController.post);
+    router.post('/machine', _channelController.addMachine);
     router.post('/update', _channelController.update);
     router.post('/delete', _channelController.delete);
+    router.post('/delete/machine', _channelController.deleteMachine);
     router.get('/all', _channelController.listAll);
 
     return router;
