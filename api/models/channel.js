@@ -135,8 +135,24 @@ module.exports = function(api) {
     };
 
     this.save = function(data, callback) {
+        let query = `
+            call prc_channel(?,?,?,?,?,?,?,?,?,@channelId);
+            select c.id
+                 , c.name
+                 , c.description
+                 , c.token
+                 , case c.active when 1 then 'Ativo' else 'Inativo' end as active
+                 , DATE_FORMAT(c.created_at, '%d/%m/%Y %H:%i:%s') as created_at
+                 , DATE_FORMAT(c.updated_at, '%d/%m/%Y %H:%i:%s') as updated_at
+                 , c.time_shift
+                 , initial_turn
+                 , final_turn
+                 , case c.reset_time_shift when 1 then 'Sim' else 'Não' end as reset_time_shift
+              from channel c
+             where c.id = @channelId
+        `;
         _pool.getConnection(function(err, connection) {
-            connection.query("set @channelId = 0; call prc_channel(?,?,?,?,?,?,?,?,?,@channelId)", 
+            connection.query(query, 
             [
                 data.name,
                 data.description,

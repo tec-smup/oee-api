@@ -227,7 +227,8 @@ DELIMITER ;
 DROP procedure IF EXISTS `prc_delete_channel`;
 
 DELIMITER $$
-CREATE PROCEDURE `prc_delete_channel`(in p_channel_id int)
+USE `oee`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `prc_delete_channel`(in p_channel_id int)
 BEGIN
 	set @name = (select name from channel where id = p_channel_id);
     
@@ -238,10 +239,12 @@ BEGIN
 		set message_text = @msg;
     end if;
     delete from user_channel where channel_id = p_channel_id;
+    delete from feed_config where channel_id = p_channel_id;
     delete from channel where id = p_channel_id; 
 END$$
 
 DELIMITER ;
+
 
 /*prc_delete_channel*/
 
@@ -271,6 +274,9 @@ BEGIN
     values(p_name, p_description, p_token, p_active, now(), now(), p_time_shift, p_initial_turn, p_final_turn, p_reset_time_shift);
     set p_channel_id = LAST_INSERT_ID();
     call prc_user_channel(p_user_id, p_channel_id);
+    
+    insert into feed_config(channel_id, field1, field2, field3, field4, field5, refresh_time, chart_tooltip_desc) 
+    values(p_channel_id, 'Descrição campo 1', 'Descrição campo 2', 'Descrição campo 3', 'Descrição campo 4', 'Descrição campo 5', 300, 'OEE: __value%');
 END$$
 
 DELIMITER ;

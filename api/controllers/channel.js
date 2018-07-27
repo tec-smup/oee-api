@@ -120,7 +120,7 @@ module.exports = function(api) {
             if(exception) {
                 return res.status(400).send(exception);
             }                 
-            return res.send(bodyData);
+            return res.send(result[1][0] || bodyData);
         });                 
     }; 
 
