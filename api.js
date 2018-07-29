@@ -14,6 +14,7 @@ const pubsub_route = process.env.BASE_URL + 'pubsub';
 const user_route = process.env.BASE_URL + 'user';
 const userChannel_route = process.env.BASE_URL + 'userchannel';
 const feedConfig_route = process.env.BASE_URL + 'channelconfig';
+const machineConfig_route = process.env.BASE_URL + 'machineconfig';
 
 //rotas que ouvimos
 api.use(index_route, api.routes.index);
@@ -25,6 +26,7 @@ api.use(pubsub_route, api.routes.pubSub);
 api.use(user_route, api.routes.user);
 api.use(userChannel_route, api.routes.userChannel);
 api.use(feedConfig_route, api.routes.feedConfig);
+api.use(machineConfig_route, api.routes.machineConfig);
 
 //rotas não encontradas serão respondidas por essa
 api.use((req, res, next) => {
