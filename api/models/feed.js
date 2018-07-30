@@ -77,7 +77,7 @@ module.exports = function(api) {
             inner join channel c on c.id = f.ch_id
             inner join machine_data md on md.code = f.mc_cd
             inner join feed_config fc on fc.channel_id = c.id
-            where date_format(f.inserted_at, '%d/%m/%Y') between ? and ?
+            where f.inserted_at between ? and ?
               and f.ch_id = ?
               and f.mc_cd = ?
             order by f.inserted_at desc
@@ -98,6 +98,46 @@ module.exports = function(api) {
         });    
     };
     
+    this.exportChartExcel = function(data, callback) {
+        let sql = `
+            select c.name as channel_name
+                , md.code as machine_code
+                , concat('[', md.code, '] ', md.name) as machine_name
+                , f.field1
+                , f.field2
+                , f.field3
+                , f.field4
+                , f.field5 
+                , date_format(f.inserted_at, '%d/%m/%Y %H:%i:%s') as inserted_at   
+                , fc.field1 as field1_desc
+                , fc.field2 as field2_desc
+                , fc.field3 as field3_desc
+                , fc.field4 as field4_desc
+                , fc.field5 as field5_desc
+            from feed f
+            inner join channel c on c.id = f.ch_id
+            inner join machine_data md on md.code = f.mc_cd
+            inner join feed_config fc on fc.channel_id = c.id
+            where f.inserted_at between ? and ?
+              and f.ch_id = ?
+              and f.mc_cd = ?
+            order by f.inserted_at
+        `;
+        _pool.getConnection(function(err, connection) {
+            connection.query(sql,     
+            [
+                data.date_ini, 
+                data.date_fin, 
+                parseInt(data.ch_id), 
+                data.mc_cd
+            ], 
+            function(error, result) {
+                connection.release();
+                callback(error, result);
+            });
+        });    
+    };
+
     this.chart = function(data, callback) {
         let sql = 'call prc_chart(?,?,?,?)';
     

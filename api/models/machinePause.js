@@ -50,7 +50,7 @@ module.exports = function(api) {
             inner join channel_machine cm on cm.machine_code = md.code
             inner join user_channel uc on uc.channel_id = cm.channel_id
             where date_format(f.inserted_at, '%d/%m/%Y') = ?
-              and uc.user_id = 1 
+              and uc.user_id = ? 
             group by f.mc_cd
         `;  
         _pool.getConnection(function(err, connection) {
@@ -67,6 +67,8 @@ module.exports = function(api) {
     };
     
     this.listPauses = function(data, callback) {
+        var dateIni = data.dateIni.substring(0, data.dateIni.indexOf(" "));
+        var dateFin = data.dateFin.substring(0, data.dateFin.indexOf(" "));
         var query = `
             select mp.id
                  , mp.mc_cd 
@@ -79,15 +81,15 @@ module.exports = function(api) {
              inner join machine_data md on md.code = mp.mc_cd
              inner join channel_machine cm on cm.machine_code = md.code
              inner join user_channel uc on uc.channel_id = cm.channel_id
-             where date_format(mp.date_ref, '%d/%m/%Y') between ? and ?
+             where mp.date_ref between ? and ?
                and uc.user_id = ?
              order by mp.mc_cd, mp.inserted_at desc 
         `; 
         _pool.getConnection(function(err, connection) {
             connection.query(query, 
             [
-                data.dateIni, 
-                data.dateFin, 
+                dateIni,  
+                dateFin, 
                 parseInt(data.userId)
             ], 
             function(error, result) {
