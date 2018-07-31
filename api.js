@@ -16,6 +16,7 @@ const userChannel_route = process.env.BASE_URL + 'userchannel';
 const feedConfig_route = process.env.BASE_URL + 'channelconfig';
 const machineConfig_route = process.env.BASE_URL + 'machineconfig';
 const exportExcel_route = process.env.BASE_URL + 'exportexcel';
+const yaman_route = process.env.BASE_URL + 'yaman';
 
 //rotas que ouvimos
 api.use(index_route, api.routes.index);
@@ -29,6 +30,7 @@ api.use(userChannel_route, api.routes.userChannel);
 api.use(feedConfig_route, api.routes.feedConfig);
 api.use(machineConfig_route, api.routes.machineConfig);
 api.use(exportExcel_route, api.routes.exportExcel);
+api.use(yaman_route, api.routes.yaman);
 
 //rotas não encontradas serão respondidas por essa
 api.use((req, res, next) => {
