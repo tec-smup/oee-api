@@ -27,6 +27,7 @@ module.exports = function(api) {
                  , c.name as channel_name
                  , c.initial_turn
                  , c.final_turn
+                 , u.id
               from user u
               left join user_channel uc on uc.user_id = u.id
               left join channel c on c.id = uc.channel_id

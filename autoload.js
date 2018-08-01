@@ -17,7 +17,7 @@ module.exports = function() {
         res.header("Access-Control-Allow-Origin", process.env.CORS_URL);
         res.header(
             "Access-Control-Allow-Headers",
-            "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+            "Origin, X-Requested-With, Content-Type, Accept, Authorization, x-access-token"
         );
         //browsers verificam antes através do metodo OPTIONS se é possivel efetuar post na url
         //habilitamos CORS para POST, GET atualmente

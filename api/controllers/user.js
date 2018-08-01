@@ -77,7 +77,7 @@ module.exports = function(api) {
             if(exception) {
                 return res.status(500).send(exception);
             }
-            res.status(200).send(result);
+            res.status(200).send(result[0]);
         });
     };
 
