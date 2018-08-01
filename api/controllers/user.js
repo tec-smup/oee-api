@@ -72,6 +72,15 @@ module.exports = function(api) {
         });                 
     };
 
+    this.getUserData = function(req, res, next) {
+        _user.getUserData(req.userId, function(exception, result) {
+            if(exception) {
+                return res.status(500).send(exception);
+            }
+            res.status(200).send(result);
+        });
+    };
+
     this.post = function(req, res, next) {
         var bodyData = req.body;
 

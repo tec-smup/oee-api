@@ -6,6 +6,7 @@ const env = process.env.NODE_ENV || 'dev';
 //ex local: /oee/api/
 //ex google: /api/ ou /
 const index_route = process.env.BASE_URL; 
+const auth_route = process.env.BASE_URL + 'auth'; 
 const machine_route = process.env.BASE_URL + 'machine';
 const channel_route = process.env.BASE_URL + 'channel';
 const feed_route = process.env.BASE_URL + 'feed';
@@ -20,6 +21,7 @@ const yaman_route = process.env.BASE_URL + 'yaman';
 
 //rotas que ouvimos
 api.use(index_route, api.routes.index);
+api.use(auth_route, api.routes.auth);
 api.use(machine_route, api.routes.machine);
 api.use(channel_route, api.routes.channel);
 api.use(feed_route, api.routes.feed);
