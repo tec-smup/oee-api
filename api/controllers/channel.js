@@ -168,7 +168,7 @@ module.exports = function(api) {
         var bodyData = req.body;
 
         //cria asserts para validação
-        req.assert('id', 'Erro na edição do registro.').notEmpty();
+        req.assert('id', 'Canal não informado.').notEmpty();
 
         var errors = req.validationErrors();
         if(errors)

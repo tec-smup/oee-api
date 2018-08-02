@@ -238,6 +238,7 @@ BEGIN
 		signal sqlstate '99999'
 		set message_text = @msg;
     end if;
+    delete from channel_machine where channel_id = p_channel_id;
     delete from user_channel where channel_id = p_channel_id;
     delete from feed_config where channel_id = p_channel_id;
     delete from channel where id = p_channel_id; 
