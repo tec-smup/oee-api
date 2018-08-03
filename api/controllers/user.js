@@ -13,7 +13,7 @@ module.exports = function(api) {
             });
         }
         
-        _user.autentication(bodyData.username, function(exception, result) {
+        _user.authentication(bodyData.username, function(exception, result) {
             if(exception) {
                 return res.status(400).send(exception);
             }

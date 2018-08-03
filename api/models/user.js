@@ -4,7 +4,7 @@ const saltRounds = 10;
 module.exports = function(api) {
     let _pool = api.database.connection; 
 
-    this.autentication = function(username, callback) {
+    this.authentication = function(username, callback) {
         let query = `
             select u.id
                  , u.password

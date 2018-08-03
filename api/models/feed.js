@@ -1,14 +1,5 @@
 module.exports = function(api) {
     let _pool = api.database.connection; 
-
-    this.autenticateToken = function(token, callback) {
-        _pool.getConnection(function(err, connection) {
-            connection.query("select id, time_shift from channel where token = ?", token, function(error, result) {
-                connection.release();
-                callback(error, result);
-            });
-        });    
-    };
     
     this.save = function(data, callback) {
         _pool.getConnection(function(err, connection) {

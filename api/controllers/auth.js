@@ -12,7 +12,7 @@ module.exports = function(api) {
             return next(error);
         }
         
-        _user.autentication(bodyData.username, function(exception, result) {
+        _user.authentication(bodyData.username, function(exception, result) {
             if(exception) {
                 let error = new Error(exception);
                 return next(error);

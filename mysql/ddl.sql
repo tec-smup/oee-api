@@ -193,8 +193,7 @@ begin
     insert into machine_data(code, name, mobile_name, department, product, last_maintenance, next_maintenance)
     values(p_code, p_name, p_mobile_name, p_department, p_product, p_last_maintenance, p_next_maintenance);
     
-    /*insert into channel_machine(channel_id, machine_code)
-    select channel_id, p_code from user_channel where user_id = p_user_id;*/
+    insert into machine_config(machine_code) values(p_code);
 end$$
 
 DELIMITER ;
@@ -206,7 +205,7 @@ DROP procedure IF EXISTS `prc_delete_machine_data`;
 
 DELIMITER $$
 USE `oee`$$
-CREATE PROCEDURE `prc_delete_machine_data`(in p_code varchar(10))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `prc_delete_machine_data`(in p_code varchar(10))
 BEGIN
 	declare msg varchar(100);
     set msg = concat('Não é possível excluir a máquina ', p_code, ' pois existem medições vinculadas a ela');
@@ -215,10 +214,12 @@ BEGIN
 		set message_text = msg;
     end if;
     delete from channel_machine where machine_code = p_code;
+    delete from machine_config where machine_code = p_code;
     delete from machine_data where code = p_code;
 END$$
 
 DELIMITER ;
+
 
 /*prc_delete_machine_data*/
 

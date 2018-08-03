@@ -1,14 +1,5 @@
 module.exports = function(api) {
     let _pool = api.database.connection; 
-
-    this.autenticateToken = function(token, callback) {
-        _pool.getConnection(function(err, connection) {
-            connection.query("select id from channel where token = ?", token, function(error, result) {
-                connection.release();
-                callback(error, result);
-            });
-        });
-    };
     
     this.getChannel = function(params, callback) {
         var query = "select c.id, c.name, c.description, c.time_shift";
@@ -97,6 +88,8 @@ module.exports = function(api) {
                  , c.name
                  , c.description
                  , case c.active when 1 then 'Ativo' else 'Inativo' end as active
+                 , initial_turn
+                 , final_turn
               from channel c
              inner join user_channel uc on uc.channel_id = c.id
              where uc.user_id = ?

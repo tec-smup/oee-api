@@ -12,26 +12,17 @@ module.exports = function(api) {
         if(errors)
             return res.status(400).send(errors);
 
-            _machine.autenticateToken(bodyData.token, function(exception, result) {
+        //null na data
+        bodyData.next_maintenance = bodyData.next_maintenance || null;                       
+        bodyData.last_maintenance = bodyData.last_maintenance || null;                       
+        
+        _machine.save(bodyData, function(exception, result) {
             if(exception) {
-                return res.status(500).send(exception);
+                return res.status(400).send(exception);
             }
-            if(!result[0]) {
-                return res.status(401).send('Token inválido');
-            }
-
-            //null na data
-            bodyData.next_maintenance = bodyData.next_maintenance || null;                       
-            bodyData.last_maintenance = bodyData.last_maintenance || null;                       
-            
-            delete bodyData.token;
-            _machine.save(bodyData, function(exception, result) {
-                if(exception) {
-                    return res.status(400).send(exception);
-                }
-                return res.status(200).send(bodyData);
-            });          
-        });                  
+            return res.status(200).send(result[1][0] || bodyData);
+        });          
+                          
     }; 
 
     this.update = function(req, res, next) {
@@ -45,26 +36,17 @@ module.exports = function(api) {
         if(errors)
             return res.status(400).send(errors);       
 
-            _machine.autenticateToken(bodyData.token, function(exception, result) {
+        //null na data
+        bodyData.next_maintenance = bodyData.next_maintenance || null;                       
+        bodyData.last_maintenance = bodyData.last_maintenance || null;                       
+        
+        _machine.update(bodyData, function(exception, results, fields) {
             if(exception) {
                 return res.status(500).send(exception);
-            }
-            if(!result[0]) {
-                return res.status(401).send('Token inválido');
-            }
-
-            //null na data
-            bodyData.next_maintenance = bodyData.next_maintenance || null;                       
-            bodyData.last_maintenance = bodyData.last_maintenance || null;                       
-            
-            delete bodyData.token;
-            _machine.update(bodyData, function(exception, results, fields) {
-                if(exception) {
-                    return res.status(500).send(exception);
-                }    
-                return res.send(bodyData);           
-            });            
-        });                 
+            }    
+            return res.send(bodyData);           
+        });            
+                         
     };
 
     this.delete = function(req, res, next) {
@@ -76,23 +58,14 @@ module.exports = function(api) {
         var errors = req.validationErrors();
         if(errors)
             return res.status(400).send(errors);         
-
-        _machine.autenticateToken(bodyData.token, function(exception, result) {
-            if(exception) {
-                res.status(500).send(exception);
-            }
-            if(!result[0]) {
-                return res.status(401).send('Token inválido');
-            }
                         
-            delete bodyData.token;
-            _machine.delete(bodyData, function(exception, results, fields) {
-                if(exception) {
-                    return res.status(400).send(exception);
-                }
-                return res.send(bodyData);
-            });            
-        });                
+        _machine.delete(bodyData, function(exception, results, fields) {
+            if(exception) {
+                return res.status(400).send(exception);
+            }
+            return res.send(bodyData);
+        });            
+                    
     };
     
     this.list = function(req, res, next) {

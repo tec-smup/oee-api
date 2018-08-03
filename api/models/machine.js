@@ -11,8 +11,21 @@ module.exports = function(api) {
     }; 
 
     this.save = function(data, callback) {
+        let query = `
+        call prc_machine_data(?,?,?,?,?,?,?,?);
+        select code
+             , name
+             , mobile_name
+             , department
+             , product
+             , DATE_FORMAT(last_maintenance, '%d/%m/%Y') as last_maintenance 
+             , DATE_FORMAT(next_maintenance, '%d/%m/%Y') as next_maintenance
+             , concat('[', code, '] ', name) as dropdown_label
+          from machine_data
+         where code = ?;
+        `;
         _pool.getConnection(function(err, connection) {
-            connection.query("call prc_machine_data(?,?,?,?,?,?,?,?)", 
+            connection.query(query, 
             [
                 data.code,
                 data.name,
@@ -21,7 +34,8 @@ module.exports = function(api) {
                 data.product,
                 data.last_maintenance,
                 data.next_maintenance,
-                data.userId
+                data.userId,
+                data.code,
             ], 
             function(error, result) {
                 connection.release();
@@ -105,6 +119,11 @@ module.exports = function(api) {
         var query = `
             select code
                  , name
+                 , mobile_name
+                 , department
+                 , product
+                 , DATE_FORMAT(last_maintenance, '%d/%m/%Y') as last_maintenance 
+                 , DATE_FORMAT(next_maintenance, '%d/%m/%Y') as next_maintenance
                  , concat('[', code, '] ', name) as dropdown_label
               from machine_data
         `;
