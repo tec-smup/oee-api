@@ -13,6 +13,8 @@ module.exports = function(api) {
     router.post('/delete', _tokenController.verify, _machineController.delete);    
     router.get('/channel/:channel', _tokenController.verify, _machineController.listByChannel);    
     router.get('/list', _tokenController.verify, _machineController.listAll);    
+    router.get('/state/:machine', _machineController.getState);    
+    router.post('/state', _tokenController.verify, _machineController.setState);    
 
     return router;
 };

@@ -93,7 +93,8 @@ create table machine_data
     department varchar(100) null,
     product varchar(100) null,
     last_maintenance date null,
-    next_maintenance date null
+    next_maintenance date null,
+    state bit default 1
 );
 alter table machine_data add unique key code_unique(code);
 CREATE INDEX code_idx ON machine_data(code);

@@ -123,5 +123,46 @@ module.exports = function(api) {
         });                
     }; 
     
+    this.getState = function(req, res, next) {
+        var code = req.params.machine;
+        var params = req.query;  
+            params.code = code;
+                
+        _machine.autenticateToken(params.token, function(exception, result) {
+            if(exception) {
+                res.status(500).send(exception);
+            }
+            if(!result[0]) {
+                return res.status(401).send('Token inválido');
+            }
+            
+            _machine.getState(params.code, function(exception, results, fields) {
+                if(exception) {
+                    return res.status(400).send(exception);
+                }
+                return res.status(200).send(results[0].state);
+            });            
+        });                
+    };     
+
+    this.setState = function(req, res, next) {
+        var bodyData = req.body;
+
+        //cria asserts para validação
+        req.assert('code', 'Preencha o código corretamente.').notEmpty();
+        req.assert('state', 'Preencha o estado da máquina corretamente.').notEmpty();
+
+        var errors = req.validationErrors();
+        if(errors)
+            return res.status(400).send(errors);         
+                        
+        _machine.setState(bodyData, function(exception, results, fields) {
+            if(exception) {
+                return res.status(400).send(exception);
+            }
+            return res.send(bodyData);
+        });                 
+    };        
+
     return this;
 };

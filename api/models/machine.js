@@ -114,7 +114,7 @@ module.exports = function(api) {
             });
         });
     };
-    
+
     this.listAll = function(callback) {
         var query = `
             select code
@@ -176,6 +176,43 @@ module.exports = function(api) {
             [
                 params.mc_cd, 
                 parseInt(params.ch_id)
+            ], 
+            function(error, result) {
+                connection.release();
+                callback(error, result);
+            });
+        });
+    };    
+
+    this.getState = function(code, callback) {
+        var query = `
+            select export_set(state,'1','0','',1) as state
+              from machine_data	
+             where code = ?
+        `;
+        _pool.getConnection(function(err, connection) {
+            connection.query(query, 
+            [
+                code
+            ], 
+            function(error, result) {
+                connection.release();
+                callback(error, result);
+            });
+        });
+    };
+
+    this.setState = function(params, callback) {
+        var query = `
+            update machine_data
+               set state = ? 	
+             where code = ?
+        `;
+        _pool.getConnection(function(err, connection) {
+            connection.query(query, 
+            [
+                params.code,
+                parseInt(params.state)
             ], 
             function(error, result) {
                 connection.release();
