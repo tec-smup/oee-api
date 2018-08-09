@@ -7,7 +7,7 @@ module.exports = function(api) {
     router.post('/authentication', _userController.authentication);
     router.get('/', _tokenController.verify, _userController.list);
     router.get('/data', _tokenController.verify, _userController.getUserData);
-    router.post('/', _userController.post); //n jwt
+    router.post('/', _tokenController.verify, _userController.post);
     router.post('/update', _tokenController.verify, _userController.update);
     router.post('/delete', _tokenController.verify, _userController.delete);
     router.post('/changePass', _tokenController.verify, _userController.changePass);

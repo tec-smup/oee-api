@@ -14,15 +14,15 @@ module.exports = function(api) {
     
     //machine
     router.get('/:machine/getMax', _machineController.getMax); //n jwt
-    router.get('/:user/:channel/machine/list', _machineController.list); //n jwt
+    router.get('/:user/:channel/machine/list', _tokenController.verify, _machineController.list);
 
     //channel
     router.get('/:channel/get', _tokenController.verify, _channelController.get);
     router.get('/:channel/timeShift', _channelController.timeShift); //n jwt
-    router.get('/:user/channel', _channelController.userChannel); //n jwt
+    router.get('/:user/channel', _tokenController.verify, _channelController.userChannel);
 
     //feed
-    router.get('/:user/:channel/:machine/:date/:limit/feed/mobile', _feedController.mobile); //n jwt
+    router.get('/:user/:channel/:machine/:date/:limit/feed/mobile', _tokenController.verify, _feedController.mobile);
 
     return router;
 };

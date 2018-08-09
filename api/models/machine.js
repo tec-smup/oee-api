@@ -95,6 +95,7 @@ module.exports = function(api) {
                  , DATE_FORMAT(last_maintenance, '%d/%m/%Y') as last_maintenance 
                  , DATE_FORMAT(next_maintenance, '%d/%m/%Y') as next_maintenance
                  , concat('[', code, '] ', name) as dropdown_label
+                 , export_set(state,'1','0','',1) as state
               from machine_data	
              inner join channel_machine cm on cm.machine_code = code
              inner join user_channel uc on uc.channel_id = cm.channel_id
