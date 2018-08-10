@@ -211,9 +211,9 @@ module.exports = function(api) {
         `;
         _pool.getConnection(function(err, connection) {
             connection.query(query, 
-            [
-                params.code,
-                parseInt(params.state)
+            [   
+                parseInt(params.state),
+				params.code
             ], 
             function(error, result) {
                 connection.release();

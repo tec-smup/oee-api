@@ -28,8 +28,10 @@ module.exports = function(api) {
                 return next(error);
             }
 
+            let expireIn = bodyData.device == "mobile" ? "365d" : "2h";
+
             jwt.sign(
-                { userId: result[0].id }, process.env.JWT_SECRET, { expiresIn: '2h' }, 
+                { userId: result[0].id }, process.env.JWT_SECRET, { expiresIn: expireIn }, 
                 function(err, token) {
                     if(err) {
                         res.status(200).send({
