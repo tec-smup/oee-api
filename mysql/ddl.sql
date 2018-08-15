@@ -27,7 +27,8 @@ create table channel
     time_shift int null default 0,
 	initial_turn char(5) null,
 	final_turn char(5) null,
-    reset_time_shift bit null
+    reset_time_shift bit null,
+    wlp_hard_coder int(4)
 );
 
 create table channel_machine 
@@ -498,6 +499,14 @@ create event if not exists resetTimeShift
 	   set time_shift = 0,
            updated_at = now() 
 	 where reset_time_shift = 1;
+
+-- :/
+create event if not exists resetTimeShift 
+	on schedule every 1 day starts '2018-08-15 23:59:00' do	
+	update channel 
+	   set time_shift = wlp_hard_coder,
+           updated_at = now() 
+	 where reset_time_shift = 1;     
 
 /*resetTimeShift*/     
 
