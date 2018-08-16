@@ -101,6 +101,7 @@ module.exports = function(api) {
              inner join user_channel uc on uc.channel_id = cm.channel_id
              where uc.user_id = ?
                and ((uc.channel_id = ?) or ? = 0)
+             order by name
         `;
         _pool.getConnection(function(err, connection) {
             connection.query(query, 
