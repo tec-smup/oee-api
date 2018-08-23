@@ -501,12 +501,32 @@ create event if not exists resetTimeShift
 	 where reset_time_shift = 1;
 
 -- :/
-create event if not exists resetTimeShift 
-	on schedule every 1 day starts '2018-08-15 23:59:00' do	
+/*muda leolac para 90 as 18h*/
+create event if not exists resetTimeShift_Leolac_1800
+	on schedule every 1 day starts '2018-08-23 18:00:00' do	
 	update channel 
 	   set time_shift = wlp_hard_coder,
            updated_at = now() 
-	 where reset_time_shift = 1;     
+	 where reset_time_shift = 1
+       and id = 1;  
+       
+/*muda leolac para 91 as 18:10*/       
+create event if not exists resetTimeShift_Leolac_1810
+	on schedule every 1 day starts '2018-08-23 18:10:00' do	
+	update channel 
+	   set time_shift = wlp_hard_coder+1,
+           updated_at = now() 
+	 where reset_time_shift = 1
+       and id = 1;       
+     
+/*muda timeshift para outras empresas diferentes de leolac*/     
+create event if not exists resetTimeShift 
+	on schedule every 1 day starts '2018-08-22 23:59:00' do	
+	update channel 
+	   set time_shift = wlp_hard_coder,
+           updated_at = now() 
+	 where reset_time_shift = 1 
+       and id <> 1;   
 
 /*resetTimeShift*/     
 
