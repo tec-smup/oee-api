@@ -457,7 +457,7 @@ DROP procedure IF EXISTS `prc_mobile`;
 
 DELIMITER $$
 USE `oee`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `prc_mobile`(
+CREATE DEFINER=`root`@`%` PROCEDURE `prc_mobile`(
 	in p_user_id int(11),
 	in p_date varchar(8),
     in p_ch_id int(11),
@@ -466,12 +466,12 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `prc_mobile`(
 )
 BEGIN
 	SET @mobile_sql = coalesce(
-		(select mobile_sql 
+		nullif((select mobile_sql 
            from machine_config 
-		  where machine_code = p_mc_cd),
-		(select mobile_sql 
+		  where machine_code = p_mc_cd), ''),
+		nullif((select mobile_sql 
 		   from feed_config 
-		  where channel_id = p_ch_id)
+		  where channel_id = p_ch_id), '')
 	);
 	
     SET @mobile_sql = REPLACE(@mobile_sql, '__user_id', p_user_id);
