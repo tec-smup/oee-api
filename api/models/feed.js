@@ -165,5 +165,16 @@ module.exports = function(api) {
         });
     };
 
+    this.allProduction = function(callback) {
+        let sql = 'select * from vw_all_production';
+        _pool.getConnection(function(err, connection) {
+            connection.query(sql, [], 
+            function(error, result) {
+                connection.release();
+                callback(error, result);
+            });
+        });
+    };
+
     return this;
 };

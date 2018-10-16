@@ -7,6 +7,7 @@ module.exports = function(api) {
     router.get('/update', _feedController.update); //n jwt
     router.get('/lastFeed', _tokenController.verify, _feedController.lastFeed);
     router.get('/chart', _tokenController.verify, _feedController.chart);
+    router.get('/production', _tokenController.verify, _feedController.allProduction);
     //router.get('/:user/:channel/:machine/:date/:limit/feed/mobile', _feedController.mobile);
 
     return router;

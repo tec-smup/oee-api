@@ -627,3 +627,37 @@ DELIMITER ;
 /*prc_feed_update*/
 
 /*stored procedures*/
+
+create view vw_all_production as 
+select u.hora, sum(u.valor) as total 
+  from (
+	select max(t.id) as id
+		 , t.mc_cd
+		 , t.hora 
+         , t.ordem
+		 , (select 
+				case f.mc_cd 
+					when 'EF3' then round(f.field2/6,0)
+					when 'EF4' then round(f.field2/6,0)
+					when 'EF5' then round(f.field3,0)
+					when 'EF6' then round(f.field3,0)
+					when 'EF7' then round(f.field3,0)
+				end 
+			   from feed f where f.id = max(t.id)
+			) as valor          
+	  from (
+		select id
+			 , mc_cd
+			 , concat(hour(inserted_at), ':00 - ', hour(inserted_at)+1, ':00') as hora
+			 , hour(inserted_at) ordem
+		  from feed
+		 where ch_id = 2
+		   and mc_cd in('EF3', 'EF4', 'EF5', 'EF6', 'EF7')
+		   and inserted_at between (STR_TO_DATE(CONCAT(year(now()), '-', month(now()), '-', day(now()), ' 06:00:00'), '%Y-%m-%d %H:%i:%s')) 
+           and (STR_TO_DATE(CONCAT(year(now()), '-', month(now()), '-', day(now()), ' 23:59:59'), '%Y-%m-%d %H:%i:%s'))
+	) t
+	group by t.mc_cd, t.hora, t.ordem	
+) u
+group by u.hora, u.ordem
+order by u.ordem;
+ 
