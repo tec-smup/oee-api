@@ -67,7 +67,8 @@ create table feed_config
     chart_sql text null,
     refresh_time int null,
     chart_tooltip_desc varchar(50) null,
-    mobile_sql text null
+    mobile_sql text null,
+    production_sql text null
 );
 alter table feed_config add constraint fk_feed_config_channel foreign key(channel_id) references channel(id);
 
@@ -626,10 +627,42 @@ END$$
 DELIMITER ;
 /*prc_feed_update*/
 
+DROP procedure IF EXISTS `prc_production_count`;
+
+DELIMITER $$
+USE `oee`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `prc_production_count`(
+	in p_ch_id int(11),
+    in p_date_ini varchar(10),
+    in p_date_fin varchar(10)
+)
+BEGIN
+	SET @prod_sql = coalesce(
+		(select production_sql 
+           from feed_config 
+		  where channel_id = p_ch_id), '');
+	
+    if(@prod_sql <> '') then
+		SET @prod_sql = REPLACE(@prod_sql, '__date_ini', p_date_ini);
+		SET @prod_sql = REPLACE(@prod_sql, '__date_fin', p_date_fin);
+		SET @prod_sql = REPLACE(@prod_sql, '__ch_id', p_ch_id);
+		
+		PREPARE stmt FROM @prod_sql;
+		EXECUTE stmt;
+		DEALLOCATE PREPARE stmt;
+    end if;
+    
+END$$
+
+DELIMITER ;
+
 /*stored procedures*/
 
-create view vw_all_production as 
-select u.hora, sum(u.valor) as total 
+alter table feed_config add production_sql text null;
+
+select u.hora
+	 , sum(u.valor) as total
+     , u.tipo   
   from (
 	select max(t.id) as id
 		 , t.mc_cd
@@ -637,14 +670,21 @@ select u.hora, sum(u.valor) as total
          , t.ordem
 		 , (select 
 				case f.mc_cd 
-					when 'EF3' then round(f.field2/6,0)
-					when 'EF4' then round(f.field2/6,0)
+					when 'EF3' then round(f.field2,0)
+					when 'EF4' then round(f.field2,0)
 					when 'EF5' then round(f.field3,0)
 					when 'EF6' then round(f.field3,0)
 					when 'EF7' then round(f.field3,0)
 				end 
 			   from feed f where f.id = max(t.id)
-			) as valor          
+			) as valor 
+		 , (case t.mc_cd 
+				when 'EF3' then 'Unidades'
+                when 'EF4' then 'Unidades'
+				when 'EF5' then 'Fardos'
+                when 'EF6' then 'Fardos'
+                when 'EF7' then 'Fardos'
+			end) as tipo            
 	  from (
 		select id
 			 , mc_cd
@@ -658,6 +698,5 @@ select u.hora, sum(u.valor) as total
 	) t
 	group by t.mc_cd, t.hora, t.ordem	
 ) u
-group by u.hora, u.ordem
-order by u.ordem;
- 
+group by u.hora, u.ordem, u.tipo
+order by u.tipo, u.ordem;

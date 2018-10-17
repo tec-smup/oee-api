@@ -165,10 +165,14 @@ module.exports = function(api) {
         });
     };
 
-    this.allProduction = function(callback) {
-        let sql = 'select * from vw_all_production';
+    this.allProduction = function(data, callback) {
+        let sql = 'CALL prc_production_count(?,?,?)';
         _pool.getConnection(function(err, connection) {
-            connection.query(sql, [], 
+            connection.query(sql, [
+                parseInt(data.ch_id),
+                data.date_ini, 
+                data.date_fin    
+            ], 
             function(error, result) {
                 connection.release();
                 callback(error, result);
