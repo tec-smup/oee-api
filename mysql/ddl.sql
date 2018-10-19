@@ -633,25 +633,24 @@ DELIMITER $$
 USE `oee`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `prc_production_count`(
 	in p_ch_id int(11),
-    in p_date_ini varchar(10),
-    in p_date_fin varchar(10)
+    in p_date_ini varchar(20),
+    in p_date_fin varchar(20)
 )
 BEGIN
 	SET @prod_sql = coalesce(
 		(select production_sql 
            from feed_config 
-		  where channel_id = p_ch_id), '');
+		  where channel_id = p_ch_id), null);
 	
-    if(@prod_sql <> '') then
+    if(@prod_sql is not null) then
 		SET @prod_sql = REPLACE(@prod_sql, '__date_ini', p_date_ini);
 		SET @prod_sql = REPLACE(@prod_sql, '__date_fin', p_date_fin);
 		SET @prod_sql = REPLACE(@prod_sql, '__ch_id', p_ch_id);
-		
+        
 		PREPARE stmt FROM @prod_sql;
 		EXECUTE stmt;
-		DEALLOCATE PREPARE stmt;
-    end if;
-    
+		DEALLOCATE PREPARE stmt;          
+    end if;  
 END$$
 
 DELIMITER ;

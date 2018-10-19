@@ -170,8 +170,8 @@ module.exports = function(api) {
         _pool.getConnection(function(err, connection) {
             connection.query(sql, [
                 parseInt(data.ch_id),
-                data.date_ini, 
-                data.date_fin    
+                data.dateIni, 
+                data.dateFin    
             ], 
             function(error, result) {
                 connection.release();

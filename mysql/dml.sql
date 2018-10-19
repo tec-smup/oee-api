@@ -47,8 +47,8 @@ select u.hora
 		 where ch_id = __ch_id
 		   and mc_cd in(\'EF3\', \'EF4\', \'EF5\', \'EF6\', \'EF7\')
 		   and inserted_at between 
-               (STR_TO_DATE(CONCAT(\'__date_ini\', \' 06:00:00\'), \'%Y-%m-%d %H:%i:%s\')) 
-           and (STR_TO_DATE(CONCAT(\'__date_fin\', \' 23:59:59\'), \'%Y-%m-%d %H:%i:%s\'))
+               (STR_TO_DATE(\'__date_ini\', \'%Y-%m-%d %H:%i:%s\')) 
+           and (STR_TO_DATE(\'__date_fin\', \'%Y-%m-%d %H:%i:%s\'))
 	) t
 	group by t.mc_cd, t.hora, t.ordem	
 ) u
