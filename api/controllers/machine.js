@@ -118,7 +118,8 @@ module.exports = function(api) {
                 if(exception) {
                     return res.status(400).send(exception);
                 }
-                return res.status(200).send(results[0].value);
+                let value = results[0] ? results[0].value : 0;
+                return res.status(200).send(value);
             });            
         });                
     }; 
