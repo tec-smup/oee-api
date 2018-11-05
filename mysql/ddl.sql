@@ -55,6 +55,16 @@ create table user_channel
 alter table user_channel add constraint fk_user_channel_channel foreign key(channel_id) references channel(id);
 alter table user_channel add constraint fk_user_channel_user foreign key(user_id) references user(id);
 
+create table channel_pause_reason
+(
+    channel_id int not null,
+    pause_reason_id int not null,
+    created_at timestamp not null default CURRENT_TIMESTAMP,
+    primary key(channel_id, pause_reason_id)
+);
+alter table channel_pause_reason add constraint fk_channel_pause_reason_channel foreign key(channel_id) references channel(id);
+alter table channel_pause_reason add constraint fk_channel_pause_reason foreign key(pause_reason_id) references pause_reason(id);
+
 create table feed_config
 (
     id int not null auto_increment primary key,
@@ -119,11 +129,26 @@ create table machine_config
     machine_code varchar(10) not null COLLATE latin1_swedish_ci,
     chart_tooltip_desc varchar(50) null,
     chart_sql text null,
-    mobile_sql text null
+    mobile_sql text null,
     inserted_at timestamp not null default CURRENT_TIMESTAMP    
 );
 CREATE INDEX machine_config_idx ON machine_config(machine_code);
 alter table machine_config add constraint fk_machine_config foreign key(machine_code) references machine_data(code);
+
+create table machine_pause_dash
+(
+	id int not null auto_increment primary key,
+    channel_id int not null,
+    machine_code varchar(10) not null COLLATE latin1_swedish_ci,
+    date_ref timestamp not null,
+    value varchar(50) null,
+    pause_reason_id int not null,
+    inserted_at timestamp not null default CURRENT_TIMESTAMP
+);
+CREATE INDEX code_idx ON machine_pause_dash(machine_code);
+alter table machine_pause_dash add constraint fk_machine_pause_dash_channel foreign key(channel_id) references channel(id);
+alter table machine_pause_dash add constraint fk_machine_pause_dash_machine foreign key(machine_code) references machine_data(code);
+alter table machine_pause_dash add constraint fk_machine_pause_dash_reason foreign key(pause_reason_id) references pause_reason(id);
 
 create table log 
 (
@@ -152,6 +177,16 @@ create table deleted_feed
     field5 varchar(100) null,
 	inserted_at varchar(50) not null, 
 	deleted_at timestamp not null default CURRENT_TIMESTAMP
+);
+
+
+create table pause_reason
+(
+    id int not null auto_increment primary key,
+    name varchar(100) not null,
+    description varchar(500) null,
+    active bit not null default true,
+    created_at timestamp not null default CURRENT_TIMESTAMP
 );
 
 /*
@@ -655,47 +690,34 @@ END$$
 
 DELIMITER ;
 
+/*prc_machine_pause_dash*/
+DROP procedure IF EXISTS `prc_machine_pause_dash`;
+
+DELIMITER $$
+USE `oee`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `prc_machine_pause_dash`(
+	in p_channel_id int,
+    in p_machine_code varchar(10),
+    in p_date_ref varchar(50),
+    in p_value varchar(50),
+    in p_pause_reason_id int
+)
+BEGIN
+	if not exists (select 1 
+					 from machine_pause_dash 
+					where channel_id = p_channel_id 
+                      and machine_code = p_machine_code
+                      and date_ref = STR_TO_DATE(p_date_ref, '%Y-%m-%d %H:%i:%s')
+                      and value = p_value) then 
+		insert into machine_pause_dash(channel_id, machine_code, date_ref, value, pause_reason_id)
+		values(p_channel_id, p_machine_code, STR_TO_DATE(p_date_ref, '%Y-%m-%d %H:%i:%s'), p_value, p_pause_reason_id);
+    end if;
+END$$
+
+DELIMITER ;
+
+/*prc_machine_pause_dash*/
+
 /*stored procedures*/
 
 alter table feed_config add production_sql text null;
-
-select u.hora
-	 , sum(u.valor) as total
-     , u.tipo   
-  from (
-	select max(t.id) as id
-		 , t.mc_cd
-		 , t.hora 
-         , t.ordem
-		 , (select 
-				case f.mc_cd 
-					when 'EF3' then round(f.field2,0)
-					when 'EF4' then round(f.field2,0)
-					when 'EF5' then round(f.field3,0)
-					when 'EF6' then round(f.field3,0)
-					when 'EF7' then round(f.field3,0)
-				end 
-			   from feed f where f.id = max(t.id)
-			) as valor 
-		 , (case t.mc_cd 
-				when 'EF3' then 'Unidades'
-                when 'EF4' then 'Unidades'
-				when 'EF5' then 'Fardos'
-                when 'EF6' then 'Fardos'
-                when 'EF7' then 'Fardos'
-			end) as tipo            
-	  from (
-		select id
-			 , mc_cd
-			 , concat(hour(inserted_at), ':00 - ', hour(inserted_at)+1, ':00') as hora
-			 , hour(inserted_at) ordem
-		  from feed
-		 where ch_id = 2
-		   and mc_cd in('EF3', 'EF4', 'EF5', 'EF6', 'EF7')
-		   and inserted_at between (STR_TO_DATE(CONCAT(year(now()), '-', month(now()), '-', day(now()), ' 06:00:00'), '%Y-%m-%d %H:%i:%s')) 
-           and (STR_TO_DATE(CONCAT(year(now()), '-', month(now()), '-', day(now()), ' 23:59:59'), '%Y-%m-%d %H:%i:%s'))
-	) t
-	group by t.mc_cd, t.hora, t.ordem	
-) u
-group by u.hora, u.ordem, u.tipo
-order by u.tipo, u.ordem;

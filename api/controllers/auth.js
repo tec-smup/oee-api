@@ -28,7 +28,7 @@ module.exports = function(api) {
                 return next(error);
             }
 
-            let expireIn = bodyData.device == "mobile" ? "365d" : "2h";
+            let expireIn = bodyData.device == "mobile" ? "365d" : "8h";
 
             jwt.sign(
                 { userId: result[0].id }, process.env.JWT_SECRET, { expiresIn: expireIn }, 

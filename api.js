@@ -6,18 +6,20 @@ const env = process.env.NODE_ENV || 'dev';
 //ex local: /oee/api/
 //ex google: /api/ ou /
 const index_route = process.env.BASE_URL; 
-const auth_route = process.env.BASE_URL + 'auth'; 
-const machine_route = process.env.BASE_URL + 'machine';
-const channel_route = process.env.BASE_URL + 'channel';
-const feed_route = process.env.BASE_URL + 'feed';
-const machinePause_route = process.env.BASE_URL + 'machinepause';
-const pubsub_route = process.env.BASE_URL + 'pubsub';
-const user_route = process.env.BASE_URL + 'user';
-const userChannel_route = process.env.BASE_URL + 'userchannel';
-const feedConfig_route = process.env.BASE_URL + 'channelconfig';
-const machineConfig_route = process.env.BASE_URL + 'machineconfig';
-const exportExcel_route = process.env.BASE_URL + 'exportexcel';
-const yaman_route = process.env.BASE_URL + 'yaman';
+const auth_route = `${process.env.BASE_URL}auth`; 
+const machine_route = `${process.env.BASE_URL}machine`;
+const channel_route = `${process.env.BASE_URL}channel`;
+const feed_route = `${process.env.BASE_URL}feed`;
+const machinePause_route = `${process.env.BASE_URL}machinepause`;
+const pubsub_route = `${process.env.BASE_URL}pubsub`;
+const user_route = `${process.env.BASE_URL}user`;
+const userChannel_route = `${process.env.BASE_URL}userchannel`;
+const feedConfig_route = `${process.env.BASE_URL}channelconfig`;
+const machineConfig_route = `${process.env.BASE_URL}machineconfig`;
+const exportExcel_route = `${process.env.BASE_URL}exportexcel`;
+//const yaman_route = process.env.BASE_URL + 'yaman';
+const pauseReason_route = `${process.env.BASE_URL}pausereason`;
+const machinePauseDash_route = `${process.env.BASE_URL}machinepausedash`;
 
 //rotas que ouvimos
 api.use(index_route, api.routes.index);
@@ -32,7 +34,9 @@ api.use(userChannel_route, api.routes.userChannel);
 api.use(feedConfig_route, api.routes.feedConfig);
 api.use(machineConfig_route, api.routes.machineConfig);
 api.use(exportExcel_route, api.routes.exportExcel);
-api.use(yaman_route, api.routes.yaman);
+//api.use(yaman_route, api.routes.yaman);
+api.use(pauseReason_route, api.routes.pauseReason);
+api.use(machinePauseDash_route, api.routes.machinePauseDash);
 
 //rotas não encontradas serão respondidas por essa
 api.use((req, res, next) => {
