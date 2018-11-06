@@ -7,8 +7,8 @@ module.exports = function(api) {
             [
                 parseInt(data.channel_id),
                 data.machine_code,
-                data.date_ref,
-                data.value,
+                data.date_ini,
+                data.date_fin,
                 parseInt(data.pause_reason_id)
             ], 
             function(error, result) {

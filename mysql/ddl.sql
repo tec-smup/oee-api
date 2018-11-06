@@ -695,26 +695,32 @@ DROP procedure IF EXISTS `prc_machine_pause_dash`;
 
 DELIMITER $$
 USE `oee`$$
-CREATE PROCEDURE `prc_machine_pause_dash`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `prc_machine_pause_dash`(
 	in p_channel_id int,
     in p_machine_code varchar(10),
-    in p_date_ref varchar(50),
-    in p_value varchar(50),
+    in p_date_ini varchar(50),
+    in p_date_fin varchar(50),
     in p_pause_reason_id int
 )
 BEGIN
-	if not exists (select 1 
-					 from machine_pause_dash 
-					where channel_id = p_channel_id 
-                      and machine_code = p_machine_code
-                      and date_ref = STR_TO_DATE(p_date_ref, '%Y-%m-%d %H:%i:%s')
-                      and value = p_value) then 
-		insert into machine_pause_dash(channel_id, machine_code, date_ref, value, pause_reason_id)
-		values(p_channel_id, p_machine_code, STR_TO_DATE(p_date_ref, '%Y-%m-%d %H:%i:%s'), p_value, p_pause_reason_id);
-    end if;
+	insert into machine_pause_dash(channel_id, machine_code, date_ref, pause_reason_id)
+	select f.ch_id
+		 , f.mc_cd
+		 , DATE_FORMAT(f.inserted_at, '%Y-%m-%d %H:%i:%s') as date_ref
+		 , p_pause_reason_id
+	  from feed f
+	 where f.ch_id = p_channel_id
+	   and f.mc_cd = p_machine_code
+	   and f.inserted_at between p_date_ini and p_date_fin
+	   and not exists(select 1 
+						from machine_pause_dash mpd 
+					   where mpd.channel_id = f.ch_id 
+						 and mpd.machine_code = f.mc_cd 
+						 and mpd.date_ref = f.inserted_at);
 END$$
 
 DELIMITER ;
+
 
 /*prc_machine_pause_dash*/
 
