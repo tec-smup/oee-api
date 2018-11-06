@@ -695,7 +695,7 @@ DROP procedure IF EXISTS `prc_machine_pause_dash`;
 
 DELIMITER $$
 USE `oee`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `prc_machine_pause_dash`(
+CREATE PROCEDURE `prc_machine_pause_dash`(
 	in p_channel_id int,
     in p_machine_code varchar(10),
     in p_date_ref varchar(50),
