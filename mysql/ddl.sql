@@ -141,7 +141,7 @@ create table machine_pause_dash
     channel_id int not null,
     machine_code varchar(10) not null COLLATE latin1_swedish_ci,
     date_ref timestamp not null,
-    value varchar(50) null,
+    pause int null,
     pause_reason_id int not null,
     inserted_at timestamp not null default CURRENT_TIMESTAMP
 );
@@ -695,19 +695,21 @@ DROP procedure IF EXISTS `prc_machine_pause_dash`;
 
 DELIMITER $$
 USE `oee`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `prc_machine_pause_dash`(
+CREATE PROCEDURE `prc_machine_pause_dash`(
 	in p_channel_id int,
     in p_machine_code varchar(10),
     in p_date_ini varchar(50),
     in p_date_fin varchar(50),
-    in p_pause_reason_id int
+    in p_pause_reason_id int,
+    in p_pause int
 )
 BEGIN
-	insert into machine_pause_dash(channel_id, machine_code, date_ref, pause_reason_id)
+	insert into machine_pause_dash(channel_id, machine_code, date_ref, pause_reason_id, pause)
 	select f.ch_id
 		 , f.mc_cd
 		 , DATE_FORMAT(f.inserted_at, '%Y-%m-%d %H:%i:%s') as date_ref
 		 , p_pause_reason_id
+         , p_pause
 	  from feed f
 	 where f.ch_id = p_channel_id
 	   and f.mc_cd = p_machine_code

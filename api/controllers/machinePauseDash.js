@@ -19,7 +19,8 @@ module.exports = function(api) {
             machine_code: bodyData[0].machine_code,            
             date_ini: bodyData[0].date_ref,
             date_fin: bodyData[1].date_ref,
-            pause_reason_id: bodyData[0].pause_reason_id         
+            pause_reason_id: bodyData[0].pause_reason_id,
+            pause: bodyData[1].date_dif   
         };
 
         _machinePauseDash.save(pauseFilter, function(exception, result) {
