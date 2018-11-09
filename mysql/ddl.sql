@@ -630,6 +630,7 @@ BEGIN
 	declare v_count int(11);
     declare v_ch_id int(11);
     declare v_time_shift int(11);
+    declare v_can_transmit bit;
     
     select count(*) into v_count 
       from channel 
@@ -641,8 +642,15 @@ BEGIN
 		set message_text = 'Token inválido';
     end if;        
     
-	select id, time_shift 
-      into v_ch_id, v_time_shift
+	select id
+         , time_shift 
+		 , case when DATE_FORMAT(now(), '%H:%i') between initial_turn and final_turn
+			then 1
+			else 0
+		   end as transmissao_liberada         
+      into v_ch_id
+         , v_time_shift
+         , v_can_transmit
       from channel 
 	 where token = p_token;
      
@@ -650,16 +658,20 @@ BEGIN
 	if not exists (select 1 from channel_machine where channel_id = v_ch_id and machine_code = p_mc_cd) then 
 		signal sqlstate '99999'
 		set message_text = 'Máquina informada não pertence ao canal';
-    end if;     
+    end if;   
 			
     set p_time_shift = v_time_shift;
     
-    insert into feed(ch_id, mc_cd, field1, field2, field3, field4, field5)
-    values(v_ch_id, p_mc_cd, p_field1, p_field2, p_field3, p_field4, p_field5);
+    /*transmite somente dentro do horario de turno do canal*/
+    if(v_can_transmit = 1) then
+		insert into feed(ch_id, mc_cd, field1, field2, field3, field4, field5)
+		values(v_ch_id, p_mc_cd, p_field1, p_field2, p_field3, p_field4, p_field5);
+    end if;
     
 END$$
 
 DELIMITER ;
+
 /*prc_feed_update*/
 
 DROP procedure IF EXISTS `prc_production_count`;

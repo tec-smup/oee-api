@@ -9,8 +9,8 @@ module.exports = function(api) {
             if(exception) {
                 return res.status(400).send(exception.sqlMessage);
             }
-            let timeShift = result[1][0].timeShift ? result[1][0].timeShift.toString() : 0;
-            res.status(200).send(timeShift.toString());                
+            let timeShift = result[1][0] ? result[1][0].timeShift.toString() : 0;
+            res.status(200).send(timeShift);                
         });                   
     }; 
 
