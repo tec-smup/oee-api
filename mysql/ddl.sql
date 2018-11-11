@@ -537,77 +537,53 @@ set global event_scheduler = ON;
 [11:56, 8/29/2018] Washington Peroni: 17:10 91
 [11:56, 8/29/2018] Washington Peroni: 17:20 10
 
-create event if not exists resetTimeShift 
-	on schedule every 1 day starts '2018-07-05 23:59:00' do	
-	update channel 
-	   set time_shift = 0,
-           updated_at = now() 
-	 where reset_time_shift = 1;
-
 -- :/
-/*muda leolac para 90 as 6:40h*/
-create event if not exists resetTimeShift_Leolac_0640
-	on schedule every 1 day starts '2018-08-31 06:40:00' do	
-	update channel 
-	   set time_shift = wlp_hard_coder,
-           updated_at = now() 
-	 where reset_time_shift = 1
-       and id = 1;  
-
+  
 /*muda leolac para 91 as 6:50h*/
 create event if not exists resetTimeShift_Leolac_0650
-	on schedule every 1 day starts '2018-08-31 06:50:00' do	
+	on schedule every 1 day starts '2018-11-12 06:50:00' do	
 	update channel 
 	   set time_shift = wlp_hard_coder + 1,
            updated_at = now() 
 	 where reset_time_shift = 1
        and id = 1;  
-
-/*muda leolac para 10 as 7:00h*/
-create event if not exists resetTimeShift_Leolac_0700
-	on schedule every 1 day starts '2018-08-31 07:00:00' do	
-	update channel 
-	   set time_shift = 10,
-           updated_at = now() 
-	 where reset_time_shift = 1
-       and id = 1; 
 
 /*muda leolac para 90 as 17:00h*/
 create event if not exists resetTimeShift_Leolac_1700
-	on schedule every 1 day starts '2018-08-30 17:00:00' do	
+	on schedule every 1 day starts '2018-11-12 17:00:00' do	
 	update channel 
 	   set time_shift = wlp_hard_coder,
            updated_at = now() 
 	 where reset_time_shift = 1
        and id = 1;  
 
-/*muda leolac para 91 as 17:10h*/
-create event if not exists resetTimeShift_Leolac_1710
-	on schedule every 1 day starts '2018-08-30 17:10:00' do	
-	update channel 
-	   set time_shift = wlp_hard_coder + 1,
-           updated_at = now() 
-	 where reset_time_shift = 1
-       and id = 1;  
-       
-/*muda leolac para 10 as 17:20h*/
-create event if not exists resetTimeShift_Leolac_1720
-	on schedule every 1 day starts '2018-08-30 17:20:00' do	
-	update channel 
-	   set time_shift = 10,
-           updated_at = now() 
-	 where reset_time_shift = 1
-       and id = 1;      
-     
-/*muda timeshift para outras empresas diferentes de leolac*/     
-create event if not exists resetTimeShift 
-	on schedule every 1 day starts '2018-08-22 23:59:00' do	
-	update channel 
-	   set time_shift = wlp_hard_coder,
-           updated_at = now() 
-	 where reset_time_shift = 1 
-       and id <> 1;   
-       
+
+-- reset da fantastico
+create event if not exists reset_leolac_0530 
+	on schedule every 1 day starts '2018-11-12 05:30:00' do	
+		insert into feed(ch_id, mc_cd, field1, field2, field3, field4, field5)
+		select channel_id
+			 , machine_code
+			 , 'Reset StartMeUp'
+			 , 0
+			 , 0
+			 , 0
+			 , '0'
+		  from channel_machine
+		 where channel_id = 2;
+
+create event if not exists reset_leolac_1900 
+	on schedule every 1 day starts '2018-11-12 19:00:00' do	
+		insert into feed(ch_id, mc_cd, field1, field2, field3, field4, field5)
+		select channel_id
+			 , machine_code
+			 , 'Reset StartMeUp'
+			 , 0
+			 , 0
+			 , 0
+			 , '0'
+		  from channel_machine
+		 where channel_id = 2;         
 
 /*resetTimeShift*/     
 
