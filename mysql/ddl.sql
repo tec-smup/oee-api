@@ -82,6 +82,15 @@ create table feed_config
 );
 alter table feed_config add constraint fk_feed_config_channel foreign key(channel_id) references channel(id);
 
+create table feed_config_prod_query
+(
+    id int not null auto_increment primary key,
+    channel_id int not null,
+    sql_query text not null,
+    position int not null
+);
+alter table feed_config_prod_query add constraint fk_feed_config_prod_query foreign key(channel_id) references channel(id);
+
 create table feed 
 (
 	id int not null auto_increment primary key,
@@ -654,16 +663,18 @@ DROP procedure IF EXISTS `prc_production_count`;
 
 DELIMITER $$
 USE `oee`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `prc_production_count`(
+CREATE PROCEDURE `prc_production_count`(
 	in p_ch_id int(11),
     in p_date_ini varchar(20),
-    in p_date_fin varchar(20)
+    in p_date_fin varchar(20),
+    in p_position int
 )
 BEGIN
 	SET @prod_sql = coalesce(
-		(select production_sql 
-           from feed_config 
-		  where channel_id = p_ch_id), null);
+		(select sql_query 
+           from feed_config_prod_query 
+		  where channel_id = p_ch_id
+            and position = p_position), null);
 	
     if(@prod_sql is not null) then
 		SET @prod_sql = REPLACE(@prod_sql, '__date_ini', p_date_ini);

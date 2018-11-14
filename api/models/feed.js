@@ -166,12 +166,13 @@ module.exports = function(api) {
     };
 
     this.allProduction = function(data, callback) {
-        let sql = 'CALL prc_production_count(?,?,?)';
+        let sql = `CALL prc_production_count(?,?,?,?);`;
         _pool.getConnection(function(err, connection) {
             connection.query(sql, [
                 parseInt(data.ch_id),
                 data.dateIni, 
-                data.dateFin    
+                data.dateFin,
+                parseInt(data.position)                  
             ], 
             function(error, result) {
                 connection.release();
