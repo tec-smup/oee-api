@@ -728,3 +728,5 @@ DELIMITER ;
 /*stored procedures*/
 
 alter table feed_config add production_sql text null;
+
+CREATE INDEX feed_inserted_at_index ON feed (ch_id, mc_cd, inserted_at);
