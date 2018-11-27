@@ -58,37 +58,86 @@ module.exports = function(api) {
     };
     
     this.listPauses = function(data, callback) {
-        var dateIni = data.dateIni.substring(0, data.dateIni.indexOf(" "));
-        var dateFin = data.dateFin.substring(0, data.dateFin.indexOf(" "));
         var query = `
-            select mp.id
-                 , mp.mc_cd 
-                 , md.name
-                 , date_format(mp.date_ref, '%d/%m/%Y') as date_ref
-                 , mp.justification
-                 , date_format(mp.inserted_at, '%d/%m/%Y %H:%i:%s') as inserted_at
-                 , time_format(sec_to_time(mp.pause*60), '%H:%i:%s') as pause
-              from machine_pause mp
-             inner join machine_data md on md.code = mp.mc_cd
-             inner join channel_machine cm on cm.machine_code = md.code
-             inner join user_channel uc on uc.channel_id = cm.channel_id
-             where mp.date_ref between ? and ?
-               and uc.user_id = ?
-             order by mp.mc_cd, mp.inserted_at desc 
+            select a.date_ref
+                , DATE_FORMAT(a.date_ref, "%d/%m/%Y") as date_ref_format
+                , a.machine_code
+                , a.machine_name
+                , a.channel_id
+                , a.pause
+                , time_format(sec_to_time(a.pause*60), '%H:%i:%s') as pause_time
+                , a.pause_reason
+                , a.pause_id 
+                , a.row_num
+            from(
+                select mpd.date_ref
+                    , mpd.machine_code
+                    , mpd.channel_id
+                    , md.name as machine_name		
+                    , pr.name as pause_reason
+                    , @row_number := case 
+                        when @pause = mpd.pause and @pause_id = pr.id
+                            then @row_number + 1
+                            else 1         
+                        end as row_num
+                    , @pause := mpd.pause as pause
+                    , @pause_id := pr.id as pause_id         
+                from machine_pause_dash mpd
+                inner join pause_reason pr on pr.id = mpd.pause_reason_id
+                inner join machine_data md on md.code = mpd.machine_code
+                where mpd.channel_id = ?
+                and mpd.machine_code = ?
+                and mpd.date_ref between ? and ?
+            ) a
+            where a.row_num = 1 
         `; 
         _pool.getConnection(function(err, connection) {
             connection.query(query, 
             [
-                dateIni,  
-                dateFin, 
-                parseInt(data.userId)
+                parseInt(data.ch_id),
+                data.mc_cd,  
+                data.dateIni, 
+                data.dateFin
             ], 
             function(error, result) {
                 connection.release();
                 callback(error, result);
             });
         });
-    };    
+    };
+
+    // this.listPauses = function(data, callback) {
+    //     var dateIni = data.dateIni.substring(0, data.dateIni.indexOf(" "));
+    //     var dateFin = data.dateFin.substring(0, data.dateFin.indexOf(" "));
+    //     var query = `
+    //         select mp.id
+    //              , mp.mc_cd 
+    //              , md.name
+    //              , date_format(mp.date_ref, '%d/%m/%Y') as date_ref
+    //              , mp.justification
+    //              , date_format(mp.inserted_at, '%d/%m/%Y %H:%i:%s') as inserted_at
+    //              , time_format(sec_to_time(mp.pause*60), '%H:%i:%s') as pause
+    //           from machine_pause mp
+    //          inner join machine_data md on md.code = mp.mc_cd
+    //          inner join channel_machine cm on cm.machine_code = md.code
+    //          inner join user_channel uc on uc.channel_id = cm.channel_id
+    //          where mp.date_ref between ? and ?
+    //            and uc.user_id = ?
+    //          order by mp.mc_cd, mp.inserted_at desc 
+    //     `; 
+    //     _pool.getConnection(function(err, connection) {
+    //         connection.query(query, 
+    //         [
+    //             dateIni,  
+    //             dateFin, 
+    //             parseInt(data.userId)
+    //         ], 
+    //         function(error, result) {
+    //             connection.release();
+    //             callback(error, result);
+    //         });
+    //     });
+    // };    
 
     return this;
 };

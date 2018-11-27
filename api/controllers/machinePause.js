@@ -23,25 +23,25 @@ module.exports = function(api) {
         });                   
     }; 
 
-    this.list = function(req, res, next) {
-        var query = req.query;       
-        var data = {};
+    // this.list = function(req, res, next) {
+    //     var query = req.query;       
+    //     var data = {};
         
-        _machinePause.list(query, function(exception, result) {
-            if(exception) {
-                return res.status(500).send(exception);
-            }
-            data.list = result;
+    //     _machinePause.list(query, function(exception, result) {
+    //         if(exception) {
+    //             return res.status(500).send(exception);
+    //         }
+    //         data.list = result;
             
-            _machinePause.listPauses(query, function(exception, result) {
-                if(exception) {
-                    return res.status(500).send(exception);
-                }
-                data.pauses = result;
-                res.send(data);                
-            });            
-        });                 
-    };
+    //         _machinePause.listPauses(query, function(exception, result) {
+    //             if(exception) {
+    //                 return res.status(500).send(exception);
+    //             }
+    //             data.pauses = result;
+    //             res.send(data);                
+    //         });            
+    //     });                 
+    // };
     
     return this;
 };
