@@ -8,7 +8,7 @@
     "url": "git+https://github.com/paul8liveira/oee-api.git"
   },
   "engines": {
-    "node": ">=8.11.2"
+    "node": ">=10.12.0"
   },
   "scripts": {
     "start": "node api.js",
