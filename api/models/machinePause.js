@@ -90,6 +90,7 @@ module.exports = function(api) {
                 and mpd.date_ref between ? and ?
             ) a
             where a.row_num = 1 
+            order by a.pause desc
         `; 
         _pool.getConnection(function(err, connection) {
             connection.query(query, 
