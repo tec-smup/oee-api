@@ -59,18 +59,17 @@ module.exports = function(api) {
     
     this.listPauses = function(data, callback) {
         var query = `
-            select a.date_ref
-                , DATE_FORMAT(a.date_ref, "%d/%m/%Y") as date_ref_format
+            select a.date_ref_format
                 , a.machine_code
                 , a.machine_name
                 , a.channel_id
-                , a.pause
-                , time_format(sec_to_time(a.pause*60), '%H:%i:%s') as pause_time
+                , sum(a.pause) as pause
+                , time_format(sec_to_time(sum(a.pause)*60), '%H:%i:%s') as pause_time
                 , a.pause_reason
                 , a.pause_id 
                 , a.row_num
             from(
-                select mpd.date_ref
+                select DATE_FORMAT(mpd.date_ref, "%d/%m/%Y") as date_ref_format
                     , mpd.machine_code
                     , mpd.channel_id
                     , md.name as machine_name		
@@ -90,6 +89,7 @@ module.exports = function(api) {
                 and mpd.date_ref between ? and ?
             ) a
             where a.row_num = 1 
+            group by a.date_ref_format, a.machine_code, a.pause_id
             order by a.pause desc
         `; 
         _pool.getConnection(function(err, connection) {
