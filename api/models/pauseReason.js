@@ -9,6 +9,7 @@ module.exports = function(api) {
              inner join pause_reason pr on pr.id = cpr.pause_reason_id
              where cpr.channel_id = ?
                and pr.active = 1
+             order by pr.name
         `;
         _pool.getConnection(function(err, connection) {
             connection.query(query, 

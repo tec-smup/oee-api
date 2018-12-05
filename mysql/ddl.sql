@@ -730,3 +730,5 @@ DELIMITER ;
 alter table feed_config add production_sql text null;
 
 CREATE INDEX feed_ch_id_mc_cd_inserted_at_index ON feed (ch_id, mc_cd, inserted_at);
+
+alter table pause_reason add type char(2) null;
