@@ -149,7 +149,7 @@ create table machine_pause_dash
 	id int not null auto_increment primary key,
     channel_id int not null,
     machine_code varchar(10) not null COLLATE latin1_swedish_ci,
-    date_ref timestamp not null,
+    date_ref datetime not null,
     pause int null,
     pause_reason_id int not null,
     inserted_at timestamp not null default CURRENT_TIMESTAMP
@@ -703,12 +703,15 @@ CREATE PROCEDURE `prc_machine_pause_dash`(
     in p_pause int
 )
 BEGIN
-	insert into machine_pause_dash(channel_id, machine_code, date_ref, pause_reason_id, pause)
+    set @insert_index = (select ifnull(max(insert_index),0)+1 from machine_pause_dash);
+    
+	insert into machine_pause_dash(channel_id, machine_code, date_ref, pause_reason_id, pause, insert_index)
 	select f.ch_id
 		 , f.mc_cd
 		 , DATE_FORMAT(f.inserted_at, '%Y-%m-%d %H:%i:%s') as date_ref
 		 , p_pause_reason_id
          , p_pause
+         , @insert_index
 	  from feed f
 	 where f.ch_id = p_channel_id
 	   and f.mc_cd = p_machine_code
@@ -722,7 +725,6 @@ END$$
 
 DELIMITER ;
 
-
 /*prc_machine_pause_dash*/
 
 /*stored procedures*/
@@ -732,3 +734,5 @@ alter table feed_config add production_sql text null;
 CREATE INDEX feed_ch_id_mc_cd_inserted_at_index ON feed (ch_id, mc_cd, inserted_at);
 
 alter table pause_reason add type char(2) null;
+
+alter table machine_pause_dash add insert_index int;
