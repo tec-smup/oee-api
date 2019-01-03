@@ -181,5 +181,27 @@ module.exports = function(api) {
         });
     };
 
+    //posso tentar manter um só dessa meneira, utilizando multiple statment
+    //agora vou deixar assim por hora mas vai ficar mais dinamico , lembre-se disso 
+    //no futuro
+    this.allProductionToExport = function(data, callback) {
+        let sql = `CALL prc_production_count(?,?,?,1);
+        CALL prc_production_count(?,?,?,2);`;
+        _pool.getConnection(function(err, connection) {
+            connection.query(sql, [
+                parseInt(data.ch_id),
+                data.dateIni, 
+                data.dateFin,
+                parseInt(data.ch_id),
+                data.dateIni, 
+                data.dateFin,                                  
+            ], 
+            function(error, result) {
+                connection.release();
+                callback(error, result);
+            });
+        });
+    };
+
     return this;
 };
