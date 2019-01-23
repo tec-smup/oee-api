@@ -12,7 +12,7 @@ module.exports = function(api) {
 
     this.save = function(data, callback) {
         let query = `
-        call prc_machine_data(?,?,?,?,?,?,?,?);
+        call prc_machine_data(?,?,?,?,?,?,?,?,?);
         select code
              , name
              , mobile_name
@@ -21,6 +21,7 @@ module.exports = function(api) {
              , DATE_FORMAT(last_maintenance, '%d/%m/%Y') as last_maintenance 
              , DATE_FORMAT(next_maintenance, '%d/%m/%Y') as next_maintenance
              , concat('[', code, '] ', name) as dropdown_label
+             , nominal_output
           from machine_data
          where code = ?;
         `;
@@ -35,6 +36,7 @@ module.exports = function(api) {
                 data.last_maintenance,
                 data.next_maintenance,
                 data.userId,
+                parseFloat(data.nominal_output),
                 data.code,
             ], 
             function(error, result) {
@@ -51,7 +53,8 @@ module.exports = function(api) {
                             department = ?, 
                             product = ?, 
                             last_maintenance = STR_TO_DATE(?, '%d/%m/%Y'), 
-                            next_maintenance = STR_TO_DATE(?, '%d/%m/%Y')
+                            next_maintenance = STR_TO_DATE(?, '%d/%m/%Y'),
+                            nominal_output = ?
                       where code = ?`;
         
         _pool.getConnection(function(err, connection) {
@@ -63,7 +66,8 @@ module.exports = function(api) {
                 data.product, 
                 data.last_maintenance, 
                 data.next_maintenance, 
-                data.code
+                parseFloat(data.nominal_output),
+                data.code,
             ], 
             function(error, result) {
                 connection.release();
@@ -96,6 +100,7 @@ module.exports = function(api) {
                  , DATE_FORMAT(next_maintenance, '%d/%m/%Y') as next_maintenance
                  , concat('[', code, '] ', name) as dropdown_label
                  , export_set(state,'1','0','',1) as state
+                 , nominal_output
               from machine_data	
              inner join channel_machine cm on cm.machine_code = code
              inner join user_channel uc on uc.channel_id = cm.channel_id
@@ -127,6 +132,7 @@ module.exports = function(api) {
                  , DATE_FORMAT(last_maintenance, '%d/%m/%Y') as last_maintenance 
                  , DATE_FORMAT(next_maintenance, '%d/%m/%Y') as next_maintenance
                  , concat('[', code, '] ', name) as dropdown_label
+                 , nominal_output
               from machine_data
         `;
         _pool.getConnection(function(err, connection) {

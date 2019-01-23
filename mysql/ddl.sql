@@ -230,15 +230,16 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `prc_machine_data`(
     in p_product varchar(100),
     in p_last_maintenance date,
     in p_next_maintenance date,
-    in p_user_id int
+    in p_user_id int,
+    in p_nominal_output double
 )
 begin   
 	if exists (select 1 from machine_data where code = p_code) then 
 		signal sqlstate '99999'
 		set message_text = 'Código informado já existe';
     end if;
-    insert into machine_data(code, name, mobile_name, department, product, last_maintenance, next_maintenance)
-    values(p_code, p_name, p_mobile_name, p_department, p_product, p_last_maintenance, p_next_maintenance);
+    insert into machine_data(code, name, mobile_name, department, product, last_maintenance, next_maintenance, nominal_output)
+    values(p_code, p_name, p_mobile_name, p_department, p_product, p_last_maintenance, p_next_maintenance, p_nominal_output);
     
     insert into machine_config(machine_code) values(p_code);
 end$$
@@ -736,3 +737,5 @@ CREATE INDEX feed_ch_id_mc_cd_inserted_at_index ON feed (ch_id, mc_cd, inserted_
 alter table pause_reason add type char(2) null;
 
 alter table machine_pause_dash add insert_index int;
+
+alter table machine_data add nominal_output double null;
