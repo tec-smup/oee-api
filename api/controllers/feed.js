@@ -72,10 +72,10 @@ module.exports = function(api) {
         });                 
     }; 
 
-    this.allProductionNew = function(req, res, next) { 
+    this.allProductionV2 = function(req, res, next) { 
         var query = req.query;
 
-        _feed.allProductionNew(query, function(exception, result) {
+        _feed.allProductionV2(query, function(exception, result) {
             if(exception) {
                 return res.status(400).send(exception);
             }

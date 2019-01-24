@@ -125,7 +125,7 @@ module.exports = function(api) {
         if(errors)
             return res.status(400).send(errors);
 
-        _feed.allProductionNew(params, function(exception, result) {
+        _feed.allProductionV2(params, function(exception, result) {
             if(exception) {
                 return res.status(400).send(exception);
             }
@@ -133,7 +133,7 @@ module.exports = function(api) {
             //rejeito result set "ok" do mysql
             let validResultSet = [];
             for(let i = 0; i < result.length; i++) {
-                if(result[i].length > 0) {
+                if(result[i].length > 0 && !result[i][0].shift_hour) {
                     validResultSet.push(result[i]);
                 }
             }

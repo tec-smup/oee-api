@@ -182,7 +182,7 @@ module.exports = function(api) {
         });
     };
 
-    this.allProductionNew = function(data, callback) {
+    this.allProductionV2 = function(data, callback) {
         let sql = `CALL prc_production_count(?,?,?,1);
         CALL prc_production_count(?,?,?,2);
         select hour as shift_hour 
