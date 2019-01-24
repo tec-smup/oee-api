@@ -125,7 +125,7 @@ module.exports = function(api) {
         if(errors)
             return res.status(400).send(errors);
 
-        _feed.allProduction(params, function(exception, result) {
+        _feed.allProductionNew(params, function(exception, result) {
             if(exception) {
                 return res.status(400).send(exception);
             }

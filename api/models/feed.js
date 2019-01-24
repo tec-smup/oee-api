@@ -165,7 +165,24 @@ module.exports = function(api) {
         });
     };
 
+    //vou manter enquanto não atualizar o app ios
     this.allProduction = function(data, callback) {
+        let sql = `CALL prc_production_count(?,?,?,?);`;
+        _pool.getConnection(function(err, connection) {
+            connection.query(sql, [
+                parseInt(data.ch_id),
+                data.dateIni, 
+                data.dateFin,
+                parseInt(data.position)                  
+            ], 
+            function(error, result) {
+                connection.release();
+                callback(error, result);
+            });
+        });
+    };
+
+    this.allProductionNew = function(data, callback) {
         let sql = `CALL prc_production_count(?,?,?,1);
         CALL prc_production_count(?,?,?,2);
         select hour as shift_hour 

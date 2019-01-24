@@ -60,10 +60,22 @@ module.exports = function(api) {
         });                 
     }; 
         
+    //vou manter enquanto não atualizar o app ios
     this.allProduction = function(req, res, next) { 
         var query = req.query;
 
         _feed.allProduction(query, function(exception, result) {
+            if(exception) {
+                return res.status(400).send(exception);
+            }
+            res.status(200).send(result);       
+        });                 
+    }; 
+
+    this.allProductionNew = function(req, res, next) { 
+        var query = req.query;
+
+        _feed.allProductionNew(query, function(exception, result) {
             if(exception) {
                 return res.status(400).send(exception);
             }
