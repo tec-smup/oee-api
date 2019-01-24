@@ -739,3 +739,10 @@ alter table pause_reason add type char(2) null;
 alter table machine_pause_dash add insert_index int;
 
 alter table machine_data add nominal_output double null;
+
+create table channel_shift_prod_count(
+	channel_id int(11) not null,
+    hour int(2) not null,
+    primary key(channel_id, hour),
+    constraint fk_channel_shift_prod_count_channel FOREIGN KEY (channel_id) REFERENCES channel (id)
+);

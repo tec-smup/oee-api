@@ -166,27 +166,11 @@ module.exports = function(api) {
     };
 
     this.allProduction = function(data, callback) {
-        let sql = `CALL prc_production_count(?,?,?,?);`;
-        _pool.getConnection(function(err, connection) {
-            connection.query(sql, [
-                parseInt(data.ch_id),
-                data.dateIni, 
-                data.dateFin,
-                parseInt(data.position)                  
-            ], 
-            function(error, result) {
-                connection.release();
-                callback(error, result);
-            });
-        });
-    };
-
-    //posso tentar manter um só dessa meneira, utilizando multiple statment
-    //agora vou deixar assim por hora mas vai ficar mais dinamico , lembre-se disso 
-    //no futuro
-    this.allProductionToExport = function(data, callback) {
         let sql = `CALL prc_production_count(?,?,?,1);
-        CALL prc_production_count(?,?,?,2);`;
+        CALL prc_production_count(?,?,?,2);
+        select hour as shift_hour 
+         from channel_shift_prod_count
+        where channel_id = ?;`;
         _pool.getConnection(function(err, connection) {
             connection.query(sql, [
                 parseInt(data.ch_id),
@@ -194,7 +178,8 @@ module.exports = function(api) {
                 data.dateFin,
                 parseInt(data.ch_id),
                 data.dateIni, 
-                data.dateFin,                                  
+                data.dateFin,      
+                parseInt(data.ch_id),                            
             ], 
             function(error, result) {
                 connection.release();
