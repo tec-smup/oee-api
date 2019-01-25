@@ -728,6 +728,48 @@ DELIMITER ;
 
 /*prc_machine_pause_dash*/
 
+/*prc_oee*/
+CREATE PROCEDURE `prc_oee`(
+	in p_channel_id int
+)
+BEGIN
+	DECLARE v_done INT;
+    declare v_machine_code varchar(10);
+
+	DECLARE curs CURSOR FOR  select cm.machine_code
+							 from channel_machine cm
+							where cm.channel_id = p_channel_id;
+							
+	DECLARE CONTINUE HANDLER FOR NOT FOUND SET v_done = 1;
+
+	DROP TEMPORARY TABLE IF EXISTS OEE;
+	CREATE TEMPORARY TABLE IF NOT EXISTS OEE(
+		channel_id int,
+		machine_code varchar(10),
+		availability float(5,2),
+		performance float(5,2),
+		quality float(5,2),
+		oee float(5,2)
+	);
+
+	OPEN curs;
+
+	SET v_done = 0;
+	REPEAT
+		FETCH curs INTO v_machine_code;
+
+			INSERT INTO OEE(channel_id, machine_code, availability, performance, quality, oee) 
+            VALUES (p_channel_id, v_machine_code, 0,0,0,0);
+	
+	UNTIL v_done END REPEAT;
+
+	CLOSE curs;
+	SELECT * FROM OEE;
+END$$
+
+DELIMITER ;
+/*prc_oee*/
+
 /*stored procedures*/
 
 alter table feed_config add production_sql text null;
@@ -746,3 +788,4 @@ create table channel_shift_prod_count(
     primary key(channel_id, hour),
     constraint fk_channel_shift_prod_count_channel FOREIGN KEY (channel_id) REFERENCES channel (id)
 );
+
