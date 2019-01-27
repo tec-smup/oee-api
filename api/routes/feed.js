@@ -9,6 +9,7 @@ module.exports = function(api) {
     router.get('/chart', _tokenController.verify, _feedController.chart);
     router.get('/production', _tokenController.verify, _feedController.allProduction);
     router.get('/production/v2', _tokenController.verify, _feedController.allProductionV2);
+    router.get('/oee', _tokenController.verify, _feedController.OEE);
     //router.get('/:user/:channel/:machine/:date/:limit/feed/mobile', _feedController.mobile);
 
     return router;

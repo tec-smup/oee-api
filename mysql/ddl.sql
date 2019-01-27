@@ -729,45 +729,148 @@ DELIMITER ;
 /*prc_machine_pause_dash*/
 
 /*prc_oee*/
-CREATE PROCEDURE `prc_oee`(
-	in p_channel_id int
+DROP procedure IF EXISTS `prc_oee`;
+
+DELIMITER $$
+USE `oee`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `prc_oee`(
+	in p_channel_id int,
+	in p_date_ini varchar(20),
+    in p_date_fin varchar(20)    
 )
-BEGIN
-	DECLARE v_done INT;
+begin
+	declare v_done int default false;
     declare v_machine_code varchar(10);
+    	
+	/*curso de maquinas do canal*/
+	declare c cursor for select cm.machine_code
+						   from channel_machine cm
+						  where cm.channel_id = p_channel_id;
+	
+	declare continue handler for not found set v_done = true;    
+	declare exit handler for sqlexception, sqlwarning
+	begin
+		rollback;
+		resignal;
+	end;    
 
-	DECLARE curs CURSOR FOR  select cm.machine_code
-							 from channel_machine cm
-							where cm.channel_id = p_channel_id;
-							
-	DECLARE CONTINUE HANDLER FOR NOT FOUND SET v_done = 1;
-
-	DROP TEMPORARY TABLE IF EXISTS OEE;
-	CREATE TEMPORARY TABLE IF NOT EXISTS OEE(
+	drop temporary table if exists tmp_oee;
+	create temporary table if not exists tmp_oee(
 		channel_id int,
 		machine_code varchar(10),
-		availability float(5,2),
-		performance float(5,2),
-		quality float(5,2),
-		oee float(5,2)
+		availability float(8,2),
+		performance float(8,2),
+		quality float(8,2),
+		oee float(8,2)
 	);
+    
+	drop temporary table if exists tmp_performance;
+	create temporary table if not exists tmp_performance(
+		machine_code varchar(10),
+		field3 float(8,2),
+		field5 float(8,2),
+		performance float(8,2)
+	);
+    
+	drop temporary table if exists tmp_availability;
+	create temporary table if not exists tmp_availability(
+		machine_code varchar(10),
+		pp float(8,2),
+		pnp float(8,2)
+	);    
 
-	OPEN curs;
+	/*desempenho*/
+	insert into tmp_performance
+	select f.mc_cd
+		 , f.field3
+		 , cast(f.field5 as decimal(8,2)) as field5
+		 , case f.mc_cd 
+			when 'EF3' then round((((f.field2 / f.field5) / m.nominal_output)),2) 
+			when 'EF4' then round((((f.field2 / f.field5) / m.nominal_output)),2) 
+			when 'EF5' then round((((f.field3 / f.field5) / m.nominal_output)),2) 
+			when 'EF6' then round((((f.field3 / f.field5) / m.nominal_output)),2) 
+			when 'EF7' then round((((f.field3 / f.field5) / m.nominal_output)),2)
+			else 0
+		   end as performance 
+	  from feed f 
+	 inner join (select max(f.id) as id
+				   from feed f
+				  where f.ch_id = p_channel_id
+					and f.inserted_at between 
+						(STR_TO_DATE(p_date_ini, '%Y-%m-%d %H:%i:%s')) 
+					and (STR_TO_DATE(p_date_fin, '%Y-%m-%d %H:%i:%s'))			
+				  group by f.mc_cd) tmp on f.id = tmp.id
+	 inner join machine_data m on m.code = f.mc_cd;    
 
-	SET v_done = 0;
-	REPEAT
-		FETCH curs INTO v_machine_code;
+	/*disponibilidade*/
+	insert into tmp_availability
+	select b.machine_code
+		 , sum(pp) as pp
+		 , sum(pnp) as pnp
+	  from (
+	select a.machine_code 
+		 , case a.type
+			when 'PP' then sum(a.pause)
+			else 0 end as pp
+		 , case a.type
+			when 'NP' then sum(a.pause)
+			else 0 end as pnp        
+	  from (  
+	select m.code as machine_code
+		 , pr.type
+		 , mpd.pause
+	  from machine_data m
+	  join channel_machine cm on cm.machine_code = m.code and cm.channel_id = 2
+	  left join machine_pause_dash mpd on mpd.machine_code = m.code
+	  left join pause_reason pr on pr.id = mpd.pause_reason_id
+	 where mpd.channel_id = p_channel_id
+	   and mpd.date_ref between 
+		   (STR_TO_DATE(p_date_ini, '%Y-%m-%d %H:%i:%s')) 
+	   and (STR_TO_DATE(p_date_fin, '%Y-%m-%d %H:%i:%s'))
+	 group by mpd.insert_index) a
+	 group by a.machine_code, a.type) b
+	 group by b.machine_code;
 
-			INSERT INTO OEE(channel_id, machine_code, availability, performance, quality, oee) 
-            VALUES (p_channel_id, v_machine_code, 0,0,0,0);
+	if not exists(select 1 from tmp_performance) then
+		signal sqlstate '45000' set message_text = 'sem dados';
+	end if;
+
+	open c;
+ 
+	read_loop: loop
+		fetch c into v_machine_code;	
+        
+		if v_done then
+			leave read_loop;
+		end if;			
 	
-	UNTIL v_done END REPEAT;
+		select @v_pp := pp
+			 , @v_pnp := pnp
+		  from tmp_availability 
+		 where machine_code = v_machine_code;
+		
+		select @v_performance := performance
+			 , @v_availability := (field5 - coalesce(@v_pp,0))
+			 , @v_real_availability := (@v_availability - coalesce(@v_pnp,0))
+		  from tmp_performance 
+		 where machine_code = v_machine_code;
+		
+		insert into tmp_oee(channel_id, machine_code, availability, performance, quality, oee) 
+		values (p_channel_id
+			  , v_machine_code
+			  , round(((@v_real_availability / @v_availability)*100),2)
+			  , (@v_performance * 100)
+			  , 100
+			  , ((@v_performance * (@v_real_availability / @v_availability) * 1) * 100)
+		);
+	end loop;
 
-	CLOSE curs;
-	SELECT * FROM OEE;
-END$$
+	close c;
+	select * from tmp_oee; 
+end$$
 
 DELIMITER ;
+
 /*prc_oee*/
 
 /*stored procedures*/

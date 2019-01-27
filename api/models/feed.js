@@ -205,5 +205,20 @@ module.exports = function(api) {
         });
     };
 
+    this.OEE = function(data, callback) {
+        let sql = `call prc_oee(?,?,?);`;
+        _pool.getConnection(function(err, connection) {
+            connection.query(sql, [
+                parseInt(data.ch_id),
+                data.dateIni, 
+                data.dateFin                            
+            ], 
+            function(error, result) {
+                connection.release();
+                callback(error, result);
+            });
+        });
+    };    
+
     return this;
 };

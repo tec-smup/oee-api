@@ -81,7 +81,18 @@ module.exports = function(api) {
             }
             res.status(200).send(result);       
         });                 
-    }; 
+    };
+    
+    this.OEE = function(req, res, next) { 
+        var query = req.query;
+
+        _feed.OEE(query, function(exception, result) {
+            if(exception) {
+                return res.status(400).send(exception);
+            }
+            res.status(200).send(result);       
+        });                 
+    };    
 
     return this;
 };
