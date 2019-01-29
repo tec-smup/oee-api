@@ -222,7 +222,7 @@ DROP procedure IF EXISTS `prc_machine_data`;
 
 DELIMITER $$
 USE `oee`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `prc_machine_data`(
+CREATE PROCEDURE `prc_machine_data`(
 	in p_code varchar(10),
     in p_name varchar(20),
     in p_mobile_name varchar(5),
@@ -253,7 +253,7 @@ DROP procedure IF EXISTS `prc_delete_machine_data`;
 
 DELIMITER $$
 USE `oee`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `prc_delete_machine_data`(in p_code varchar(10))
+CREATE PROCEDURE `prc_delete_machine_data`(in p_code varchar(10))
 BEGIN
 	declare msg varchar(100);
     set msg = concat('Não é possível excluir a máquina ', p_code, ' pois existem medições vinculadas a ela');
@@ -277,7 +277,7 @@ DROP procedure IF EXISTS `prc_delete_channel`;
 
 DELIMITER $$
 USE `oee`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `prc_delete_channel`(in p_channel_id int)
+CREATE PROCEDURE `prc_delete_channel`(in p_channel_id int)
 BEGIN
 	set @name = (select name from channel where id = p_channel_id);
     
@@ -303,7 +303,7 @@ DROP procedure IF EXISTS `prc_channel`;
 
 DELIMITER $$
 USE `oee`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `prc_channel`(
+CREATE PROCEDURE `prc_channel`(
 	in p_name varchar(100),
     in p_description varchar(500),
     in p_token varchar(50),
@@ -469,7 +469,7 @@ DROP procedure IF EXISTS `prc_chart`;
 
 DELIMITER $$
 USE `oee`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `prc_chart`(
+CREATE PROCEDURE `prc_chart`(
 	in p_date_ini varchar(20),
     in p_date_fin varchar(20),
     in p_ch_id int(11),
@@ -733,7 +733,7 @@ DROP procedure IF EXISTS `prc_oee`;
 
 DELIMITER $$
 USE `oee`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `prc_oee`(
+CREATE DEFINER=`root`@`%` PROCEDURE `prc_oee`(
 	in p_channel_id int,
 	in p_date_ini varchar(20),
     in p_date_fin varchar(20)    
@@ -741,10 +741,12 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `prc_oee`(
 begin
 	declare v_done int default false;
     declare v_machine_code varchar(10);
+    declare v_machine_name varchar(20);
     	
 	/*curso de maquinas do canal*/
-	declare c cursor for select cm.machine_code
+	declare c cursor for select cm.machine_code, m.name
 						   from channel_machine cm
+						  inner join machine_data m on m.code = cm.machine_code
 						  where cm.channel_id = p_channel_id;
 	
 	declare continue handler for not found set v_done = true;    
@@ -785,11 +787,11 @@ begin
 		 , f.field3
 		 , cast(f.field5 as decimal(8,2)) as field5
 		 , case f.mc_cd 
-			when 'EF3' then round((((f.field2 / f.field5) / m.nominal_output)),2) 
-			when 'EF4' then round((((f.field2 / f.field5) / m.nominal_output)),2) 
-			when 'EF5' then round((((f.field3 / f.field5) / m.nominal_output)),2) 
-			when 'EF6' then round((((f.field3 / f.field5) / m.nominal_output)),2) 
-			when 'EF7' then round((((f.field3 / f.field5) / m.nominal_output)),2)
+			when 'EF3' then round((((f.field2 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2) 
+			when 'EF4' then round((((f.field2 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2) 
+			when 'EF5' then round((((f.field3 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2) 
+			when 'EF6' then round((((f.field3 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2) 
+			when 'EF7' then round((((f.field3 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2)
 			else 0
 		   end as performance 
 	  from feed f 
@@ -815,19 +817,19 @@ begin
 		 , case a.type
 			when 'NP' then sum(a.pause)
 			else 0 end as pnp        
-	  from (  
-	select m.code as machine_code
-		 , pr.type
-		 , mpd.pause
-	  from machine_data m
-	  join channel_machine cm on cm.machine_code = m.code and cm.channel_id = 2
-	  left join machine_pause_dash mpd on mpd.machine_code = m.code
-	  left join pause_reason pr on pr.id = mpd.pause_reason_id
-	 where mpd.channel_id = p_channel_id
-	   and mpd.date_ref between 
-		   (STR_TO_DATE(p_date_ini, '%Y-%m-%d %H:%i:%s')) 
-	   and (STR_TO_DATE(p_date_fin, '%Y-%m-%d %H:%i:%s'))
-	 group by mpd.insert_index) a
+	  from (       
+		select mpd.machine_code
+			 , pr.type
+			 , mpd.pause 
+		  from channel c
+		 inner join channel_machine cm on cm.channel_id = c.id
+		  left join machine_pause_dash mpd on mpd.channel_id = c.id and mpd.machine_code = cm.machine_code
+		  left join pause_reason pr on pr.id = mpd.pause_reason_id
+		 where c.id = p_channel_id
+		   and mpd.date_ref between 
+				   (STR_TO_DATE(p_date_ini, '%Y-%m-%d %H:%i:%s')) 
+			   and (STR_TO_DATE(p_date_fin, '%Y-%m-%d %H:%i:%s'))
+		 group by mpd.insert_index) a
 	 group by a.machine_code, a.type) b
 	 group by b.machine_code;
 
@@ -838,7 +840,7 @@ begin
 	open c;
  
 	read_loop: loop
-		fetch c into v_machine_code;	
+		fetch c into v_machine_code, v_machine_name;	
         
 		if v_done then
 			leave read_loop;
@@ -857,11 +859,11 @@ begin
 		
 		insert into tmp_oee(channel_id, machine_code, availability, performance, quality, oee) 
 		values (p_channel_id
-			  , v_machine_code
+			  , v_machine_name
 			  , round(((@v_real_availability / @v_availability)*100),2)
-			  , (@v_performance * 100)
+			  , round((@v_performance * 100),2)
 			  , 100
-			  , ((@v_performance * (@v_real_availability / @v_availability) * 1) * 100)
+			  , ((@v_performance * (@v_real_availability / @v_availability) * 1) * 100) 
 		);
 	end loop;
 
@@ -874,6 +876,44 @@ DELIMITER ;
 /*prc_oee*/
 
 /*stored procedures*/
+
+/*functions*/
+DROP function IF EXISTS `fnc_machine_pause`;
+
+DELIMITER $$
+USE `oee`$$
+CREATE FUNCTION `fnc_machine_pause`(
+	p_channel_id int,
+    p_machine_code varchar(10),
+    p_date_ini varchar(20),
+    p_date_fin varchar(20),
+    p_pause_type char(2)
+) RETURNS int(11)
+    DETERMINISTIC
+begin
+	declare v_pause int;
+    set v_pause = 0;
+    select sum(a.pause) as pause
+      into v_pause
+	  from (
+		select mpd.pause 
+		  from channel c
+		 inner join channel_machine cm on cm.channel_id = c.id
+		  left join machine_pause_dash mpd on mpd.channel_id = c.id and mpd.machine_code = cm.machine_code
+		  left join pause_reason pr on pr.id = mpd.pause_reason_id
+		 where c.id = p_channel_id
+		   and cm.machine_code = p_machine_code
+		   and mpd.date_ref between 
+				   (str_to_date(p_date_ini, '%Y-%m-%d %H:%i:%s')) 
+			   and (str_to_date(p_date_fin, '%Y-%m-%d %H:%i:%s'))
+		   and pr.type = p_pause_type    
+		 group by mpd.insert_index
+	) a;
+	return coalesce(v_pause, 0);
+end$$
+
+DELIMITER ;
+/*functions*/
 
 alter table feed_config add production_sql text null;
 
