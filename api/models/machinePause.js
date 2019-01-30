@@ -60,37 +60,26 @@ module.exports = function(api) {
     this.listPauses = function(data, callback) {
         var query = `
             select a.date_ref_format
-                , a.machine_code
                 , a.machine_name
-                , a.channel_id
-                , sum(a.pause) as pause
                 , time_format(sec_to_time(sum(a.pause)*60), '%H:%i:%s') as pause_time
                 , a.pause_reason
-                , a.pause_id 
-                , a.row_num
             from(
                 select DATE_FORMAT(mpd.date_ref, "%d/%m/%Y") as date_ref_format
-                    , mpd.machine_code
-                    , mpd.channel_id
                     , md.name as machine_name		
-                    , pr.name as pause_reason
-                    , @row_number := case 
-                        when @pause = mpd.pause and @pause_id = pr.id
-                            then @row_number + 1
-                            else 1         
-                        end as row_num
-                    , @pause := mpd.pause as pause
-                    , @pause_id := pr.id as pause_id         
+                    , pr.name as pause_reason    
+                    , mpd.pause
                 from machine_pause_dash mpd
                 inner join pause_reason pr on pr.id = mpd.pause_reason_id
                 inner join machine_data md on md.code = mpd.machine_code
                 where mpd.channel_id = ?
                 and mpd.machine_code = ?
-                and mpd.date_ref between ? and ?
+                and mpd.date_ref between 
+                    (STR_TO_DATE(?, '%Y-%m-%d %H:%i:%s')) 
+                and (STR_TO_DATE(?, '%Y-%m-%d %H:%i:%s'))
+                group by mpd.insert_index 
             ) a
-            where a.row_num = 1 
-            group by a.date_ref_format, a.machine_code, a.pause_id
-            order by a.pause desc
+            group by a.date_ref_format, a.machine_name, a.pause_reason
+            order by sum(pause);
         `; 
         _pool.getConnection(function(err, connection) {
             connection.query(query, 

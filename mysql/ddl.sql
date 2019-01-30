@@ -729,11 +729,12 @@ DELIMITER ;
 /*prc_machine_pause_dash*/
 
 /*prc_oee*/
+USE `oee`;
 DROP procedure IF EXISTS `prc_oee`;
 
 DELIMITER $$
 USE `oee`$$
-CREATE DEFINER=`root`@`%` PROCEDURE `prc_oee`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `prc_oee`(
 	in p_channel_id int,
 	in p_date_ini varchar(20),
     in p_date_fin varchar(20)    
@@ -760,6 +761,7 @@ begin
 	create temporary table if not exists tmp_oee(
 		channel_id int,
 		machine_code varchar(10),
+        machine_name varchar(100),
 		availability float(8,2),
 		performance float(8,2),
 		quality float(8,2),
@@ -857,9 +859,10 @@ begin
 		  from tmp_performance 
 		 where machine_code = v_machine_code;
 		
-		insert into tmp_oee(channel_id, machine_code, availability, performance, quality, oee) 
+		insert into tmp_oee(channel_id, machine_code, machine_name, availability, performance, quality, oee) 
 		values (p_channel_id
-			  , v_machine_name
+			  , v_machine_code
+              , v_machine_name
 			  , round(((@v_real_availability / @v_availability)*100),2)
 			  , round((@v_performance * 100),2)
 			  , 100
@@ -872,6 +875,8 @@ begin
 end$$
 
 DELIMITER ;
+
+
 
 /*prc_oee*/
 
