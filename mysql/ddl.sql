@@ -729,12 +729,11 @@ DELIMITER ;
 /*prc_machine_pause_dash*/
 
 /*prc_oee*/
-USE `oee`;
 DROP procedure IF EXISTS `prc_oee`;
 
 DELIMITER $$
 USE `oee`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `prc_oee`(
+CREATE DEFINER=`root`@`%` PROCEDURE `prc_oee`(
 	in p_channel_id int,
 	in p_date_ini varchar(20),
     in p_date_fin varchar(20)    
@@ -848,11 +847,17 @@ begin
 			leave read_loop;
 		end if;			
 	
+		set @v_pp = 0;
+        set @v_pnp = 0;
+        set @v_performance = 0;
+        set @v_availability = 0.01; /*somente para não dar divisao por zero*/
+        set @v_real_availability = 0;        
+        
 		select @v_pp := pp
 			 , @v_pnp := pnp
 		  from tmp_availability 
 		 where machine_code = v_machine_code;
-		
+		        
 		select @v_performance := performance
 			 , @v_availability := (field5 - coalesce(@v_pp,0))
 			 , @v_real_availability := (@v_availability - coalesce(@v_pnp,0))
@@ -865,7 +870,10 @@ begin
               , v_machine_name
 			  , round(((@v_real_availability / @v_availability)*100),2)
 			  , round((@v_performance * 100),2)
-			  , 100
+			  , case p_channel_id 
+				when 2 then 100
+				when 14 then 95
+				else 100 end
 			  , ((@v_performance * (@v_real_availability / @v_availability) * 1) * 100) 
 		);
 	end loop;
@@ -875,8 +883,6 @@ begin
 end$$
 
 DELIMITER ;
-
-
 
 /*prc_oee*/
 
