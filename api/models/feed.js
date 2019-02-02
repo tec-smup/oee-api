@@ -183,20 +183,13 @@ module.exports = function(api) {
     };
 
     this.allProductionV2 = function(data, callback) {
-        let sql = `CALL prc_production_count(?,?,?,1);
-        CALL prc_production_count(?,?,?,2);
-        select hour as shift_hour 
-         from channel_shift_prod_count
-        where channel_id = ?;`;
+        let sql = `call prc_commands_executer(?,?,?,?);`;
         _pool.getConnection(function(err, connection) {
             connection.query(sql, [
                 parseInt(data.ch_id),
                 data.dateIni, 
-                data.dateFin,
-                parseInt(data.ch_id),
-                data.dateIni, 
-                data.dateFin,      
-                parseInt(data.ch_id),                            
+                data.dateFin, 
+                "production"                           
             ], 
             function(error, result) {
                 connection.release();

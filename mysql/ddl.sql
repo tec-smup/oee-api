@@ -729,11 +729,12 @@ DELIMITER ;
 /*prc_machine_pause_dash*/
 
 /*prc_oee*/
+USE `oee`;
 DROP procedure IF EXISTS `prc_oee`;
 
 DELIMITER $$
 USE `oee`$$
-CREATE DEFINER=`root`@`%` PROCEDURE `prc_oee`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `prc_oee`(
 	in p_channel_id int,
 	in p_date_ini varchar(20),
     in p_date_fin varchar(20)    
@@ -742,6 +743,7 @@ begin
 	declare v_done int default false;
     declare v_machine_code varchar(10);
     declare v_machine_name varchar(20);
+    declare v_quality int;
     	
 	/*curso de maquinas do canal*/
 	declare c cursor for select cm.machine_code, m.name
@@ -838,6 +840,8 @@ begin
 		signal sqlstate '45000' set message_text = 'sem dados';
 	end if;
 
+	set v_quality = (select quality from channel where id = p_channel_id);
+
 	open c;
  
 	read_loop: loop
@@ -870,10 +874,7 @@ begin
               , v_machine_name
 			  , round(((@v_real_availability / @v_availability)*100),2)
 			  , round((@v_performance * 100),2)
-			  , case p_channel_id 
-				when 2 then 100
-				when 14 then 95
-				else 100 end
+			  , v_quality
 			  , ((@v_performance * (@v_real_availability / @v_availability) * 1) * 100) 
 		);
 	end loop;
@@ -885,6 +886,63 @@ end$$
 DELIMITER ;
 
 /*prc_oee*/
+
+/*prc_commands_executer*/
+
+USE `oee`;
+DROP procedure IF EXISTS `oee`.`prc_commands_executer`;
+
+DELIMITER $$
+USE `oee`$$
+CREATE PROCEDURE `prc_commands_executer`(
+	in p_channel_id int(11),
+    in p_date_ini varchar(20),
+    in p_date_fin varchar(20),
+    in p_type varchar(50)
+)
+BEGIN
+	declare v_done int default false;
+    declare v_query text;
+    
+	declare c cursor for select query
+						   from commands q 
+						  where q.channel_id = p_channel_id
+							and q.type = p_type;
+
+	declare continue handler for not found set v_done = true;    
+	declare exit handler for sqlexception, sqlwarning
+	begin
+		rollback;
+		resignal;
+	end;  
+	
+	open c;
+ 
+	read_loop: loop
+		fetch c into v_query;	
+        
+		if v_done then
+			leave read_loop;
+		end if;			
+	    
+        SET @v_query = v_query;
+		SET @v_query = REPLACE(@v_query, '__date_ini', p_date_ini);
+		SET @v_query = REPLACE(@v_query, '__date_fin', p_date_fin);
+		SET @v_query = REPLACE(@v_query, '__ch_id', p_channel_id);
+			
+		PREPARE stmt FROM @v_query;
+		EXECUTE stmt;
+		DEALLOCATE PREPARE stmt; 
+		
+	end loop;
+
+	close c;    
+    
+END$$
+
+DELIMITER ;
+
+/*prc_commands_executer*/
 
 /*stored procedures*/
 
@@ -936,6 +994,7 @@ alter table machine_pause_dash add insert_index int;
 
 alter table machine_data add nominal_output double null;
 
+//nao sei se vou manter isso
 create table channel_shift_prod_count(
 	channel_id int(11) not null,
     hour int(2) not null,
@@ -943,3 +1002,15 @@ create table channel_shift_prod_count(
     constraint fk_channel_shift_prod_count_channel FOREIGN KEY (channel_id) REFERENCES channel (id)
 );
 
+/*02-02-2019 - adicionando tabela de commands*/
+create table commands(
+	id int not null auto_increment primary key,
+	channel_id int(11) not null,
+    machine_code varchar(10) null,
+    type varchar(50) not null,
+    query text null
+);
+alter table queries add constraint fk_queries_channel foreign key(channel_id) references channel(id);
+alter table queries add constraint fk_queries_machine foreign key(machine_code) references machine_data(code);
+
+alter table channel add quality int null;
