@@ -734,7 +734,7 @@ DROP procedure IF EXISTS `prc_oee`;
 
 DELIMITER $$
 USE `oee`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `prc_oee`(
+CREATE DEFINER=`root`@`%` PROCEDURE `prc_oee`(
 	in p_channel_id int,
 	in p_date_ini varchar(20),
     in p_date_fin varchar(20)    
@@ -839,8 +839,8 @@ begin
 	if not exists(select 1 from tmp_performance) then
 		signal sqlstate '45000' set message_text = 'sem dados';
 	end if;
-
-	set v_quality = (select quality from channel where id = p_channel_id);
+    
+    set v_quality = (select quality from channel where id = p_channel_id);
 
 	open c;
  
@@ -884,7 +884,6 @@ begin
 end$$
 
 DELIMITER ;
-
 /*prc_oee*/
 
 /*prc_commands_executer*/
@@ -1006,11 +1005,11 @@ create table channel_shift_prod_count(
 create table commands(
 	id int not null auto_increment primary key,
 	channel_id int(11) not null,
-    machine_code varchar(10) null,
+    machine_code varchar(10) null COLLATE latin1_swedish_ci,
     type varchar(50) not null,
     query text null
 );
-alter table queries add constraint fk_queries_channel foreign key(channel_id) references channel(id);
-alter table queries add constraint fk_queries_machine foreign key(machine_code) references machine_data(code);
+alter table commands add constraint fk_commands_channel foreign key(channel_id) references channel(id);
+alter table commands add constraint fk_commands_machine foreign key(machine_code) references machine_data(code);
 
 alter table channel add quality int null;
