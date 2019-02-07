@@ -62,12 +62,17 @@ module.exports = function(api) {
             select a.date_ref_format
                 , a.machine_name
                 , time_format(sec_to_time(sum(a.pause)*60), '%H:%i:%s') as pause_time
+                , sum(a.pause) as pause_in_minutes
                 , a.pause_reason
+                , a.pause_type
+                , a.type
             from(
                 select DATE_FORMAT(mpd.date_ref, "%d/%m/%Y") as date_ref_format
                     , md.name as machine_name		
                     , pr.name as pause_reason    
                     , mpd.pause
+                    , pr.type
+                    , case pr.type when 'PP' then 'Pausa programada' else 'Pausa não programada' end as pause_type
                 from machine_pause_dash mpd
                 inner join pause_reason pr on pr.id = mpd.pause_reason_id
                 inner join machine_data md on md.code = mpd.machine_code

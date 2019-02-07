@@ -795,6 +795,8 @@ begin
 			when 'EF5' then round((((f.field3 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2) 
 			when 'EF6' then round((((f.field3 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2) 
 			when 'EF7' then round((((f.field3 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2)
+			when 'RB1' then round((((f.field2 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2)
+			when 'RB2' then round((((f.field2 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2)
 			else 0
 		   end as performance 
 	  from feed f 
