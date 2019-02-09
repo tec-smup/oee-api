@@ -23,25 +23,20 @@ module.exports = function(api) {
         });                   
     }; 
 
-    // this.list = function(req, res, next) {
-    //     var query = req.query;       
-    //     var data = {};
+    this.list = function(req, res, next) {
+        var query = req.query;       
         
-    //     _machinePause.list(query, function(exception, result) {
-    //         if(exception) {
-    //             return res.status(500).send(exception);
-    //         }
-    //         data.list = result;
-            
-    //         _machinePause.listPauses(query, function(exception, result) {
-    //             if(exception) {
-    //                 return res.status(500).send(exception);
-    //             }
-    //             data.pauses = result;
-    //             res.send(data);                
-    //         });            
-    //     });                 
-    // };
+        _machinePause.listPauses(query, function(exception, result) {
+            if(exception) {
+                return res.status(400).send(exception);
+            }
+            let dataResult = {
+                pauses: result[0],
+                pause_grouped: result[1][0] || []
+            }
+            res.status(200).send(dataResult);            
+        });                  
+    };
     
     return this;
 };

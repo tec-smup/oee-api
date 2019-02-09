@@ -229,5 +229,22 @@ module.exports = function(api) {
         });
     };    
 
+    this.nominalComparative = function(data, callback) {
+        let sql = `call prc_commands_executer(?,?,?,?,?);`;
+        _pool.getConnection(function(err, connection) {
+            connection.query(sql, [
+                parseInt(data.channelId),
+                data.machineCode,
+                data.dateIni, 
+                data.dateFin, 
+                "machine_comparative_prod_nominal"                           
+            ], 
+            function(error, result) {
+                connection.release();
+                callback(error, result);
+            });
+        });
+    };
+
     return this;
 };

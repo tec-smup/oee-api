@@ -15,6 +15,7 @@ module.exports = function(api) {
     router.get('/list', _tokenController.verify, _machineController.listAll);    
     router.get('/state/:machine', _machineController.getState);    
     router.post('/state', _tokenController.verify, _machineController.setState);    
+    router.get('/nominalcomparative', _tokenController.verify, _machineController.nominalComparative);    
 
     return router;
 };

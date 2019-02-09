@@ -891,12 +891,13 @@ DELIMITER ;
 /*prc_commands_executer*/
 
 USE `oee`;
-DROP procedure IF EXISTS `oee`.`prc_commands_executer`;
+DROP procedure IF EXISTS `prc_commands_executer`;
 
 DELIMITER $$
 USE `oee`$$
-CREATE PROCEDURE `prc_commands_executer`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `prc_commands_executer`(
 	in p_channel_id int(11),
+    in p_machine_code varchar(10),
     in p_date_ini varchar(20),
     in p_date_fin varchar(20),
     in p_type varchar(50)
@@ -930,6 +931,7 @@ BEGIN
 		SET @v_query = REPLACE(@v_query, '__date_ini', p_date_ini);
 		SET @v_query = REPLACE(@v_query, '__date_fin', p_date_fin);
 		SET @v_query = REPLACE(@v_query, '__ch_id', p_channel_id);
+        SET @v_query = REPLACE(@v_query, '__mc_cd', p_machine_code);
 			
 		PREPARE stmt FROM @v_query;
 		EXECUTE stmt;

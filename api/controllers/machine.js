@@ -165,5 +165,24 @@ module.exports = function(api) {
         });                 
     };        
 
+    this.nominalComparative = function(req, res, next) {        
+        //cria asserts para validação
+        req.assert('channelId', 'Canal não informado.').notEmpty();
+        req.assert('machineCode', 'Máquina não informada.').notEmpty();
+        req.assert('dateIni', 'Data inicial não informada.').notEmpty();
+        req.assert('dateFin', 'Data final não informada.').notEmpty();
+
+        var errors = req.validationErrors();
+        if(errors)
+            return res.status(400).send(errors);         
+                        
+        _machine.nominalComparative(req.query, function(exception, results, fields) {
+            if(exception) {
+                return res.status(400).send(exception);
+            }
+            return res.send(results[0]);
+        });                 
+    };  
+
     return this;
 };

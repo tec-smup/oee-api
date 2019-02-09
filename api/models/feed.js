@@ -183,10 +183,11 @@ module.exports = function(api) {
     };
 
     this.allProductionV2 = function(data, callback) {
-        let sql = `call prc_commands_executer(?,?,?,?);`;
+        let sql = `call prc_commands_executer(?,?,?,?,?);`;
         _pool.getConnection(function(err, connection) {
             connection.query(sql, [
                 parseInt(data.ch_id),
+                '',
                 data.dateIni, 
                 data.dateFin, 
                 "production"                           
