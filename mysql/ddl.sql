@@ -97,9 +97,9 @@ create table feed
     ch_id int not null,
     mc_cd varchar(10) null,
     field1 varchar(100) null,
-    field2 float(8,2) null,
-    field3 float(8,2) null,
-    field4 float(8,2) null,
+    field2 float(15,2) null,
+    field3 float(15,2) null,
+    field4 float(15,2) null,
     field5 varchar(100) null,
 	inserted_at timestamp not null default CURRENT_TIMESTAMP
 );
@@ -606,9 +606,9 @@ CREATE PROCEDURE `prc_feed_update`(
 	in p_token varchar(50),
     in p_mc_cd varchar(10),
     in p_field1 varchar(100),
-    in p_field2 float(8,2),
-    in p_field3 float(8,2),
-    in p_field4 float(8,2),
+    in p_field2 float(15,2),
+    in p_field3 float(15,2),
+    in p_field4 float(15,2),
     in p_field5 varchar(100),
     out p_time_shift int(11)
 )
