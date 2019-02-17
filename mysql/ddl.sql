@@ -617,6 +617,7 @@ BEGIN
     declare v_ch_id int(11);
     declare v_time_shift int(11);
     declare v_can_transmit bit;
+    declare v_last_feed float(15,2);
     
     select count(*) into v_count 
       from channel 
@@ -640,6 +641,17 @@ BEGIN
       from channel 
 	 where token = p_token;
      
+	select ifnull(sum(field2 + field3),0) as last
+      into v_last_feed
+	  from feed f
+	 inner join (select max(id) as id
+				   from feed
+				  where ch_id = v_ch_id
+					and mc_cd = p_mc_cd
+					and date(inserted_at) = DATE_FORMAT(now(), "%Y-%m-%d")
+				  group by mc_cd) ids on ids.id = f.id
+	 inner join machine_data m on m.code = f.mc_cd;     
+     
 	/*maquina pertence ao canal?*/
 	if not exists (select 1 from channel_machine where channel_id = v_ch_id and machine_code = p_mc_cd) then 
 		signal sqlstate '99999'
@@ -649,7 +661,7 @@ BEGIN
     set p_time_shift = v_time_shift;
     
     /*transmite somente dentro do horario de turno do canal*/
-    if(v_can_transmit = 1) then
+    if(v_can_transmit = 1 and ((p_field2 + p_field3) >= v_last_feed)) then
 		insert into feed(ch_id, mc_cd, field1, field2, field3, field4, field5)
 		values(v_ch_id, p_mc_cd, p_field1, p_field2, p_field3, p_field4, p_field5);
     end if;
