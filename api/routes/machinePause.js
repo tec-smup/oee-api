@@ -6,6 +6,7 @@ module.exports = function(api) {
 
     router.post('/', _tokenController.verify, _machinePauseController.post);
     router.get('/list', _tokenController.verify, _machinePauseController.list);
+    router.get('/pareto', _tokenController.verify, _machinePauseController.pareto);
 
     return router;
 };

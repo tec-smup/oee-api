@@ -134,6 +134,25 @@ module.exports = function(api) {
         });
     };
 
+    this.pareto = function(data, callback) {
+        var query = `
+            call prc_chart_pause_pareto(?, ?, ?);          
+        `; 
+        _pool.getConnection(function(err, connection) {
+            connection.query(query, 
+            [
+                parseInt(data.channel_id),
+                data.machine_code,
+                parseInt(data.filter)
+            ], 
+            function(error, result) {
+                connection.release();
+                callback(error, result);
+            });
+        });
+    };
+
+
     // this.listPauses = function(data, callback) {
     //     var dateIni = data.dateIni.substring(0, data.dateIni.indexOf(" "));
     //     var dateFin = data.dateFin.substring(0, data.dateFin.indexOf(" "));

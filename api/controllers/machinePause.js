@@ -37,6 +37,20 @@ module.exports = function(api) {
             res.status(200).send(dataResult);            
         });                  
     };
+
+    this.pareto = function(req, res, next) {
+        var query = req.query;       
+        
+        _machinePause.pareto(query, function(exception, result) {
+            if(exception) {
+                return res.status(400).send(exception);
+            }
+            let dataResult = {
+                pareto: result[0] || []
+            }
+            res.status(200).send(dataResult);            
+        });                  
+    };    
     
     return this;
 };
