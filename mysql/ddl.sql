@@ -1032,20 +1032,6 @@ alter table channel add quality int null;
 
 
 -- 20/02/2019
--- FUNCTION DEFINITION
-DELIMITER //
-
-CREATE FUNCTION fnc_week_of_month ( date DATE )
-RETURNS INT
-
-BEGIN
-
-   RETURN FLOOR((DAYOFMONTH(date) - 1) / 7) + 1;
-
-END; //
-
-DELIMITER ;
-
 -- pareto
 USE `oee`;
 DROP procedure IF EXISTS `prc_chart_pause_pareto`;
@@ -1066,7 +1052,7 @@ BEGIN
 			select year(mpd.date_ref) as year
 				 , month(mpd.date_ref) as month
 				 , day(mpd.date_ref) as day
-				 , fnc_week_of_month(mpd.date_ref) as week
+				 , week(mpd.date_ref) as week
 				 , mpd.pause
 			  from machine_pause_dash mpd
 			 inner join pause_reason pr on pr.id = mpd.pause_reason_id
@@ -1093,7 +1079,7 @@ BEGIN
 					select year(mpd.date_ref) as year
 						 , month(mpd.date_ref) as month
 						 , day(mpd.date_ref) as day
-						 , fnc_week_of_month(mpd.date_ref) as week
+						 , week(mpd.date_ref) as week
 						 , mpd.pause_reason_id
 						 , mpd.pause
 						 , pr.name as pause_name
@@ -1136,8 +1122,8 @@ BEGIN
             set @queryPausesCount = replace(@queryPausesCount, '__filter', 'and p.month = month(now())'); 
         -- filtro por mes/semana
         elseif(p_time_filter = 2) then
-			set @queryPauses = replace(@queryPauses, '__filter', 'and p.week = fnc_week_of_month(now()) and p.month = month(now())');
-            set @queryPausesCount = replace(@queryPausesCount, '__filter', 'and p.week = fnc_week_of_month(now()) and p.month = month(now())');        
+			set @queryPauses = replace(@queryPauses, '__filter', 'and p.week = week(now()) and p.month = month(now())');
+            set @queryPausesCount = replace(@queryPausesCount, '__filter', 'and p.week = week(now()) and p.month = month(now())');        
 		-- filtro por mes/dia
         else
 			set @queryPauses = replace(@queryPauses, '__filter', 'and p.day = day(now()) and p.month = month(now())');
