@@ -1143,9 +1143,132 @@ END$$
 DELIMITER ;
 
 
+-- 25/02/2019
+alter table machine_config add max_day_production float(15,2) null;
 
+-- 26/02/2019
+USE `oee`;
+DROP procedure IF EXISTS `prc_commands_executer`;
 
+DELIMITER $$
+USE `oee`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `prc_commands_executer`(
+	in p_channel_id int(11),
+    in p_machine_code varchar(10),
+    in p_date_ini varchar(20),
+    in p_date_fin varchar(20),
+    in p_type varchar(50) 
+)
+BEGIN
+	declare v_done int default false;
+    declare v_query text;
+    
+	declare c cursor for select query
+						   from commands q 
+						  where q.channel_id = p_channel_id
+							and ((q.machine_code = p_machine_code) or q.machine_code is null)
+                            and q.type = p_type;
 
+	declare continue handler for not found set v_done = true;    
+	declare exit handler for sqlexception, sqlwarning
+	begin
+		rollback;
+		resignal;
+	end;  
+	
+	open c;
+ 
+	read_loop: loop
+		fetch c into v_query;	
+        
+		if v_done then
+			leave read_loop;
+		end if;			
+	    
+        SET @v_query = v_query;
+		SET @v_query = REPLACE(@v_query, '__date_ini', p_date_ini);
+		SET @v_query = REPLACE(@v_query, '__date_fin', p_date_fin);
+		SET @v_query = REPLACE(@v_query, '__ch_id', p_channel_id);
+        SET @v_query = REPLACE(@v_query, '__mc_cd', p_machine_code);
+			
+		PREPARE stmt FROM @v_query;
+		EXECUTE stmt;
+		DEALLOCATE PREPARE stmt; 
+		
+	end loop;
 
+	close c;    
+    
+END$$
 
+DELIMITER ;
 
+insert into commands(channel_id, type, query) 
+values(2, 'mobile_gauge_chart', '
+select a.machine_code
+     , a.machine_name
+     , a.max_day_production
+     , round(coalesce(((a.production * 100) / a.max_day_production), 0), 2) as production
+     , a.chart_tooltip_desc
+     , a.date
+  from ( 
+select f.mc_cd as machine_code
+     , m.name as machine_name
+     , case f.mc_cd 
+		when \'EF3\' then f.field2
+        when \'EF4\' then f.field2
+        when \'EF5\' then f.field3 
+        when \'EF6\' then f.field3
+        when \'EF7\' then f.field3 
+        else 0 end as production
+     , coalesce(mc.max_day_production, 0) as max_day_production
+     , case f.mc_cd 
+		when \'EF3\' then replace(mc.chart_tooltip_desc, \'__value\', f.field2)
+        when \'EF4\' then replace(mc.chart_tooltip_desc, \'__value\', f.field2)
+        when \'EF5\' then replace(mc.chart_tooltip_desc, \'__value\', f.field3) 
+        when \'EF6\' then replace(mc.chart_tooltip_desc, \'__value\', f.field3)
+        when \'EF7\' then replace(mc.chart_tooltip_desc, \'__value\', f.field3)
+        else 0 end as chart_tooltip_desc     
+     , DATE_FORMAT(f.inserted_at, \'%d/%m/%Y %H:%i:%s\') as date
+  from feed f
+ inner join machine_data m on m.code = f.mc_cd
+ inner join (select max(id) as id
+			   from feed f 
+			  where f.ch_id = __ch_id
+			    and DATE_FORMAT(f.inserted_at, \'%d%m%Y\') = \'__date_ini\'
+			  group by f.mc_cd) tmp on tmp.id = f.id
+ inner join machine_config mc on mc.machine_code = f.mc_cd) a;');
+
+ update machine_config set max_day_production = 3000 where machine_code in('EF3','EF4','EF5','EF6','EF7');
+
+insert into commands(channel_id, type, query) 
+values(16, 'mobile_gauge_chart', '
+select a.machine_code
+     , a.machine_name
+     , a.max_day_production
+     , round(coalesce(((a.production * 100) / a.max_day_production), 0), 2) as production
+     , a.chart_tooltip_desc
+     , a.date
+  from ( 
+select f.mc_cd as machine_code
+     , m.name as machine_name
+     , case f.mc_cd 
+		when \'AB1\' then f.field3
+        when \'AB2\' then f.field3
+        else 0 end as production
+     , coalesce(mc.max_day_production, 0) as max_day_production
+     , case f.mc_cd 
+		when \'AB1\' then replace(mc.chart_tooltip_desc, \'__value\', f.field3)
+        when \'AB2\' then replace(mc.chart_tooltip_desc, \'__value\', f.field3)
+        else 0 end as chart_tooltip_desc     
+     , DATE_FORMAT(f.inserted_at, \'%d/%m/%Y %H:%i:%s\') as date
+  from feed f
+ inner join machine_data m on m.code = f.mc_cd
+ inner join (select max(id) as id
+			   from feed f 
+			  where f.ch_id = __ch_id
+			    and DATE_FORMAT(f.inserted_at, \'%d%m%Y\') = \'__date_ini\'
+			  group by f.mc_cd) tmp on tmp.id = f.id
+ inner join machine_config mc on mc.machine_code = f.mc_cd) a;');
+
+ update machine_config set max_day_production = 600000 where machine_code in('AB1','AB2');
