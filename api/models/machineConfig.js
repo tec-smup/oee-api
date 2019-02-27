@@ -25,6 +25,7 @@ module.exports = function(api) {
                set chart_sql = ?
                  , mobile_sql = ?
                  , chart_tooltip_desc = ?
+                 , max_day_production = ?
              where machine_code = ?
         `;
         _pool.getConnection(function(err, connection) {
@@ -32,8 +33,9 @@ module.exports = function(api) {
             [
                 data.chart_sql, 
                 data.mobile_sql,
-                data.chart_tooltip_desc,
-                data.machine_code,
+                data.chart_tooltip_desc,                
+                parseFloat(data.max_day_production),
+                data.machine_code
             ], 
             function(error, result) {
                 connection.release();
