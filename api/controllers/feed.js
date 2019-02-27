@@ -28,7 +28,7 @@ module.exports = function(api) {
 				if(exception) {
 					return res.status(400).send(exception);
 				}
-				data.pauses = result;
+				data.pauses = result[0];
 				res.status(200).send(data);            
 			});              
         });                 
