@@ -20,6 +20,8 @@ const exportExcel_route = `${process.env.BASE_URL}exportexcel`;
 const pauseReason_route = `${process.env.BASE_URL}pausereason`;
 const machinePauseDash_route = `${process.env.BASE_URL}machinepausedash`;
 const mobile_route = `${process.env.BASE_URL}mobile`;
+const shift_route = `${process.env.BASE_URL}shift`;
+const machineShift_route = `${process.env.BASE_URL}machineshift`;
 
 //rotas que ouvimos
 api.use(index_route, api.routes.index);
@@ -37,6 +39,8 @@ api.use(exportExcel_route, api.routes.exportExcel);
 api.use(pauseReason_route, api.routes.pauseReason);
 api.use(machinePauseDash_route, api.routes.machinePauseDash);
 api.use(mobile_route, api.routes.mobile);
+api.use(shift_route, api.routes.shift);
+api.use(machineShift_route, api.routes.machineShift);
 
 //rotas não encontradas serão respondidas por essa
 api.use((req, res, next) => {

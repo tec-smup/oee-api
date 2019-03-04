@@ -1009,14 +1009,6 @@ alter table machine_pause_dash add insert_index int;
 
 alter table machine_data add nominal_output double null;
 
-//nao sei se vou manter isso
-create table channel_shift_prod_count(
-	channel_id int(11) not null,
-    hour int(2) not null,
-    primary key(channel_id, hour),
-    constraint fk_channel_shift_prod_count_channel FOREIGN KEY (channel_id) REFERENCES channel (id)
-);
-
 /*02-02-2019 - adicionando tabela de commands*/
 create table commands(
 	id int not null auto_increment primary key,
@@ -1383,3 +1375,43 @@ END$$
 
 DELIMITER ;
 
+-- 04/03 - adicionandno tabela de turno por maquina
+create table machine_shift(
+	id int not null auto_increment,
+    machine_code varchar(10) not null COLLATE latin1_swedish_ci,
+	hour_ini char(5) not null,
+    hour_fin char(5) not null,
+    primary key(id, machine_code)
+);
+
+alter table machine_shift add constraint fk_machine_shift_machine FOREIGN KEY (machine_code) REFERENCES machine_data (code);
+
+-- tabela com horarios de turno
+create table shift(
+	id int not null auto_increment,
+    hour char(5) not null,
+    primary key(id)
+);
+insert into shift(hour) values('00:00');
+insert into shift(hour) values('01:00');
+insert into shift(hour) values('02:00');
+insert into shift(hour) values('03:00');
+insert into shift(hour) values('04:00');
+insert into shift(hour) values('05:00');
+insert into shift(hour) values('06:00');
+insert into shift(hour) values('07:00');
+insert into shift(hour) values('08:00');
+insert into shift(hour) values('09:00');
+insert into shift(hour) values('10:00');
+insert into shift(hour) values('12:00');
+insert into shift(hour) values('13:00');
+insert into shift(hour) values('14:00');
+insert into shift(hour) values('15:00');
+insert into shift(hour) values('16:00');
+insert into shift(hour) values('17:00');
+insert into shift(hour) values('18:00');
+insert into shift(hour) values('19:00');
+insert into shift(hour) values('20:00');
+insert into shift(hour) values('21:00');
+insert into shift(hour) values('22:00');
+insert into shift(hour) values('23:00');
