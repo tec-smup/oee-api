@@ -22,5 +22,33 @@ module.exports = function(api) {
         });
     };  
 
+    this.add = function(data, callback) {
+        _pool.getConnection(function(err, connection) {
+            connection.query("call prc_machine_shift(?,?,?);", 
+            [
+                data.machineCode,
+                data.hourIni,
+                data.hourFin
+            ], 
+            function(error, result) {
+                connection.release();
+                callback(error, result);
+            });
+        });    
+    };
+
+    this.delete = function(params, callback) {
+        _pool.getConnection(function(err, connection) {
+            connection.query("delete from machine_shift where id = ?", 
+            [
+                parseInt(params.id)
+            ], 
+            function(error, result) {
+                connection.release();
+                callback(error, result);
+            });
+        });    
+    };    
+
     return this;
 };

@@ -1415,3 +1415,32 @@ insert into shift(hour) values('20:00');
 insert into shift(hour) values('21:00');
 insert into shift(hour) values('22:00');
 insert into shift(hour) values('23:00');
+
+-- procedure de inserção de turno da maquina
+USE `oee`;
+DROP procedure IF EXISTS `prc_machine_shift`;
+
+DELIMITER $$
+USE `oee`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `prc_machine_shift`(
+	in p_machine_code varchar(10),
+    in p_hour_ini char(5),
+    in p_hour_fin char(5)
+)
+BEGIN    
+    set @msg = 'Horário inválido ou já cadastrado';
+    
+	if (exists (select 1 from machine_shift 
+				where machine_code = p_machine_code
+                  and hour_ini = p_hour_ini
+                  and hour_fin = p_hour_fin) or p_hour_ini = p_hour_fin) then 
+		signal sqlstate '99999'
+		set message_text = @msg;
+    end if;
+    insert into machine_shift(machine_code, hour_ini, hour_fin) 
+	values(p_machine_code, p_hour_ini, p_hour_fin);
+END$$
+
+DELIMITER ;
+
+
