@@ -200,12 +200,13 @@ module.exports = function(api) {
     };
 
     this.OEE = function(data, callback) {
-        let sql = `call prc_oee(?,?,?);`;
+        let sql = `call prc_oee(?,?,?,?);`;
         _pool.getConnection(function(err, connection) {
             connection.query(sql, [
                 parseInt(data.ch_id),
                 data.dateIni, 
-                data.dateFin                            
+                data.dateFin,
+                data.machineCode ? data.machineCode : ''
             ], 
             function(error, result) {
                 connection.release();

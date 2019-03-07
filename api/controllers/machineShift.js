@@ -49,5 +49,26 @@ module.exports = function(api) {
         });
     }; 
 
+    this.OEE = function(req, res, next) {
+        var params = req.params;
+
+        //cria asserts para validação
+        req.assert('channelId', 'canal não informado.').notEmpty();
+        req.assert('machineCode', 'máquina não informada.').notEmpty();
+        req.assert('dateIni', 'data não informada.').notEmpty();
+        req.assert('dateFin', 'data não informada.').notEmpty();
+       
+        var errors = req.validationErrors();
+        if(errors)
+            return res.status(400).send(errors);         
+
+        _machineShift.OEE(params, function(exception, results, fields) {
+            if(exception) {
+                return res.status(400).send(exception);
+            }
+            return res.status(200).send(results);
+        });
+    };     
+
     return this;
 };

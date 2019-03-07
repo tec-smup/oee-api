@@ -203,7 +203,7 @@ module.exports = function(api) {
                 return res.status(400).send(exception);
             }
 
-            if(result.length <= 0) {
+            if(result[0].length <= 0) {
                 return res.send(null);
             } 
 
@@ -235,7 +235,7 @@ module.exports = function(api) {
                 {
                     name: 'Pausas',   
                     specification: specification,
-                    data: result 
+                    data: result[0] 
                 }
             ]);
 

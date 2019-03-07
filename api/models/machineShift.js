@@ -50,5 +50,21 @@ module.exports = function(api) {
         });    
     };    
 
+    this.OEE = function(params, callback) {
+        _pool.getConnection(function(err, connection) {
+            connection.query("call prc_shift_oee(?,?,?,?);", 
+            [
+                parseInt(params.channelId),
+                params.machineCode,
+                params.dateIni,
+                params.dateFin
+            ], 
+            function(error, result) {
+                connection.release();
+                callback(error, result);
+            });
+        });    
+    };     
+
     return this;
 };

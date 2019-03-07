@@ -1443,4 +1443,232 @@ END$$
 
 DELIMITER ;
 
+-- 07/03/2019 - melhorias prc oee
+USE `oee`;
+DROP procedure IF EXISTS `prc_oee`;
+
+DELIMITER $$
+USE `oee`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `prc_oee`(
+	in p_channel_id int,
+	in p_date_ini varchar(20),
+    in p_date_fin varchar(20),
+    in p_machine_code varchar(10)
+)
+begin
+	declare v_done int default false;
+    declare v_machine_code varchar(10);
+    declare v_machine_name varchar(20);
+    declare v_quality int;
+    	
+	/*curso de maquinas do canal*/
+	declare c cursor for select cm.machine_code, m.name
+						   from channel_machine cm
+						  inner join machine_data m on m.code = cm.machine_code
+						  where cm.channel_id = p_channel_id
+                            and ((cm.machine_code = p_machine_code) or ifnull(p_machine_code, '') = '');
+	
+	declare continue handler for not found set v_done = true;    
+	declare exit handler for sqlexception, sqlwarning
+	begin
+		rollback;
+		resignal;
+	end;    
+
+	drop temporary table if exists tmp_oee;
+	create temporary table if not exists tmp_oee(
+		channel_id int,
+		machine_code varchar(10),
+        machine_name varchar(100),
+		availability float(8,2),
+		performance float(8,2),
+		quality float(8,2),
+		oee float(8,2)
+	);
+    
+	drop temporary table if exists tmp_performance;
+	create temporary table if not exists tmp_performance(
+		machine_code varchar(10),
+		field3 float(8,2),
+		field5 float(8,2),
+		performance float(8,2)
+	);
+    
+	drop temporary table if exists tmp_availability;
+	create temporary table if not exists tmp_availability(
+		machine_code varchar(10),
+		pp float(8,2),
+		pnp float(8,2)
+	);    
+
+	/*desempenho*/
+	insert into tmp_performance
+	select f.mc_cd
+		 , f.field3
+		 , cast(coalesce(f.field5,0) as decimal(15,2)) as field5
+         , coalesce(case f.mc_cd 
+			when 'EF3' then round((((f.field2 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2) 
+			when 'EF4' then round((((f.field2 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2) 
+			when 'EF5' then round((((f.field3 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2) 
+			when 'EF6' then round((((f.field3 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2) 
+			when 'EF7' then round((((f.field3 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2)
+            when 'RB1' then round((((f.field2 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2)
+            when 'RB2' then round((((f.field2 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2)
+			when 'AB1' then round((((f.field3 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2)
+            when 'AB2' then round((((f.field3 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2)
+            /*when 'MAQ1' then round((((f.field4 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2)
+			when 'MAQ2' then round((((f.field4 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2)
+			when 'MAQ3' then round((((f.field4 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2)
+			when 'MAQ4' then round((((f.field4 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2)
+			when 'MAQ5' then round((((f.field4 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2)
+            when 'LLC6' then round((((f.field4 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2)
+			when 'LLC7' then round((((f.field4 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2)
+			when 'LLC8' then round((((f.field4 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2)
+			when 'LLC9' then round((((f.field4 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2)
+			when 'LLC10' then round((((f.field4 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2)
+			when 'LLC11' then round((((f.field4 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2)
+			when 'LLC12' then round((((f.field4 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2)
+			when 'LLC13' then round((((f.field4 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2)
+            when 'OP1' then round((((f.field3 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2) */
+            else 0
+		   end, 0) as performance 
+	  from feed f 
+	 inner join (select max(f.id) as id
+				   from feed f
+				  where f.ch_id = p_channel_id
+                    and ((f.mc_cd = p_machine_code) or ifnull(p_machine_code, '') = '')
+					and f.inserted_at between 
+						(STR_TO_DATE(p_date_ini, '%Y-%m-%d %H:%i:%s')) 
+					and (STR_TO_DATE(p_date_fin, '%Y-%m-%d %H:%i:%s'))			
+				  group by f.mc_cd) tmp on f.id = tmp.id
+	 inner join machine_data m on m.code = f.mc_cd;    
+
+	/*disponibilidade*/
+	insert into tmp_availability
+	select b.machine_code
+		 , sum(pp) as pp
+		 , sum(pnp) as pnp
+	  from (
+	select a.machine_code 
+		 , case a.type
+			when 'PP' then sum(a.pause)
+			else 0 end as pp
+		 , case a.type
+			when 'NP' then sum(a.pause)
+			else 0 end as pnp        
+	  from (       
+		select mpd.machine_code
+			 , pr.type
+			 , mpd.pause 
+		  from machine_pause_dash mpd
+		  left join pause_reason pr on pr.id = mpd.pause_reason_id
+		 where mpd.channel_id = p_channel_id
+           and ((mpd.machine_code = p_machine_code) or ifnull(p_machine_code, '') = '')
+		   and mpd.date_ref between 
+				   (STR_TO_DATE(p_date_ini, '%Y-%m-%d %H:%i:%s')) 
+			   and (STR_TO_DATE(p_date_fin, '%Y-%m-%d %H:%i:%s'))
+		 group by mpd.insert_index) a
+	 group by a.machine_code, a.type) b
+	 group by b.machine_code;
+
+	if not exists(select 1 from tmp_performance) then
+		signal sqlstate '45000' set message_text = 'sem dados';
+	end if;
+    
+    set v_quality = (select quality from channel where id = p_channel_id);
+
+	open c;
+ 
+	read_loop: loop
+		fetch c into v_machine_code, v_machine_name;	
+        
+		if v_done then
+			leave read_loop;
+		end if;			
+	
+		set @v_pp = 0;
+        set @v_pnp = 0;
+        set @v_performance = 0;
+        set @v_availability = 0.01; /*somente para não dar divisao por zero*/
+        set @v_real_availability = 0;        
+        
+		select @v_pp := pp
+			 , @v_pnp := pnp
+		  from tmp_availability 
+		 where machine_code = v_machine_code;
+		        
+		select @v_performance := performance
+			 , @v_availability := (field5 - coalesce(@v_pp,0))
+			 , @v_real_availability := (@v_availability - coalesce(@v_pnp,0))
+		  from tmp_performance 
+		 where machine_code = v_machine_code;
+		
+		insert into tmp_oee(channel_id, machine_code, machine_name, availability, performance, quality, oee) 
+		values (p_channel_id
+			  , v_machine_code
+              , v_machine_name
+			  , round(((@v_real_availability / @v_availability)*100),2)
+			  , round((@v_performance * 100),2)
+			  , v_quality
+			  , ((@v_performance * (@v_real_availability / @v_availability) * 1) * 100) 
+		);
+	end loop;
+
+	close c;
+	select * from tmp_oee; 
+end$$
+
+DELIMITER ;
+
+-- procedure de geração do oee por turno
+USE `oee`;
+DROP procedure IF EXISTS `prc_shift_oee`;
+
+DELIMITER $$
+USE `oee`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `prc_shift_oee`(
+	in p_channel_id int(11),
+    in p_machine_code varchar(10),
+    in p_date_ini varchar(20),
+    in p_date_fin varchar(20)
+)
+BEGIN
+	declare v_done int default false;
+    declare v_hour_ini char(5);
+    declare v_hour_fin char(5);
+    
+	declare c cursor for select hour_ini, hour_fin
+						   from machine_shift ms 
+						  where ms.machine_code = p_machine_code;
+
+	declare continue handler for not found set v_done = true;    
+	declare exit handler for sqlexception, sqlwarning
+	begin
+		rollback;
+		resignal;
+	end;  
+	
+	open c;
+ 
+	read_loop: loop
+		fetch c into v_hour_ini, v_hour_fin;	
+        
+		if v_done then
+			leave read_loop;
+		end if;			
+        
+        set @v_date_ini = concat(convert(date_format(str_to_date(p_date_ini, '%Y-%m-%d %H:%i:%s'), '%Y-%m-%d'), char(10)), ' ', v_hour_ini, ':00');
+        set @v_date_fin = concat(convert(date_format(str_to_date(p_date_fin, '%Y-%m-%d %H:%i:%s'), '%Y-%m-%d'), char(10)), ' ', v_hour_fin, ':00');
+        
+		select p_machine_code as machine_code, concat('OEE turno: ', v_hour_ini, ' - ', v_hour_fin) as oee_msg;
+        call prc_oee(p_channel_id, @v_date_ini, @v_date_fin, p_machine_code);
+		
+	end loop;
+
+	close c;    
+END$$
+
+DELIMITER ;
+
+
 
