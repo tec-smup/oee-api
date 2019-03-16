@@ -1670,5 +1670,520 @@ END$$
 
 DELIMITER ;
 
+-- 09/03
+insert into shift(hour) values('00:00');
+insert into shift(hour) values('00:01');
+insert into shift(hour) values('00:05');
+insert into shift(hour) values('00:10');
+insert into shift(hour) values('00:15');
+insert into shift(hour) values('00:20');
+insert into shift(hour) values('00:25');
+insert into shift(hour) values('00:30');
+insert into shift(hour) values('00:35');
+insert into shift(hour) values('00:40');
+insert into shift(hour) values('00:45');
+insert into shift(hour) values('00:50');
+insert into shift(hour) values('00:55');
+
+insert into shift(hour) values('01:00');
+insert into shift(hour) values('01:01');
+insert into shift(hour) values('01:05');
+insert into shift(hour) values('01:10');
+insert into shift(hour) values('01:15');
+insert into shift(hour) values('01:20');
+insert into shift(hour) values('01:25');
+insert into shift(hour) values('01:30');
+insert into shift(hour) values('01:35');
+insert into shift(hour) values('01:40');
+insert into shift(hour) values('01:45');
+insert into shift(hour) values('01:50');
+insert into shift(hour) values('01:55');
+
+insert into shift(hour) values('02:00');
+insert into shift(hour) values('02:01');
+insert into shift(hour) values('02:05');
+insert into shift(hour) values('02:10');
+insert into shift(hour) values('02:15');
+insert into shift(hour) values('02:20');
+insert into shift(hour) values('02:25');
+insert into shift(hour) values('02:30');
+insert into shift(hour) values('02:35');
+insert into shift(hour) values('02:40');
+insert into shift(hour) values('02:45');
+insert into shift(hour) values('02:50');
+insert into shift(hour) values('02:55');
+
+insert into shift(hour) values('03:00');
+insert into shift(hour) values('03:01');
+insert into shift(hour) values('03:05');
+insert into shift(hour) values('03:10');
+insert into shift(hour) values('03:15');
+insert into shift(hour) values('03:20');
+insert into shift(hour) values('03:25');
+insert into shift(hour) values('03:30');
+insert into shift(hour) values('03:35');
+insert into shift(hour) values('03:40');
+insert into shift(hour) values('03:45');
+insert into shift(hour) values('03:50');
+insert into shift(hour) values('03:55');
+
+insert into shift(hour) values('04:00');
+insert into shift(hour) values('04:01');
+insert into shift(hour) values('04:05');
+insert into shift(hour) values('04:10');
+insert into shift(hour) values('04:15');
+insert into shift(hour) values('04:20');
+insert into shift(hour) values('04:25');
+insert into shift(hour) values('04:30');
+insert into shift(hour) values('04:35');
+insert into shift(hour) values('04:40');
+insert into shift(hour) values('04:45');
+insert into shift(hour) values('04:50');
+insert into shift(hour) values('04:55');
+
+insert into shift(hour) values('05:00');
+insert into shift(hour) values('05:01');
+insert into shift(hour) values('05:05');
+insert into shift(hour) values('05:10');
+insert into shift(hour) values('05:15');
+insert into shift(hour) values('05:20');
+insert into shift(hour) values('05:25');
+insert into shift(hour) values('05:30');
+insert into shift(hour) values('05:35');
+insert into shift(hour) values('05:40');
+insert into shift(hour) values('05:45');
+insert into shift(hour) values('05:50');
+insert into shift(hour) values('05:55');
+
+insert into shift(hour) values('06:00');
+insert into shift(hour) values('06:01');
+insert into shift(hour) values('06:05');
+insert into shift(hour) values('06:10');
+insert into shift(hour) values('06:15');
+insert into shift(hour) values('06:20');
+insert into shift(hour) values('06:25');
+insert into shift(hour) values('06:30');
+insert into shift(hour) values('06:35');
+insert into shift(hour) values('06:40');
+insert into shift(hour) values('06:45');
+insert into shift(hour) values('06:50');
+insert into shift(hour) values('06:55');
+
+insert into shift(hour) values('07:00');
+insert into shift(hour) values('07:01');
+insert into shift(hour) values('07:05');
+insert into shift(hour) values('07:10');
+insert into shift(hour) values('07:15');
+insert into shift(hour) values('07:20');
+insert into shift(hour) values('07:25');
+insert into shift(hour) values('07:30');
+insert into shift(hour) values('07:35');
+insert into shift(hour) values('07:40');
+insert into shift(hour) values('07:45');
+insert into shift(hour) values('07:50');
+insert into shift(hour) values('07:55');
+
+insert into shift(hour) values('08:00');
+insert into shift(hour) values('08:01');
+insert into shift(hour) values('08:05');
+insert into shift(hour) values('08:10');
+insert into shift(hour) values('08:15');
+insert into shift(hour) values('08:20');
+insert into shift(hour) values('08:25');
+insert into shift(hour) values('08:30');
+insert into shift(hour) values('08:35');
+insert into shift(hour) values('08:40');
+insert into shift(hour) values('08:45');
+insert into shift(hour) values('08:50');
+insert into shift(hour) values('08:55');
+
+insert into shift(hour) values('09:00');
+insert into shift(hour) values('09:01');
+insert into shift(hour) values('09:05');
+insert into shift(hour) values('09:10');
+insert into shift(hour) values('09:15');
+insert into shift(hour) values('09:20');
+insert into shift(hour) values('09:25');
+insert into shift(hour) values('09:30');
+insert into shift(hour) values('09:35');
+insert into shift(hour) values('09:40');
+insert into shift(hour) values('09:45');
+insert into shift(hour) values('09:50');
+insert into shift(hour) values('09:55');
+
+insert into shift(hour) values('10:00');
+insert into shift(hour) values('10:01');
+insert into shift(hour) values('10:05');
+insert into shift(hour) values('10:10');
+insert into shift(hour) values('10:15');
+insert into shift(hour) values('10:20');
+insert into shift(hour) values('10:25');
+insert into shift(hour) values('10:30');
+insert into shift(hour) values('10:35');
+insert into shift(hour) values('10:40');
+insert into shift(hour) values('10:45');
+insert into shift(hour) values('10:50');
+insert into shift(hour) values('10:55');
+
+insert into shift(hour) values('11:00');
+insert into shift(hour) values('11:01');
+insert into shift(hour) values('11:05');
+insert into shift(hour) values('11:10');
+insert into shift(hour) values('11:15');
+insert into shift(hour) values('11:20');
+insert into shift(hour) values('11:25');
+insert into shift(hour) values('11:30');
+insert into shift(hour) values('11:35');
+insert into shift(hour) values('11:40');
+insert into shift(hour) values('11:45');
+insert into shift(hour) values('11:50');
+insert into shift(hour) values('11:55');
+
+insert into shift(hour) values('12:00');
+insert into shift(hour) values('12:01');
+insert into shift(hour) values('12:05');
+insert into shift(hour) values('12:10');
+insert into shift(hour) values('12:15');
+insert into shift(hour) values('12:20');
+insert into shift(hour) values('12:25');
+insert into shift(hour) values('12:30');
+insert into shift(hour) values('12:35');
+insert into shift(hour) values('12:40');
+insert into shift(hour) values('12:45');
+insert into shift(hour) values('12:50');
+insert into shift(hour) values('12:55');
+
+insert into shift(hour) values('13:00');
+insert into shift(hour) values('13:01');
+insert into shift(hour) values('13:05');
+insert into shift(hour) values('13:10');
+insert into shift(hour) values('13:15');
+insert into shift(hour) values('13:20');
+insert into shift(hour) values('13:25');
+insert into shift(hour) values('13:30');
+insert into shift(hour) values('13:35');
+insert into shift(hour) values('13:40');
+insert into shift(hour) values('13:45');
+insert into shift(hour) values('13:50');
+insert into shift(hour) values('13:55');
+
+insert into shift(hour) values('14:00');
+insert into shift(hour) values('14:01');
+insert into shift(hour) values('14:05');
+insert into shift(hour) values('14:10');
+insert into shift(hour) values('14:15');
+insert into shift(hour) values('14:20');
+insert into shift(hour) values('14:25');
+insert into shift(hour) values('14:30');
+insert into shift(hour) values('14:35');
+insert into shift(hour) values('14:40');
+insert into shift(hour) values('14:45');
+insert into shift(hour) values('14:50');
+insert into shift(hour) values('14:55');
+
+insert into shift(hour) values('15:00');
+insert into shift(hour) values('15:01');
+insert into shift(hour) values('15:05');
+insert into shift(hour) values('15:10');
+insert into shift(hour) values('15:15');
+insert into shift(hour) values('15:20');
+insert into shift(hour) values('15:25');
+insert into shift(hour) values('15:30');
+insert into shift(hour) values('15:35');
+insert into shift(hour) values('15:40');
+insert into shift(hour) values('15:45');
+insert into shift(hour) values('15:50');
+insert into shift(hour) values('15:55');
+
+insert into shift(hour) values('16:00');
+insert into shift(hour) values('16:01');
+insert into shift(hour) values('16:05');
+insert into shift(hour) values('16:10');
+insert into shift(hour) values('16:15');
+insert into shift(hour) values('16:20');
+insert into shift(hour) values('16:25');
+insert into shift(hour) values('16:30');
+insert into shift(hour) values('16:35');
+insert into shift(hour) values('16:40');
+insert into shift(hour) values('16:45');
+insert into shift(hour) values('16:50');
+insert into shift(hour) values('16:55');
+
+insert into shift(hour) values('17:00');
+insert into shift(hour) values('17:01');
+insert into shift(hour) values('17:05');
+insert into shift(hour) values('17:10');
+insert into shift(hour) values('17:15');
+insert into shift(hour) values('17:20');
+insert into shift(hour) values('17:25');
+insert into shift(hour) values('17:30');
+insert into shift(hour) values('17:35');
+insert into shift(hour) values('17:40');
+insert into shift(hour) values('17:45');
+insert into shift(hour) values('17:50');
+insert into shift(hour) values('17:55');
+
+insert into shift(hour) values('18:00');
+insert into shift(hour) values('18:01');
+insert into shift(hour) values('18:05');
+insert into shift(hour) values('18:10');
+insert into shift(hour) values('18:15');
+insert into shift(hour) values('18:20');
+insert into shift(hour) values('18:25');
+insert into shift(hour) values('18:30');
+insert into shift(hour) values('18:35');
+insert into shift(hour) values('18:40');
+insert into shift(hour) values('18:45');
+insert into shift(hour) values('18:50');
+insert into shift(hour) values('18:55');
+
+insert into shift(hour) values('19:00');
+insert into shift(hour) values('19:01');
+insert into shift(hour) values('19:05');
+insert into shift(hour) values('19:10');
+insert into shift(hour) values('19:15');
+insert into shift(hour) values('19:20');
+insert into shift(hour) values('19:25');
+insert into shift(hour) values('19:30');
+insert into shift(hour) values('19:35');
+insert into shift(hour) values('19:40');
+insert into shift(hour) values('19:45');
+insert into shift(hour) values('19:50');
+insert into shift(hour) values('19:55');
+
+insert into shift(hour) values('20:00');
+insert into shift(hour) values('20:01');
+insert into shift(hour) values('20:05');
+insert into shift(hour) values('20:10');
+insert into shift(hour) values('20:15');
+insert into shift(hour) values('20:20');
+insert into shift(hour) values('20:25');
+insert into shift(hour) values('20:30');
+insert into shift(hour) values('20:35');
+insert into shift(hour) values('20:40');
+insert into shift(hour) values('20:45');
+insert into shift(hour) values('20:50');
+insert into shift(hour) values('20:55');
+
+insert into shift(hour) values('21:00');
+insert into shift(hour) values('21:01');
+insert into shift(hour) values('21:05');
+insert into shift(hour) values('21:10');
+insert into shift(hour) values('21:15');
+insert into shift(hour) values('21:20');
+insert into shift(hour) values('21:25');
+insert into shift(hour) values('21:30');
+insert into shift(hour) values('21:35');
+insert into shift(hour) values('21:40');
+insert into shift(hour) values('21:45');
+insert into shift(hour) values('21:50');
+insert into shift(hour) values('21:55');
+
+insert into shift(hour) values('22:00');
+insert into shift(hour) values('22:01');
+insert into shift(hour) values('22:05');
+insert into shift(hour) values('22:10');
+insert into shift(hour) values('22:15');
+insert into shift(hour) values('22:20');
+insert into shift(hour) values('22:25');
+insert into shift(hour) values('22:30');
+insert into shift(hour) values('22:35');
+insert into shift(hour) values('22:40');
+insert into shift(hour) values('22:45');
+insert into shift(hour) values('22:50');
+insert into shift(hour) values('22:55');
+
+insert into shift(hour) values('23:00');
+insert into shift(hour) values('23:01');
+insert into shift(hour) values('23:05');
+insert into shift(hour) values('23:10');
+insert into shift(hour) values('23:15');
+insert into shift(hour) values('23:20');
+insert into shift(hour) values('23:25');
+insert into shift(hour) values('23:30');
+insert into shift(hour) values('23:35');
+insert into shift(hour) values('23:40');
+insert into shift(hour) values('23:45');
+insert into shift(hour) values('23:50');
+insert into shift(hour) values('23:55');
+
+
+-- 16/03
+USE `oee`;
+DROP procedure IF EXISTS `prc_oee`;
+
+DELIMITER $$
+USE `oee`$$
+CREATE DEFINER=`root`@`%` PROCEDURE `prc_oee`(
+	in p_channel_id int,
+	in p_date_ini varchar(20),
+    in p_date_fin varchar(20),
+    in p_machine_code varchar(10)
+)
+begin
+	declare v_done int default false;
+    declare v_machine_code varchar(10);
+    declare v_machine_name varchar(20);
+    declare v_quality int;
+    	
+	/*curso de maquinas do canal*/
+	declare c cursor for select cm.machine_code, m.name
+						   from channel_machine cm
+						  inner join machine_data m on m.code = cm.machine_code
+						  where cm.channel_id = p_channel_id
+                            and ((cm.machine_code = p_machine_code) or ifnull(p_machine_code, '') = '');
+	
+	declare continue handler for not found set v_done = true;    
+	declare exit handler for sqlexception, sqlwarning
+	begin
+		rollback;
+		resignal;
+	end;    
+
+	drop temporary table if exists tmp_oee;
+	create temporary table if not exists tmp_oee(
+		channel_id int,
+		machine_code varchar(10),
+        machine_name varchar(100),
+		availability float(15,2),
+		performance float(15,2),
+		quality float(15,2),
+		oee float(15,2)
+	);
+    
+	drop temporary table if exists tmp_performance;
+	create temporary table if not exists tmp_performance(
+		machine_code varchar(10),
+		field5 float(15,2),
+		performance float(15,2)
+	);
+    
+	drop temporary table if exists tmp_availability;
+	create temporary table if not exists tmp_availability(
+		machine_code varchar(10),
+		pp float(15,2),
+		pnp float(15,2)
+	);    
+
+	/*desempenho*/
+	insert into tmp_performance
+	select f.mc_cd
+		 , cast(coalesce(f.field5,0) as decimal(15,2)) as field5
+         , coalesce(case f.mc_cd 
+			when 'EF3' then round((((f.field2 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2) 
+			when 'EF4' then round((((f.field2 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2) 
+			when 'EF5' then round((((f.field3 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2) 
+			when 'EF6' then round((((f.field3 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2) 
+			when 'EF7' then round((((f.field3 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2)
+            when 'RB1' then round((((f.field2 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2)
+            when 'RB2' then round((((f.field2 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2)
+			when 'AB1' then round((((f.field3 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2)
+            when 'AB2' then round((((f.field3 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2)
+            when 'MAQ1' then round((((f.field2 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2)
+			when 'MAQ2' then round((((f.field2 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2)
+			when 'MAQ3' then round((((f.field2 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2)
+			when 'MAQ4' then round((((f.field2 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2)
+			when 'MAQ5' then round((((f.field2 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2)
+            when 'LLC6' then round((((f.field2 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2)
+			when 'LLC7' then round((((f.field2 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2)
+			when 'LLC8' then round((((f.field2 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2)
+			when 'LLC9' then round((((f.field2 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2)
+			when 'LLC10' then round((((f.field2 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2)
+			when 'LLC11' then round((((f.field2 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2)
+			when 'LLC12' then round((((f.field2 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2)
+			when 'LLC13' then round((((f.field2 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2)
+            when 'SEL1' then round((((f.field2 / (f.field5 - fnc_machine_pause(f.ch_id, f.mc_cd, p_date_ini, p_date_fin, 'PP'))) / m.nominal_output)),2) 
+            else 0
+		   end, 0) as performance 
+	  from feed f 
+	 inner join (select max(f.id) as id
+				   from feed f
+				  where f.ch_id = p_channel_id
+                    and ((f.mc_cd = p_machine_code) or ifnull(p_machine_code, '') = '')
+					and f.inserted_at between 
+						(STR_TO_DATE(p_date_ini, '%Y-%m-%d %H:%i:%s')) 
+					and (STR_TO_DATE(p_date_fin, '%Y-%m-%d %H:%i:%s'))			
+				  group by f.mc_cd) tmp on f.id = tmp.id
+	 inner join machine_data m on m.code = f.mc_cd;    
+
+	/*disponibilidade*/
+	insert into tmp_availability
+	select b.machine_code
+		 , sum(pp) as pp
+		 , sum(pnp) as pnp
+	  from (
+	select a.machine_code 
+		 , case a.type
+			when 'PP' then sum(a.pause)
+			else 0 end as pp
+		 , case a.type
+			when 'NP' then sum(a.pause)
+			else 0 end as pnp        
+	  from (       
+		select mpd.machine_code
+			 , pr.type
+			 , mpd.pause 
+		  from machine_pause_dash mpd
+		  left join pause_reason pr on pr.id = mpd.pause_reason_id
+		 where mpd.channel_id = p_channel_id
+           and ((mpd.machine_code = p_machine_code) or ifnull(p_machine_code, '') = '')
+		   and mpd.date_ref between 
+				   (STR_TO_DATE(p_date_ini, '%Y-%m-%d %H:%i:%s')) 
+			   and (STR_TO_DATE(p_date_fin, '%Y-%m-%d %H:%i:%s'))
+		 group by mpd.insert_index) a
+	 group by a.machine_code, a.type) b
+	 group by b.machine_code;
+
+	-- if not exists(select 1 from tmp_performance) then
+	-- 	signal sqlstate '45000' set message_text = 'sem dados';
+	-- end if;
+    
+    set v_quality = (select quality from channel where id = p_channel_id);
+
+	open c;
+ 
+	read_loop: loop
+		fetch c into v_machine_code, v_machine_name;	
+        
+		if v_done then
+			leave read_loop;
+		end if;			
+	
+		set @v_pp = 0;
+        set @v_pnp = 0;
+        set @v_performance = 0;
+        set @v_availability = 0.01; /*somente para não dar divisao por zero*/
+        set @v_real_availability = 0;        
+        
+		select @v_pp := pp
+			 , @v_pnp := pnp
+		  from tmp_availability 
+		 where machine_code = v_machine_code;
+		        
+		select @v_performance := performance
+			 , @v_availability := if((field5 - coalesce(@v_pp,0)) = 0, 0.01, (field5 - coalesce(@v_pp,0)))
+			 , @v_real_availability := (@v_availability - coalesce(@v_pnp,0))
+		  from tmp_performance 
+		 where machine_code = v_machine_code;
+		
+		insert into tmp_oee(channel_id, machine_code, machine_name, availability, performance, quality, oee) 
+		values (p_channel_id
+			  , v_machine_code
+              , v_machine_name
+			  , round(((@v_real_availability / @v_availability)*100),2)
+			  , round((@v_performance * 100),2)
+			  , v_quality
+			  , ((@v_performance * (@v_real_availability / @v_availability) * 1) * 100) 
+		);
+	end loop;
+
+	close c;
+	select * from tmp_oee; 
+end$$
+
+DELIMITER ;
+
+
+
 
 
