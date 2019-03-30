@@ -16,7 +16,7 @@ module.exports = function(api) {
                 parseInt(data.channelId),    
                 data.dateIni, 
                 data.dateFin,
-                data.machineCode ? data.machineCode : ''                    
+                data.machineCode === 'null' ? '' : data.machineCode                
             ], 
             function(error, result) {
                 connection.release();
