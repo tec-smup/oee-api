@@ -335,7 +335,67 @@
                                 </table>                                
                             </div> 
                         </div>
-                    </div>                    
+                    </div>  
+                    
+                    <div class="bs-example"> 
+                        <div class="panel panel-primary"> 
+                            <div class="panel-heading"> 
+                                <h3 class="panel-title"><a id="pauseIoT">Inserir pausa via IoT</a></h3> 
+                            </div> 
+                            <div class="panel-body">
+                                <p>Inserir pausa via IoT.</p>
+                                <pre><span class="origin"></span>/api/machinepause?token=VALOR&mc=VALOR&p=VALOR&sd=VALOR&ed=VALOR&pr=VALOR</pre>                                
+                                <table class="table"> 
+                                    <thead> 
+                                        <tr> 
+                                            <th>Parâmetro</th> 
+                                            <th>Tipo</th>
+                                            <th>Obrigatório</th> 
+                                            <th>Descrição</th>
+                                        </tr> 
+                                    </thead> 
+                                    <tbody> 
+                                        <tr> 
+                                            <td>&token</td> 
+                                            <td>String</td> 
+                                            <td>Sim</td> 
+                                            <td>Chave de autenticação do canal. Retorna erro 404 caso não informado ou incorreto.</td> 
+                                        </tr>   
+                                        <tr> 
+                                            <td>&mc</td> 
+                                            <td>String</td> 
+                                            <td>Sim</td> 
+                                            <td>Código da máquina</td> 
+                                        </tr>     
+                                        <tr> 
+                                            <td>&p</td> 
+                                            <td>Inteiro</td> 
+                                            <td>Sim</td> 
+                                            <td>Pausa em minutos</td> 
+                                        </tr>  
+                                        <tr> 
+                                            <td>&sd</td> 
+                                            <td>String</td> 
+                                            <td>Sim</td> 
+                                            <td>Data inicial da pausa</td> 
+                                        </tr>  
+                                        <tr> 
+                                            <td>&ed</td> 
+                                            <td>String</td> 
+                                            <td>Sim</td> 
+                                            <td>Data final da pausa</td> 
+                                        </tr>   
+                                        <tr> 
+                                            <td>&pr</td> 
+                                            <td>Inteiro</td> 
+                                            <td>Sim</td> 
+                                            <td>Id do motivo da pausa</td> 
+                                        </tr>                                                                                                                                                                                                                                 
+                                    </tbody> 
+                                </table>                                
+                            </div> 
+                        </div>
+                    </div>                      
 
                     <footer class="footer">
                         <br/>

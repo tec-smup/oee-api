@@ -34,10 +34,10 @@ module.exports = function(api) {
         });                 
     };
 
-    this.chart = function(req, res, next) {
+    this.chart = (req, res, next) => {
         var query = req.query;        
         
-        _feed.chart(query, function(exception, result) {
+        _feed.chart(query, (exception, result) => {
             if(exception) {
                 return res.status(400).send(exception);
             }
@@ -83,10 +83,10 @@ module.exports = function(api) {
         });                 
     };
     
-    this.OEE = function(req, res, next) { 
+    this.OEE = (req, res, next) => { 
         var query = req.query;
 
-        _feed.OEE(query, function(exception, result) {
+        _feed.OEE(query, (exception, result) => {
             if(exception) {
                 return res.status(400).send(exception);
             }

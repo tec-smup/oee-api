@@ -3,12 +3,17 @@ module.exports = function(api) {
     
     this.save = function(data, callback) {    
         _pool.getConnection(function(err, connection) {
-            connection.query("call prc_machine_pause(?,?,?,?)", 
+            connection.query(`
+                call prc_machine_pause(?,?,?,?,?,?,?,@machinePauseId);
+                select @machinePauseId as id;`, 
             [
-                data.mc_cd,
-                data.pause,
-                data.date_ref,
-                data.justification
+                data.token,
+                parseInt(data.id) || 0,
+                data.mc,
+                parseFloat(data.p) || 0,
+                data.sd || null,
+                data.ed || null,
+                parseInt(data.pr) || 0
             ], 
             function(error, result) {
                 connection.release();
@@ -63,6 +68,7 @@ module.exports = function(api) {
                 , a.machine_name
                 , time_format(sec_to_time(sum(a.pause)*60), '%H:%i:%s') as pause_time
                 , sum(a.pause) as pause_in_minutes
+                , count(0) as incidents
                 , a.pause_reason
                 , a.pause_type
                 , a.type
@@ -84,7 +90,7 @@ module.exports = function(api) {
                 group by mpd.insert_index 
             ) a
             group by a.date_ref_format, a.machine_name, a.pause_reason
-            order by sum(pause);
+            order by date_ref_format, sum(pause);
 
             select b.machine_code
                 , sec_to_time(sum(pp)*60) as pp
@@ -153,38 +159,36 @@ module.exports = function(api) {
     };
 
 
-    // this.listPauses = function(data, callback) {
-    //     var dateIni = data.dateIni.substring(0, data.dateIni.indexOf(" "));
-    //     var dateFin = data.dateFin.substring(0, data.dateFin.indexOf(" "));
-    //     var query = `
-    //         select mp.id
-    //              , mp.mc_cd 
-    //              , md.name
-    //              , date_format(mp.date_ref, '%d/%m/%Y') as date_ref
-    //              , mp.justification
-    //              , date_format(mp.inserted_at, '%d/%m/%Y %H:%i:%s') as inserted_at
-    //              , time_format(sec_to_time(mp.pause*60), '%H:%i:%s') as pause
-    //           from machine_pause mp
-    //          inner join machine_data md on md.code = mp.mc_cd
-    //          inner join channel_machine cm on cm.machine_code = md.code
-    //          inner join user_channel uc on uc.channel_id = cm.channel_id
-    //          where mp.date_ref between ? and ?
-    //            and uc.user_id = ?
-    //          order by mp.mc_cd, mp.inserted_at desc 
-    //     `; 
-    //     _pool.getConnection(function(err, connection) {
-    //         connection.query(query, 
-    //         [
-    //             dateIni,  
-    //             dateFin, 
-    //             parseInt(data.userId)
-    //         ], 
-    //         function(error, result) {
-    //             connection.release();
-    //             callback(error, result);
-    //         });
-    //     });
-    // };    
+    this.getMachinePause = function(data, callback) {
+        var query = `
+            select cm.channel_id
+                , mp.mc_cd as machine_code
+                , DATE_FORMAT(STR_TO_DATE(mp.start_date, '%Y-%m-%d %H:%i:%s'), '%d/%m/%Y %H:%i:%s') as start_date
+                , DATE_FORMAT(STR_TO_DATE(mp.end_date, '%Y-%m-%d %H:%i:%s'), '%d/%m/%Y %H:%i:%s') as end_date
+                , mp.pause_reason_id
+                , pr.name as pause_reason_name
+                , mp.pause
+                , sec_to_time(?*60) as pause_in_time
+            from machine_pause mp
+            inner join channel_machine cm on cm.machine_code = mp.mc_cd
+            inner join channel c on c.id = cm.channel_id
+            left join pause_reason pr on pr.id = mp.pause_reason_id
+            where mp.id = ?
+            and c.token = ?
+        `; 
+        _pool.getConnection(function(err, connection) {
+            connection.query(query, 
+            [
+                parseFloat(data.downtime || 0),
+                parseInt(data.id),
+                data.token
+            ], 
+            function(error, result) {
+                connection.release();
+                callback(error, result);
+            });
+        });
+    };    
 
     return this;
 };

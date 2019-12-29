@@ -22,6 +22,8 @@ const machinePauseDash_route = `${process.env.BASE_URL}machinepausedash`;
 const mobile_route = `${process.env.BASE_URL}mobile`;
 const shift_route = `${process.env.BASE_URL}shift`;
 const machineShift_route = `${process.env.BASE_URL}machineshift`;
+const sponsor_route = `${process.env.BASE_URL}sponsor`;
+const alert_route = `${process.env.BASE_URL}alert`;
 
 //rotas que ouvimos
 api.use(index_route, api.routes.index);
@@ -41,6 +43,8 @@ api.use(machinePauseDash_route, api.routes.machinePauseDash);
 api.use(mobile_route, api.routes.mobile);
 api.use(shift_route, api.routes.shift);
 api.use(machineShift_route, api.routes.machineShift);
+api.use(sponsor_route, api.routes.sponsor);
+api.use(alert_route, api.routes.alert);
 
 //rotas não encontradas serão respondidas por essa
 api.use((req, res, next) => {

@@ -37,6 +37,7 @@ module.exports = function() {
         .include('database')
         .then('enums')
         .then('models')
+        .then('services')
         .then('controllers')
         .then('routes')
         .into(api);

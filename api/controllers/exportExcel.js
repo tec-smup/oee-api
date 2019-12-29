@@ -228,7 +228,12 @@ module.exports = function(api) {
                     displayName: "Justificativa", 
                     headerStyle: styles.headerBlue,
                     width: 300 
-                },                                                                                                        
+                },
+                incidents: {
+                    displayName: "Ocorrências", 
+                    headerStyle: styles.headerBlue,
+                    width: 100                    
+                }                                                                                                        
             };      
         
             const exportExcel = excel.buildExport([

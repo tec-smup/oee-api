@@ -1,4 +1,4 @@
-module.exports = function(api) {
+module.exports = (api) => {
     let _pool = api.database.connection; 
     
     this.save = function(data, callback) {
@@ -129,10 +129,10 @@ module.exports = function(api) {
         });    
     };
 
-    this.chart = function(data, callback) {
+    this.chart = (data, callback) => {
         let sql = 'call prc_chart(?,?,?,?)';
     
-        _pool.getConnection(function(err, connection) {
+        _pool.getConnection(async(err, connection) => {
             connection.query(sql,     
             [
                 data.date_ini, 
@@ -140,7 +140,7 @@ module.exports = function(api) {
                 parseInt(data.ch_id), 
                 data.mc_cd
             ], 
-            function(error, result) {
+            (error, result) => {
                 connection.release();
                 callback(error, result);
             });
@@ -199,18 +199,18 @@ module.exports = function(api) {
         });
     };
 
-    this.OEE = function(data, callback) {
+    this.OEE = (data, callback) => {
         let sql = `call prc_oee(?,?,?,?);`;
-        _pool.getConnection(function(err, connection) {
+        _pool.getConnection((err, connection) => {
             connection.query(sql, [
                 parseInt(data.ch_id),
                 data.dateIni, 
                 data.dateFin,
                 data.machineCode ? data.machineCode : ''
             ], 
-            function(error, result) {
+            (error, result) => {
                 connection.release();
-                callback(error, result);
+               callback(error, result);
             });
         });
     };    
